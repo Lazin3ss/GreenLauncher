@@ -1,3 +1,11 @@
+; TODO: FIX EDIT GAME FORM
+; TODO: FIX DELETE GAME MECHANISM
+; TODO: HANDLE ICONS DATABASE WHEN AN ICON SHOULDN'T BE ALLOCATED IN MEMORY (SHOULD WE DELETE IT? AVOID ALLOCATING IT?)
+; TODO: HANDLE GAME COUNTING FOR ICONS, YEARS, DEVS, ETC.
+; TODO: FIX SORTING IN THE LIST VIEW
+; TODO: ALL TOTAL GAMES IN QUERY TO STATUS BAR
+; TODO: ADD "CHECK DATABASE INTEGRITY" FUNC
+
 If Not @compiled Then
 	#AutoIt3Wrapper_Change2CUI=y
 EndIf
@@ -27,11 +35,11 @@ EndIf
 ; VERSION
 Global Const $sVersion = "0.1"
 Global Const $sAboutMsg = "Version: " & $sVersion & @CRLF & @CRLF & _
-					"Created by Francisco Iturrieta. Various code attributed to:" & @CRLF & _
+					"Created by Francisco Iturrieta. Various code may be attributed to:" & @CRLF & _
 					"- Larsj" & @CRLF & _
 					"- pixelsearch" & @CRLF & _
 					"- PaulIA" & @CRLF & @CRLF & _
-					"- Melba23" & @CRLF & @CRLF & _
+					"- Melba23 (GUIFrame)" & @CRLF & @CRLF & _
 					"- Various AutoIT forum threads" & @CRLF & @CRLF & _
 					"https://github.com/Lazin3ss/GreenLauncher"
 
@@ -80,7 +88,7 @@ EndIf
 
 _SQLite_Open ("GameLibrary.db")
 ; Create metadata tables
-_SQLite_Exec(-1, 	"CREATE TABLE IF NOT EXISTS icons(icon_id INTEGER PRIMARY KEY ASC UNIQUE, path TEXT, unique (path));" & _ 
+_SQLite_Exec(-1, 	"CREATE TABLE IF NOT EXISTS icons(icon_id INTEGER PRIMARY KEY ASC UNIQUE, path TEXT UNIQUE);" & _ 
 					"CREATE TABLE IF NOT EXISTS years(year INTEGER PRIMARY KEY ASC UNIQUE, gameCount INTEGER);" & _
 					"CREATE TABLE IF NOT EXISTS developers(dev_id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL);" & _
 					"CREATE TABLE IF NOT EXISTS publishers(publ_id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL);" & _
@@ -91,12 +99,11 @@ _SQLite_Exec(-1, 	"CREATE TABLE IF NOT EXISTS icons(icon_id INTEGER PRIMARY KEY 
 _SQLite_Exec(-1, 	"CREATE TABLE IF NOT EXISTS developers_mapping(game_id INTEGER, dev_id INTEGER);" & _
 					"CREATE TABLE IF NOT EXISTS publishers_mapping(game_id INTEGER, publ_id INTEGER);" & _
 					"CREATE TABLE IF NOT EXISTS genres_mapping(game_id INTEGER, genre_id INTEGER);" & _
-					"CREATE TABLE IF NOT EXISTS categories_mapping(game_id INTEGER, genre_id INTEGER);" & _
-					"CREATE TABLE IF NOT EXISTS tools_mapping(game_id INTEGER, tool_id INTEGER);" & _
-					"CREATE TABLE IF NOT EXISTS categories_mapping(game_id INTEGER, genre_id INTEGER);")
+					"CREATE TABLE IF NOT EXISTS categories_mapping(game_id INTEGER, category_id INTEGER);" & _
+					"CREATE TABLE IF NOT EXISTS tools_mapping(game_id INTEGER, tool_id INTEGER);")
 ; Create games table
 _SQLite_Exec(-1, 	"CREATE TABLE IF NOT EXISTS main.games(game_id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL, exePath TEXT NOT NULL, iconId INTEGER, year INTEGER, favorite INTEGER, " & _
-					"FOREIGN KEY(iconId) REFERENCES icons(icon_id), FOREIGN KEY(year) REFERENCES years(year));")
+					"FOREIGN KEY(iconId) REFERENCES icons(icon_id) ON DELETE RESTRICT, FOREIGN KEY(year) REFERENCES years(year));")
 RefreshGameList()
 
 ; Run Main window
@@ -136,7 +143,7 @@ Func MainForm()
 	_GUIFrame_Switch($iFrame_A, 2)
 	
 	; Create Game List View
-	$idList = GUICtrlCreateListView("Name|Year|Developer|Publisher", 0, 0, 444, 357, BitOR($LVS_REPORT, $LVS_OWNERDATA), BitOR($LVS_EX_FULLROWSELECT, $LVS_EX_DOUBLEBUFFER))
+	$idList = GUICtrlCreateListView("Name|Year|Developer|Publisher|Genre|Category|Favorite", 0, 0, 444, 357, BitOR($LVS_REPORT, $LVS_OWNERDATA), BitOR($LVS_EX_FULLROWSELECT, $LVS_EX_DOUBLEBUFFER))
 	$hList = GUICtrlGetHandle($idList)
 	$hImage = _GUIImageList_Create(16, 16, 6, 3)
 	ImageListFill($hImage)
@@ -144,7 +151,7 @@ Func MainForm()
 	_GUICtrlListView_RegisterSortCallBack($hList)
 	
 	; TEST
-	AddGame("Warcraft III - Frozen Throne", "C:\Users\Laziness\Downloads\Warcraft III\Frozen Throne.exe", -1, 2003)
+	;AddGame("Warcraft III - Frozen Throne", "C:\Users\Laziness\Downloads\Warcraft III\Frozen Throne.exe", -1, 2003)
 	
 	; Create Context menu
 	$idContextDummy = GUICtrlCreateDummy()
@@ -171,7 +178,7 @@ Func MainForm()
 	
 	; GUI Message Loop
 	GUIRegisterMsg($WM_NOTIFY, "WM_NOTIFY")
-	GUIRegisterMsg($WM_SIZE, "RESIZECONTROLS")
+	GUIRegisterMsg($WM_SIZE, "WM_RESIZECONTROLS")
 	RefreshGameList()
 	GUISetState(@SW_SHOW, $mainForm)
 	While 1
@@ -179,17 +186,17 @@ Func MainForm()
 		Case $hList
 			_GUICtrlListView_SortItems($hList, GUICtrlGetState($hList))
 		Case $addgameitem
-			EditGameForm(-1)
+			EditGameForm(False)
 		Case $idContextDummy
 			Local $iMenu_Choice = _TrackPopupMenu($hContextMenu, $mainForm, MouseGetPos(0), MouseGetPos(1))
 			If $iMenu_Choice Then
 				Switch $iMenu_Choice
 				Case $idLaunchGame
-					RunGame($idSelectedItem)
+					RunGame()
 				Case $idEditGame
-					EditGameForm($idSelectedItem)
+					EditGameForm(True)
 				Case $idDeleteGame
-					DeleteGame($idSelectedItem)
+					DeleteGame()
 				EndSwitch
 			EndIf
 		Case $aboutitem
@@ -224,25 +231,33 @@ EndFunc   ;==>MainForm
 ;--------------------------------------------------------------
 
 
-Func EditGameForm($gameId)
-	_GUICtrlStatusBar_SetText($hStatusBar, _Iif($gameId > -1, "Editing " & $aGameTable[$gameId+1][1] & "...", "Adding game..."))
+Func EditGameForm($AddingGame)
+	Local $gameId, $gameData
+	If $AddingGame Then
+		$gameId = -1
+	Else
+		GetSelectedItemData($gameData)
+		$gameId = $gameData[0]
+	EndIf
+	
+	_GUICtrlStatusBar_SetText($hStatusBar, _Iif($gameId > -1, "Editing " & $gameData[1] & "...", "Adding game..."))
 	GUISetState(@SW_DISABLE, $mainForm)
 	; Create the Window
 	$editGameForm = GUICreate(_Iif($gameId > -1, "Edit Game", "Add Game"),  300, 350, -1, -1, -1, -1, $mainForm)
 	
 	; Build form
 	GUICtrlCreateLabel("Name", 20, 20)
-	$sName = GUICtrlCreateInput(_Iif($gameId > -1, $aGameTable[$gameId+1][1], ""), 20, 40, 260)
+	$sName = GUICtrlCreateInput(_Iif($gameId > -1, $gameData[1], ""), 20, 40, 260)
 	GUICtrlCreateLabel("Path to Executable", 20, 70)
-	$sExePath = GUICtrlCreateInput(_Iif($gameId > -1, $aGameTable[$gameId+1][2], ""), 20, 90, 260)
+	$sExePath = GUICtrlCreateInput(_Iif($gameId > -1, $gameData[2], ""), 20, 90, 260)
 	GUICtrlCreateLabel("Path to Icon (Optional)", 20, 120)
-	$sIconPath = GUICtrlCreateInput(_Iif($gameId > -1, $aGameTable[$gameId+1][3], ""), 20, 140, 260)
+	$sIconPath = GUICtrlCreateInput(_Iif($gameId > -1, $gameData[3], ""), 20, 140, 260)
 	GUICtrlCreateLabel("Year", 20, 170)
-	$sYear = GUICtrlCreateInput(_Iif($gameId > -1, $aGameTable[$gameId+1][4], ""), 20, 190, 260)
+	$sYear = GUICtrlCreateInput(_Iif($gameId > -1, $gameData[4], ""), 20, 190, 260)
 	GUICtrlCreateLabel("Developer", 20, 220)
-	$sDeveloper = GUICtrlCreateInput(_Iif($gameId > -1, $aGameTable[$gameId+1][5], ""), 20, 240, 260)
+	$sDeveloper = GUICtrlCreateInput(_Iif($gameId > -1, $gameData[5], ""), 20, 240, 260)
 	GUICtrlCreateLabel("Publisher", 20, 270)
-	$sPublisher = GUICtrlCreateInput(_Iif($gameId > -1, $aGameTable[$gameId+1][6], ""), 20, 290, 260)
+	$sPublisher = GUICtrlCreateInput(_Iif($gameId > -1, $gameData[6], ""), 20, 290, 260)
 	
 	$hFinishButton = GUICtrlCreateButton(_Iif($gameId > -1, "Save Changes", "Add Game!"), 130, 320)
 	
@@ -252,9 +267,9 @@ Func EditGameForm($gameId)
 		Switch GUIGetMsg()
 		Case $hFinishButton
 			if $gameId > -1 Then
-				UpdateGameInDatabase($aGameTable[$gameId+1][0], GUICtrlRead($sName), GUICtrlRead($sExePath), GUICtrlRead($sIconPath), GUICtrlRead($sYear), GUICtrlRead($sDeveloper), GUICtrlRead($sPublisher))
+				Database_UpdateGame($aGameData[0], GUICtrlRead($sName), GUICtrlRead($sExePath), GUICtrlRead($sIconPath), GUICtrlRead($sYear), GUICtrlRead($sDeveloper), GUICtrlRead($sPublisher))
 			Else
-				AddGameToDatabase(GUICtrlRead($sName), GUICtrlRead($sExePath), GUICtrlRead($sIconPath), GUICtrlRead($sYear), GUICtrlRead($sDeveloper), GUICtrlRead($sPublisher))
+				AddGame(GUICtrlRead($sName), GUICtrlRead($sExePath), GUICtrlRead($sIconPath), GUICtrlRead($sYear), GUICtrlRead($sDeveloper), GUICtrlRead($sPublisher))
 			EndIf
 			_GUICtrlStatusBar_SetText($hStatusBar, "Done!")
 			ExitLoop
@@ -266,6 +281,173 @@ Func EditGameForm($gameId)
 	GUISetState(@SW_ENABLE, $mainForm)
 	GUIDelete($editGameForm)
 EndFunc   ;==>EditGameForm
+
+
+;--------------------------------------------------------------
+; LIST VIEW AND TREE VIEW METHODS
+;--------------------------------------------------------------
+
+
+Func AddGame($Name, $ExePath, $IconPath = -1, $Year = -1, $Developer = -1, $Publisher = -1, $Genre = -1, $Category = -1)
+	If $IconPath == -1 Then $IconPath = $ExePath
+	Local $iconid
+	; We try to add the icon to the database
+	If Database_InsertIcon($IconPath, $iconid) Then 
+		; If it was successfully added (it didn't exist there yet), we also add the icon to the main image list
+		_GUIImageList_AddIconEx($hImage, $IconPath, 0, $iconid) ; This should probably be moved to a ImageList handling function
+	EndIf
+	If Not Database_InsertYear($Year) Then
+		$gameCount = Database_SelectYearField($Year, "gameCount")
+		Database_UpdateYear($Year, $gameCount + 1)
+	EndIf
+	Database_InsertGame($Name, $ExePath, $iconid, $Year, 1)
+EndFunc   ;==>AddGame
+
+Func EditGame($GameId, $Name, $ExePath = -1, $IconPath = -1, $Year = -1, $Developer = -1, $Publisher = -1, $Genre = -1, $Category = -1)
+	If $IconPath == -1 Then $IconPath = $ExePath
+	Local $iconid
+	; We try to add the icon to the database
+	If Database_InsertIcon($IconPath, $iconid) Then 
+		; If it was successfully added (it didn't exist there yet), we also add the icon to the main image list
+		_GUIImageList_AddIconEx($hImage, $IconPath, 0, $iconid) ; This should probably be moved to a ImageList handling function
+	EndIf
+	If Not Database_InsertYear($Year) Then
+		$gameCount = Database_SelectYearField($Year, "gameCount")
+		Database_UpdateYear($Year, $gameCount + 1)
+	EndIf
+	Database_InsertGame($Name, $ExePath, $iconid, $Year, 1)
+EndFunc   ;==>AddGame
+
+Func RunGame()
+	Local $gameData
+	GetSelectedItemData($gameData)
+	$sLaunchingTitle = "Launching " & $gameData[1] & "..."
+	_GuiCtrlStatusBar_SetText($hStatusBar, $sLaunchingTitle)
+	$sGamePath = $gameData[2]
+	RunWait($sGamePath, StringRegExpReplace($sGamePath, "\\(?:.(?!\\))+$", ""))
+	_GuiCtrlStatusBar_SetText($hStatusBar, "Ready.")
+EndFunc   ;==>RunGame
+
+Func GetSelectedItemData(ByRef $gameData)
+	_SQLite_QuerySingleRow(-1, $sCurrentQuery & " LIMIT 1 OFFSET " & $idSelectedItem, $gameData)
+EndFunc   ;==>GetGameDataFromCurrentQuery
+
+Func ImageListFill($hImage)
+	Local $aResult, $iRows, $iCols
+	_SQLite_GetTable2d(-1, 'SELECT * FROM icons', $aResult, $iRows, $iCols)
+	_GUIImageList_SetImageCount($hImage, $iRows)
+	For $i = 0 to $iRows - 1
+		_GUIImageList_AddIconEx($hImage, $aResult[$i+1][1], 0, Number($aResult[$i+1][0])-1)
+	Next
+	$aResult = 0
+EndFunc
+
+Func RefreshGameList($newQuery = "", $newCountQuery = "")
+	If $newQuery <> -1 Then
+		$sCurrentQuery = "SELECT * FROM main.games " & $newQuery
+	EndIf
+	Local $aRow
+	_SQLite_QuerySingleRow( -1, "SELECT COUNT(1) FROM main.games " & $newCountQuery, $aRow )
+	If IsArray( $aRow ) Then $iTotalRows = Number($aRow[0])
+	GUICtrlSendMsg( $idList, $LVM_SETITEMCOUNT, $iTotalRows, 0 )
+	_GUICtrlListView_SetColumnWidth($hList, 0, $LVSCW_AUTOSIZE)
+EndFunc
+  
+; EVENT HANDLER
+Func WM_NOTIFY($hWnd, $iMsg, $iwParam, $ilParam)
+    #forceref $hWnd, $iMsg, $iwParam
+	
+    Local $hWndFrom, $iIDFrom, $iCode, $tNMHDR, $tInfo
+
+    $tNMHDR = DllStructCreate($tagNMHDR, $ilParam)
+    $hWndFrom = HWnd(DllStructGetData($tNMHDR, "hWndFrom"))
+    $iIDFrom = DllStructGetData($tNMHDR, "IDFrom")
+    $iCode = DllStructGetData($tNMHDR, "Code")
+    Switch $hWndFrom
+	Case $hList
+        Switch $iCode
+		Case $LVN_ODCACHEHINT
+			Local $tNMLVCACHEHINT = DllStructCreate( $tagNMLVCACHEHINT, $ilParam )
+			$iFrom = DllStructGetData( $tNMLVCACHEHINT, "iFrom" )
+			$iTo = DllStructGetData( $tNMLVCACHEHINT, "iTo" )
+			Local $sSQL = $sCurrentQuery & " LIMIT " & _GUICtrlListView_GetCounterPage($hList) + 1 & " OFFSET " & $iFrom
+			_SQLite_GetTable2d(-1, $sSQL, $aGameTableCache, $iGameTableCacheRows, $iGameTableCacheCols)
+		Case $LVN_GETDISPINFOW
+			Local $tNMLVDISPINFO = DllStructCreate( $tagNMLVDISPINFO, $ilParam )
+			If BitAND( DllStructGetData( $tNMLVDISPINFO, "Mask" ), $LVIF_TEXT ) Then
+				Local $iIndex = DllStructGetData( $tNMLVDISPINFO, "Item" ) - $iFrom + 1
+				If $iIndex > 0 And $iIndex < $iGameTableCacheRows + 1 Then
+					Switch DllStructGetData($tNMLVDISPINFO,"SubItem")
+					Case 0 ; Name
+						$sItem = $aGameTableCache[$iIndex][1]
+						DllStructSetData($tNMLVDISPINFO, "Image", Number($aGameTableCache[$iIndex][3])-1)
+					Case 1 ; Year
+						$sItem = $aGameTableCache[$iIndex][4]
+					Case 2 ; Developer
+						$sItem = "" ; $aGameTableCache[$iIndex][5]
+					Case 3 ; Publisher
+						$sItem = "" ; $aGameTableCache[$iIndex][6]
+					Case 4 ; Genre
+						$sItem = "" ; $aGameTableCache[$iIndex][7]
+					Case 5 ; Category
+						$sItem = "" ; $aGameTableCache[$iIndex][8]
+					Case 6 ; Favorite
+						$sItem = "" ; $aGameTableCache[$iIndex][9]
+					EndSwitch
+					DllStructSetData( $tText, 1, $sItem )
+					DllStructSetData( $tNMLVDISPINFO, "Text", $pText )
+					DllStructSetData( $tNMLVDISPINFO, "TextMax", StringLen( $sItem ) )
+				EndIf
+			EndIf
+		Case $LVN_COLUMNCLICK
+			
+			$tInfo = DllStructCreate($tagNMLISTVIEW, $ilParam)
+			
+			_GUICtrlListView_SortItems($hWndFrom, DllStructGetData($tInfo, "SubItem"))
+		Case $NM_DBLCLK
+			; Run the GAME, Damnit!
+			$tInfo = DllStructCreate($tagNMITEMACTIVATE, $ilParam)
+			$idSelectedItem = DllStructGetData($tInfo, "Index")
+			RunGame($idSelectedItem)
+		; Contextual Menu
+		Case $NM_RCLICK ; Sent by a list-view control when the user clicks an item with the right mouse button
+			$tInfo = DllStructCreate($tagNMITEMACTIVATE, $ilParam)
+			If Not @compiled Then
+				_DebugPrint("$NM_RCLICK" & @LF & "--> hWndFrom:" & @TAB & $hWndFrom & @LF & _
+						"-->IDFrom:" & @TAB & $iIDFrom & @LF & _
+						"-->Code:" & @TAB & $iCode & @LF & _
+						"-->Index:" & @TAB & DllStructGetData($tInfo, "Index") & @LF & _
+						"-->SubItem:" & @TAB & DllStructGetData($tInfo, "SubItem") & @LF & _
+						"-->NewState:" & @TAB & DllStructGetData($tInfo, "NewState") & @LF & _
+						"-->OldState:" & @TAB & DllStructGetData($tInfo, "OldState") & @LF & _
+						"-->Changed:" & @TAB & DllStructGetData($tInfo, "Changed") & @LF & _
+						"-->ActionX:" & @TAB & DllStructGetData($tInfo, "ActionX") & @LF & _
+						"-->ActionY:" & @TAB & DllStructGetData($tInfo, "ActionY") & @LF & _
+						"-->lParam:" & @TAB & DllStructGetData($tInfo, "lParam") & @LF & _
+						"-->KeyFlags:" & @TAB & DllStructGetData($tInfo, "KeyFlags"))
+			EndIf
+			$idSelectedItem = DllStructGetData($tInfo, "Index")
+			If $idSelectedItem > -1 Then ; valid row
+				GUICtrlSendToDummy($idContextDummy)
+			EndIf
+		EndSwitch
+	Case $hTreeView
+		Switch $iCode
+		Case $NM_CLICK
+			$bTreeViewClicked = true
+		EndSwitch
+    EndSwitch
+    Return $GUI_RUNDEFMSG
+EndFunc   ;==>WM_NOTIFY
+
+Func WM_RESIZECONTROLS($hWnd, $iMsg, $wParam, $lParam)
+	#forceref $iMsg, $wParam, $lParam
+	; Resize Frames
+	_GUIFrame_SIZE_Handler($hWnd, $iMsg, $wParam, $lParam)
+	; Resize Status Bar
+	_GUICtrlStatusBar_Resize($hStatusBar)
+    Return $GUI_RUNDEFMSG
+EndFunc   ;==>WM_RESIZECONTROLS
 
 
 ;--------------------------------------------------------------
@@ -289,11 +471,11 @@ EndFunc   ;==>Database_InsertGame
 
 Func Database_UpdateGame($GameId, $Name = -1, $ExePath = -1, $IconId = -1, $YearId = -1, $Favorite = -1)
 	Local $sSQL = 'UPDATE main.games SET '
-	If $Name <> -1 Then $sSQL = $sQL & 'name=' & sanitize($Name) & ', '
-	If $ExePath <> -1 Then $sSQL = $sQL & 'exePath=' & sanitize($ExePath) & ', '
-	If $IconId <> -1 Then $sSQL = $sQL & 'iconId=' & sanitize($IconId) & ', '
-	If $YearId <> -1 Then $sSQL = $sQL & 'yearId=' & sanitize($YearId) & ', '
-	If $Favorite <> -1 Then $sSQL = $sQL & 'favorite=' & sanitize($Favorite) & ', '
+	If $Name <> -1 Then $sSQL &= 'name=' & sanitize($Name) & ', '
+	If $ExePath <> -1 Then $sSQL &= 'exePath=' & sanitize($ExePath) & ', '
+	If $IconId <> -1 Then $sSQL &= 'iconId=' & sanitize($IconId) & ', '
+	If $YearId <> -1 Then $sSQL &= 'yearId=' & sanitize($YearId) & ', '
+	If $Favorite <> -1 Then $sSQL &= 'favorite=' & sanitize($Favorite) & ', '
 	Return _SQLite_Exec(-1, StringTrimRight($sSQL, 2) & ' WHERE game_id=' & $GameId) == $SQLITE_OK
 EndFunc   ;==>Database_UpdateGame
 
@@ -350,148 +532,17 @@ Func Database_DeleteYear($Year)
 	Return _SQLite_Exec(-1, 'DELETE FROM years WHERE year=' & $Year) == $SQLITE_OK
 EndFunc  ;==>Database_DeleteYear
 
+
+;--------------------------------------------------------------
+; MISC/GUI FUNCTIONS
+;--------------------------------------------------------------
+
+
 Func sanitize($str)
 	If $str = "" Or Not $str Then $Str = "NULL"
 	If $str <> "NULL" And Not IsNumber($str) Then $str = '"' & $str & '"'
 	Return $str
 EndFunc   ;==>sanitize
-
-
-;--------------------------------------------------------------
-; LIST VIEW AND TREE VIEW METHODS
-;--------------------------------------------------------------
-
-Func AddGame($Name, $ExePath, $IconPath = -1, $Year = -1, $Developer = -1, $Publisher = -1, $Genre = -1, $Category = -1)
-	If $IconPath == -1 Then $IconPath = $ExePath
-	Local $iconid
-	If Database_InsertIcon($IconPath, $iconid) Then 
-		_GUIImageList_AddIconEx($hImage, $IconPath, 0, $iconid) ; This should probably be moved to a ImageList handling function
-	EndIf
-	If Not Database_InsertYear($Year) Then
-		$gameCount = Database_SelectYearField($Year, "gameCount")
-		Database_UpdateYear($Year, $gameCount + 1)
-	EndIf
-	Database_InsertGame($Name, $ExePath, $iconid, $Year, 1)
-EndFunc
-
-
-Func RunGame($gameTableIndex)
-	$sLaunchingTitle = "Launching " & $aGameTable[$gameTableIndex+1][1] & "..."
-	_GuiCtrlStatusBar_SetText($hStatusBar, $sLaunchingTitle)
-	$sGamePath = $aGameTable[$gameTableIndex+1][2]
-	RunWait($sGamePath, StringRegExpReplace($sGamePath, "\\(?:.(?!\\))+$", ""))
-	_GuiCtrlStatusBar_SetText($hStatusBar, "Ready.")
-EndFunc   ;==>RunGame
-
-Func ImageListFill($hImage)
-	Local $aResult, $iRows, $iCols
-	_SQLite_GetTable2d(-1, 'SELECT * FROM icons', $aResult, $iRows, $iCols)
-	_GUIImageList_SetImageCount($hImage, $iRows)
-	For $i = 0 to $iRows - 1
-		_GUIImageList_AddIconEx($hImage, $aResult[$i+1][1], 0, Number($aResult[$i+1][0])-1)
-	Next
-	$aResult = 0
-EndFunc
-
-Func RefreshGameList($newQuery = "", $newCountQuery = "")
-	If $newQuery <> -1 Then
-		$sCurrentQuery = "SELECT * FROM main.games "& $newQuery
-	EndIf
-	Local $aRow
-	_SQLite_QuerySingleRow( -1, "SELECT COUNT(1) FROM main.games " & $newCountQuery, $aRow )
-	If IsArray( $aRow ) Then $iTotalRows = Number($aRow[0])
-	GUICtrlSendMsg( $idList, $LVM_SETITEMCOUNT, $iTotalRows, 0 )
-	_GUICtrlListView_SetColumnWidth($hList, 0, $LVSCW_AUTOSIZE)
-EndFunc
-  
-; EVENT HANDLER
-Func WM_NOTIFY($hWnd, $iMsg, $iwParam, $ilParam)
-    #forceref $hWnd, $iMsg, $iwParam
-	
-    Local $hWndFrom, $iIDFrom, $iCode, $tNMHDR, $tInfo
-
-    $tNMHDR = DllStructCreate($tagNMHDR, $ilParam)
-    $hWndFrom = HWnd(DllStructGetData($tNMHDR, "hWndFrom"))
-    $iIDFrom = DllStructGetData($tNMHDR, "IDFrom")
-    $iCode = DllStructGetData($tNMHDR, "Code")
-    Switch $hWndFrom
-	Case $hList
-        Switch $iCode
-		Case $LVN_ODCACHEHINT
-			Local $tNMLVCACHEHINT = DllStructCreate( $tagNMLVCACHEHINT, $ilParam )
-			$iFrom = DllStructGetData( $tNMLVCACHEHINT, "iFrom" )
-			$iTo = DllStructGetData( $tNMLVCACHEHINT, "iTo" )
-			Local $sSQL = $sCurrentQuery & " LIMIT " & _GUICtrlListView_GetCounterPage($hList) + 1 & " OFFSET " & $iFrom
-			_SQLite_GetTable2d(-1, $sSQL, $aGameTableCache, $iGameTableCacheRows, $iGameTableCacheCols)
-		Case $LVN_GETDISPINFOW
-			Local $tNMLVDISPINFO = DllStructCreate( $tagNMLVDISPINFO, $ilParam )
-			If BitAND( DllStructGetData( $tNMLVDISPINFO, "Mask" ), $LVIF_TEXT ) Then
-				Local $iIndex = DllStructGetData( $tNMLVDISPINFO, "Item" ) - $iFrom + 1
-				If $iIndex > 0 And $iIndex < $iGameTableCacheRows + 1 Then
-					Switch DllStructGetData($tNMLVDISPINFO,"SubItem")
-					Case 0 ; Name
-						$sItem = $aGameTableCache[$iIndex][1]
-						DllStructSetData($tNMLVDISPINFO, "Image", Number($aGameTableCache[$iIndex][3])-1)
-					Case 1 ; Year
-						$sItem = $aGameTableCache[$iIndex][4]
-					Case 2 ; Developer
-						$sItem = "" ; $aGameTableCache[$iIndex][5]
-					Case 3 ; Publisher
-						$sItem = "" ; $aGameTableCache[$iIndex][6]
-					EndSwitch
-					DllStructSetData( $tText, 1, $sItem )
-					DllStructSetData( $tNMLVDISPINFO, "Text", $pText )
-					DllStructSetData( $tNMLVDISPINFO, "TextMax", StringLen( $sItem ) )
-				EndIf
-			EndIf
-		Case $LVN_COLUMNCLICK
-			$tInfo = DllStructCreate($tagNMLISTVIEW, $ilParam)
-			ConsoleWrite(DllStructGetData($tInfo, "SubItem") & @CRLF)
-			_GUICtrlListView_SortItems($hWndFrom, DllStructGetData($tInfo, "SubItem"))
-		; Run the GAME, Damnit!
-		Case $NM_DBLCLK
-			$tInfo = DllStructCreate($tagNMITEMACTIVATE, $ilParam)
-			$idSelectedItem = DllStructGetData($tInfo, "Index")
-			RunGame($idSelectedItem)
-		; Contextual Menu
-		Case $NM_RCLICK ; Sent by a list-view control when the user clicks an item with the right mouse button
-			$tInfo = DllStructCreate($tagNMITEMACTIVATE, $ilParam)
-			If Not @compiled Then
-				_DebugPrint("$NM_RCLICK" & @LF & "--> hWndFrom:" & @TAB & $hWndFrom & @LF & _
-						"-->IDFrom:" & @TAB & $iIDFrom & @LF & _
-						"-->Code:" & @TAB & $iCode & @LF & _
-						"-->Index:" & @TAB & DllStructGetData($tInfo, "Index") & @LF & _
-						"-->SubItem:" & @TAB & DllStructGetData($tInfo, "SubItem") & @LF & _
-						"-->NewState:" & @TAB & DllStructGetData($tInfo, "NewState") & @LF & _
-						"-->OldState:" & @TAB & DllStructGetData($tInfo, "OldState") & @LF & _
-						"-->Changed:" & @TAB & DllStructGetData($tInfo, "Changed") & @LF & _
-						"-->ActionX:" & @TAB & DllStructGetData($tInfo, "ActionX") & @LF & _
-						"-->ActionY:" & @TAB & DllStructGetData($tInfo, "ActionY") & @LF & _
-						"-->lParam:" & @TAB & DllStructGetData($tInfo, "lParam") & @LF & _
-						"-->KeyFlags:" & @TAB & DllStructGetData($tInfo, "KeyFlags"))
-			EndIf
-			$idSelectedItem = DllStructGetData($tInfo, "Index")
-			If $idSelectedItem > -1 Then ; valid row
-				GUICtrlSendToDummy($idContextDummy)
-			EndIf
-		EndSwitch
-	Case $hTreeView
-		Switch $iCode
-		Case $NM_CLICK
-			$bTreeViewClicked = true
-		EndSwitch
-    EndSwitch
-    Return $GUI_RUNDEFMSG
-EndFunc   ;==>WM_NOTIFY
-
-Func RESIZECONTROLS($hWnd, $iMsg, $wParam, $lParam)
-	#forceref $iMsg, $wParam, $lParam
-	; Resize Frames
-	_GUIFrame_SIZE_Handler($hWnd, $iMsg, $wParam, $lParam)
-	; Resize Status Bar
-	_GUICtrlStatusBar_Resize($hStatusBar)
-    Return $GUI_RUNDEFMSG
-EndFunc   ;==>RESIZECONTROLS
 
 Func _TrackPopupMenu($hMenu, $hWnd, $iX, $iY)
     ; $TPM_RETURNCMD returns the menu item identifier of the user's selection in the return value.
