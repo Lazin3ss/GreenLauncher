@@ -1,4 +1,7 @@
+/Tests
+/backup
 *.db
 *.exe
 *.ini
 *.txt
+*.dll

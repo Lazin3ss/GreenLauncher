@@ -4,7 +4,6 @@ EndIf
 
 #Include <WinAPI.au3>
 #include <SQLite.au3>
-#include <SQLite.dll.au3>
 
 #Include <WindowsConstants.au3>
 #Include <Constants.au3>
@@ -17,14 +16,16 @@ EndIf
 #include <Array.au3>
 #include <Misc.au3>
 
+#include "database.au3"
+
 ;--------------------------------------------------------------
 ; GLOBAL VARIABLES
 ;--------------------------------------------------------------
 
 ; VERSION
-Global $sVersion = "0.1"
+Global $sVersion = "0.2"
 Global $sAboutMsg = "Version: " & $sVersion & @CRLF & @CRLF & _
-					"Created by Francisco Iturrieta. Some code attributed to:" & @CRLF & _
+					"Created by Francisco Iturrieta. Various code may be attributed to:" & @CRLF & _
 					"- Larsj" & @CRLF & _
 					"- pixelsearch" & @CRLF & _
 					"- PaulIA" & @CRLF & @CRLF & _
@@ -44,29 +45,20 @@ Global $idContextDummy, $hContextMenu
 ; MAIN OPERATIONS
 ;--------------------------------------------------------------
 
-
 ; Initialize SQLite database
-_SQLite_Startup ()
-If @error > 0 Then
-    MsgBox(16, "SQLite Error", "SQLite.dll Can't be Loaded!")
-    Exit - 1
-EndIf
-_SQLite_Open ("GameLibrary.db")
-_SQLite_Exec(-1, "CREATE TABLE IF NOT EXISTS main.games(rowid INTEGER PRIMARY KEY ASC, name TEXT NOT NULL, exePath TEXT NOT NULL, iconPath TEXT, year INTEGER, developer TEXT, publisher TEXT);")
+_Database_Startup()
 
 ; Run Main window
 MainForm()
 
 ; Exit the program
-_SQLite_Close ()
-_SQLite_Shutdown ()
-Exit
+_Database_Shutdown()
 
+Exit
 
 ;--------------------------------------------------------------
 ; FORM 1: MAIN WINDOW
 ;--------------------------------------------------------------
-
 
 Func MainForm()
 	; Create the Window
@@ -125,11 +117,9 @@ Func MainForm()
 	WEnd
 EndFunc   ;==>MainForm
 
-
 ;--------------------------------------------------------------
 ; FORM 2: ADD/EDIT GAME WINDOW
 ;--------------------------------------------------------------
-
 
 Func EditGameForm($gameId)
 	GUISetState(@SW_DISABLE, $mainForm)
@@ -171,11 +161,9 @@ Func EditGameForm($gameId)
 	GUIDelete($editGameForm)
 EndFunc   ;==>EditGameForm
 
-
 ;--------------------------------------------------------------
 ; FUNCTIONS AND HANDLERS
 ;--------------------------------------------------------------
-
 
 Func AddGameToDatabase($Name, $ExePath, $IconPath = "NULL", $Year = "NULL", $Developer = "NULL", $Publisher = "NULL")
 	_SQLite_Exec(-1, 'INSERT INTO main.games VALUES (NULL, ' & sanitize($Name) & ', ' & sanitize($ExePath) & ', ' & sanitize($IconPath) & ', ' & sanitize($Year) & ', ' & sanitize($Developer) & ', ' & sanitize($Publisher) & ');')
@@ -199,12 +187,6 @@ Func DeleteGame($gameTableIndex)
 	_SQLite_Exec(-1, "DELETE FROM main.games WHERE rowid=" & $aGameTable[$gameTableIndex+1][0] & ";")
 	FillListViewFromQuery($idList, $sLastQuery)
 EndFunc   ;==>DeleteGame
-
-Func sanitize($str)
-	If $str = "" Or Not $str Then $Str = "NULL"
-	If $str <> "NULL" Then $str = '"' & $str & '"'
-	Return $str
-EndFunc   ;==>sanitize
 
 ; TODO: Check if this routine leaks memory in large sessions
 Func FillListViewFromQuery($idLV, $sSQL)
