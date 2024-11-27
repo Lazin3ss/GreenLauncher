@@ -40,7 +40,7 @@ Global $mainForm, $editGameForm
 
 ; Handlers for game table data.
 Global $aGameTable, $iGameTableRows, $iGameTableCols, $idList, $hList, $hImage, $idSelectedItem
-Global $sLastQuery = "SELECT * FROM main.games;"
+Global $sLastQuery = "SELECT * FROM gameList;"
 
 ; Context Menu
 Global $idContextDummy, $hContextMenu
@@ -209,29 +209,13 @@ Func FillListViewFromQuery($idLV, $sSQL)
 	_GUICtrlListView_DeleteAllItems($hList)
 	_GUIImageList_Destroy($hImage)
 	; Perform search based on SQL statement
-	_SQLite_GetTable2d(-1, $sSQL, $aGameTable, $iGameTableRows, $iGameTableCols)
+	_Database_GetGamesByQuery($sSQL, $aGameTable, $iGameTableRows, $iGameTableCols)
+	_GUICtrlListView_AddArray($hList, $aGameTable)
+	
 	$hImage = _GUIImageList_Create(16, 16, 6, 3)
 	_GUICtrlListView_SetImageList($hList, $hImage, 1)
-	
-	Local $tLVITEM = DllStructCreate($tagLVITEM)
-	Local $pLVITEM = DllStructGetPtr($tLVITEM)
-	DllStructSetData($tLVITEM, "Mask", $LVIF_IMAGE) ; Icon (or image)
-	DllStructSetData($tLVITEM, "SubItem", 0)        ; First column
-	For $j = 0 To $iGameTableRows - 1
-		; Text
-		Local $itemId = GUICtrlCreateListViewItem($aGameTable[$j+1][1] & "|" & $aGameTable[$j+1][4] & "|" & $aGameTable[$j+1][5] & "|" & $aGameTable[$j+1][6], $idLV) ; Add item and all texts
-		; Icon
-		If $aGameTable[$j+1][3] == "" Then
-			; Add icon from executable instead of icon path
-			_GUIImageList_AddIconEx($hImage, $aGameTable[$j+1][2], 0)
-		Else
-			_GUIImageList_AddIconEx($hImage, $aGameTable[$j+1][3], 0)
-		EndIf
-		DllStructSetData($tLVITEM, "Image", $j)
-		
-		DllStructSetData($tLVITEM, "Item", $j)        ; Row
-		GUICtrlSendMsg($idLV, $LVM_SETITEMW, 0, $pLVITEM) ; Add icon
-	Next
+
+	_GUICtrlStatusBar_SetText($hStatusBar, 'Games: '&$iGameTableRows, 1)
 	_GUICtrlListView_SetColumnWidth($hList, 0, $LVSCW_AUTOSIZE)
 EndFunc   ;==>FillListViewFromQuery
 
