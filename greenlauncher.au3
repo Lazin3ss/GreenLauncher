@@ -3,15 +3,15 @@ If Not @compiled Then
 EndIf
 
 #Include <WinAPI.au3>
-#include <SQLite.au3>
 
 #Include <WindowsConstants.au3>
 #Include <Constants.au3>
-#Include <GuiMenu.au3>
 
 #include <GuiConstantsEx.au3>
 #include <GuiImageList.au3>
 #include <GuiListView.au3>
+#Include <GuiMenu.au3>
+#Include <GuiStatusBar.au3>
 
 #include <Array.au3>
 #include <Misc.au3>
@@ -19,17 +19,21 @@ EndIf
 #include "database.au3"
 
 ;--------------------------------------------------------------
-; GLOBAL VARIABLES
+; CONSTANTS
 ;--------------------------------------------------------------
 
 ; VERSION
-Global $sVersion = "0.2"
-Global $sAboutMsg = "Version: " & $sVersion & @CRLF & @CRLF & _
+Global Const $sVersion = "0.2"
+Global Const $sAboutMsg = "Version: " & $sVersion & @CRLF & @CRLF & _
 					"Created by Francisco Iturrieta. Various code may be attributed to:" & @CRLF & _
 					"- Larsj" & @CRLF & _
 					"- pixelsearch" & @CRLF & _
 					"- PaulIA" & @CRLF & @CRLF & _
 					"https://github.com/Lazin3ss"
+					
+;--------------------------------------------------------------
+; GLOBAL VARIABLES
+;--------------------------------------------------------------
 
 ; Forms
 Global $mainForm, $editGameForm
@@ -40,6 +44,9 @@ Global $sLastQuery = "SELECT * FROM main.games;"
 
 ; Context Menu
 Global $idContextDummy, $hContextMenu
+
+; Status Bar
+Global $hStatusBar
 
 ;--------------------------------------------------------------
 ; MAIN OPERATIONS
@@ -62,8 +69,14 @@ Exit
 
 Func MainForm()
 	; Create the Window
-	$mainForm = GUICreate("Green Launcher", 600, 400)
+	$mainForm = GUICreate("Green Launcher", 600, 400, -1, -1, $WS_OVERLAPPEDWINDOW)
 	GUISetIcon(@ScriptDir & "\icon.ico", 0)
+	
+	; Create Status Bar
+	Local $vPartEdge[2] = [500, -1]
+	Local $vPartText[2] = ["Ready.", "0 Games"]
+	$hStatusBar = _GUICtrlStatusBar_Create($mainForm, $vPartEdge, $vPartText, $SBARS_SIZEGRIP)
+	
 	
 	; Create Menus
 	Local $filemenu = GUICtrlCreateMenu("File")
@@ -75,8 +88,9 @@ Func MainForm()
 	
 	
 	; Create Game List View
-	$idList = GUICtrlCreateListView("Name|Year|Developer|Publisher", 0, 0, 600, 380, $LVS_REPORT, $LVS_EX_FULLROWSELECT)
+	$idList = GUICtrlCreateListView("Name|Favorite|Year|Developer|Publisher|Genre|Category", 0, 0, 600, 357, $LVS_REPORT, $LVS_EX_FULLROWSELECT)
 	$hList = GUICtrlGetHandle($idList)
+	GUICtrlSetResizing($idList, $GUI_DOCKBORDERS)
 	$hImage = _GUIImageList_Create(16, 16, 6, 3)
 	_GUICtrlListView_SetImageList($hList, $hImage, 1)
 	
@@ -92,6 +106,7 @@ Func MainForm()
 	
 	; GUI Message Loop
 	GUIRegisterMsg($WM_NOTIFY, "WM_NOTIFY")
+	GUIRegisterMsg($WM_SIZE, "WM_RESIZECONTROLS")
 	GUISetState(@SW_SHOW, $mainForm)
 	While 1
 		Switch GUIGetMsg()
@@ -176,8 +191,8 @@ Func UpdateGameInDatabase($RowId, $Name, $ExePath, $IconPath = "NULL", $Year = "
 EndFunc   ;==>UpdateGameInDatabase
 
 Func RunGame($gameTableIndex)
-	$sLaunchingTitle = "Green Launcher - Launching " & $aGameTable[$gameTableIndex+1][1] & "..."
-	WinSetTitle("Green Launcher", "", $sLaunchingTitle)
+	$sLaunchingTitle = "Launching " & $aGameTable[$gameTableIndex+1][1] & "..."
+	_GuiCtrlStatusBar_SetText($hStatusBar, $sLaunchingTitle)
 	$sGamePath = $aGameTable[$gameTableIndex+1][2]
 	RunWait($sGamePath, StringRegExpReplace($sGamePath, "\\(?:.(?!\\))+$", ""))
 	WinSetTitle($sLaunchingTitle, "", "Green Launcher")
@@ -306,6 +321,18 @@ Func WM_NOTIFY($hWnd, $iMsg, $iwParam, $ilParam)
     EndSwitch
     Return $GUI_RUNDEFMSG
 EndFunc   ;==>WM_NOTIFY
+
+Func WM_RESIZECONTROLS($hWnd, $iMsg, $wParam, $lParam)
+	#forceref $iMsg, $wParam, $lParam
+	; Resize Status Bar
+	_GUICtrlStatusBar_Resize($hStatusBar)
+	Local $aSize = WinGetPos("Green Launcher")
+	If IsArray($aSize) Then
+		Local $vPartEdge[2] = [$aSize[2]-100, -1]
+		_GUICtrlStatusBar_SetParts($hStatusBar, $vPartEdge)
+	EndIf
+    Return $GUI_RUNDEFMSG
+EndFunc   ;==>WM_RESIZECONTROLS
 
 Func _TrackPopupMenu($hMenu, $hWnd, $iX, $iY)
     ; $TPM_RETURNCMD returns the menu item identifier of the user's selection in the return value.
