@@ -20,8 +20,8 @@ Func _Database_Startup()
 	If @error > 0 Then
 		MsgBox(16, "SQLite Error", "SQLite3.dll couldn't be loaded.")
 		Exit - 1
-	ElseIf _VersionCompare(_SQLite_LibVersion(), "3.6.19") == -1 Then
-		MsgBox(16, "Error", "SQLite3.dll version must be equal or greater than 3.6.19! (Current version is " & _SQLite_LibVersion() & ")")
+	ElseIf _VersionCompare(_SQLite_LibVersion(), "3.5.4") == -1 Then
+		MsgBox(16, "Error", "SQLite3.dll version must be equal or greater than 3.5.4! (Current version is " & _SQLite_LibVersion() & ")")
 		_SQLite_Shutdown ()
 		Exit - 1
 	EndIf

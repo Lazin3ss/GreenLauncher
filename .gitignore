@@ -1,7 +1,6 @@
 /Tests
-/backup
+/Release
 *.db
 *.exe
 *.ini
-*.txt
 *.dll

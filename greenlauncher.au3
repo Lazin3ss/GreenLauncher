@@ -24,9 +24,9 @@ EndIf
 
 ; VERSION
 Global Const $sVersion = "0.2"
-Global Const $sWindowTitle = "Green Launcher " & $sVersion
+Global Const $sWindowTitle = "GreenLauncher " & $sVersion
 Global Const $sAboutMsg = "Version: " & $sVersion & @CRLF & @CRLF & _
-					"Created by Francisco Iturrieta, with AutoIt 3.2.12.1." & @CRLF & @CRLF & _
+					"By Francisco Iturrieta (Lazin3ss), with AutoIt 3.2.12.1." & @CRLF & @CRLF & _
 					"https://github.com/Lazin3ss/GreenLauncher"
 					
 ;--------------------------------------------------------------
@@ -125,7 +125,7 @@ Func MainForm()
 		Case $launchitem
 			RunGame($idSelectedItem)
 		Case $aboutitem
-			MsgBox(0, "About Green Launcher", $sAboutMsg)
+			MsgBox(0, "About GreenLauncher", $sAboutMsg)
 		Case $GUI_EVENT_CLOSE, $exititem
 			ExitLoop
 		EndSwitch
@@ -202,14 +202,14 @@ Func EditGameForm($listItemId)
 					GUICtrlRead($idCategory))
 			Else
 				AddGameToDatabase(GUICtrlRead($idName), _ 
-				GUICtrlRead($idExePath), _ 
-				GUICtrlRead($idIconPath), _ 
-				Number(GUICtrlRead($idFavorite) == $GUI_CHECKED), _ 
-				GUICtrlRead($idYear), _ 
-				GUICtrlRead($idDeveloper), _ 
-				GUICtrlRead($idPublisher) , _ 
-				GUICtrlRead($idGenre), _ 
-				GUICtrlRead($idCategory))
+					GUICtrlRead($idExePath), _ 
+					GUICtrlRead($idIconPath), _ 
+					Number(GUICtrlRead($idFavorite) == $GUI_CHECKED), _ 
+					GUICtrlRead($idYear), _ 
+					GUICtrlRead($idDeveloper), _ 
+					GUICtrlRead($idPublisher) , _ 
+					GUICtrlRead($idGenre), _ 
+					GUICtrlRead($idCategory))
 			EndIf
 			ExitLoop
 		Case $GUI_EVENT_CLOSE
@@ -250,7 +250,7 @@ Func WM_NOTIFY($hWnd, $iMsg, $iwParam, $ilParam)
                 Case $NM_RCLICK ; Sent by a list-view control when the user clicks an item with the right mouse button
                     $tInfo = DllStructCreate($tagNMITEMACTIVATE, $ilParam)
 					$idSelectedItem = DllStructGetData($tInfo, "Index")
-					If $idSelectedItem > -1 Then ; valid row
+					If $idSelectedItem > -1 Then
 						GUICtrlSendToDummy($idContextDummy)
 					EndIf
             EndSwitch
@@ -363,24 +363,8 @@ Func FillListViewFromQuery($idLV, $sSQL)
 	_GUICtrlStatusBar_SetText($hStatusBar, 'Games: '&$iGameTableRows, 1)
 EndFunc   ;==>FillListViewFromQuery
 
-; #FUNCTION# ====================================================================================================================
-; Name...........: _GUIImageList_AddIconEx
-; Description ...: Adds an icon to an image list
-; Syntax.........: _GUIImageList_AddIconEx($hWnd, $sFile[, $iIndex=0[, $iPos = -1[, $fLarge = False])
-; Parameters ....: $hWnd        - Handle to the control
-;                  $sFile       - Path to the icon that contains the image
-;                  $iIndex      - Specifies the zero-based index of the icon to extract
-;                  $iPos        - Position in the Image List to replace
-;                  $fLarge      - Extract Large Icon
-; Return values .: Success      - The index of the image
-;                  Failure      - -1
-; Author ........: Paul Campbell (PaulIA)
-; Modified.......: Francisco Iturrieta (Laziness)
-; Remarks .......:
-; Related .......: _GUIImageList_Add, _GUIImageList_AddBitmap
-; Link ..........;
-; Example .......; Yes
-; ===============================================================================================================================
+; ATTRIBUTION: Paul Campbell (PaulIA)
+; REMARKS: This function was extracted and modified from AutoIT 3.2.12.1 included UDFs.
 Func _GUIImageList_AddIconEx($hWnd, $sFile, $iIndex = 0, $iPos = -1, $fLarge = False)
 	Local $tIcon, $iResult, $hIcon
 
@@ -410,6 +394,8 @@ Func _GUIImageList_AddIconEx($hWnd, $sFile, $iIndex = 0, $iPos = -1, $fLarge = F
 	Return $iResult
 EndFunc   ;==>_GUIImageList_AddIconEx
 
+; ATTRIBUTION: pixelsearch on AutoIT Forums.
+; https://www.autoitscript.com/forum/topic/205908-context-menu-in-listview/
 Func _TrackPopupMenu($hMenu, $hWnd, $iX, $iY)
     ; $TPM_RETURNCMD returns the menu item identifier of the user's selection in the return value.
     Local $result = DllCall("user32.dll", "int", "TrackPopupMenuEx", "hwnd", $hMenu, "int", $TPM_RETURNCMD, "int", $iX, "int", $iY, "hwnd", $hWnd, "ptr", 0)
