@@ -9,7 +9,6 @@
 
 #include <SQLite.au3>
 #include <Misc.au3>
-#include <Array.au3>
 
 ;--------------------------------------------------------------
 ; INITIALIZATION / CLOSURE
@@ -42,10 +41,10 @@ Func _Database_Startup()
 						"CREATE TABLE IF NOT EXISTS categories(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL UNIQUE, description TEXT, gameCount INTEGER); " & _
 						"CREATE TABLE IF NOT EXISTS tools(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL UNIQUE, exePath TEXT NOT NULL, iconId INTEGER); ")
 	; Create mapping tables for multiple metadata values
-	_SQLite_Exec(-1, 	"CREATE TABLE IF NOT EXISTS metadata_mapping(type TEXT ASC, metadata_id INTEGER ASC, game_id INTEGER, UNIQUE(type, metadata_id, game_id)); " & _
-						"CREATE TABLE IF NOT EXISTS tools_mapping(tools_id INTEGER, game_id INTEGER, UNIQUE(tools_id, game_id));") ; This might get deleted
+	_SQLite_Exec(-1, 	"CREATE TABLE IF NOT EXISTS metadata_mapping(game_id INTEGER ASC, type TEXT ASC, metadata_id INTEGER, UNIQUE(game_id, type, metadata_id)); " & _
+						"CREATE TABLE IF NOT EXISTS tools_mapping(game_id INTEGER, tools_id INTEGER, UNIQUE(game_id, tools_id));") ; This might get deleted
 	; Create games table
-	_SQLite_Exec(-1, 	"CREATE TABLE IF NOT EXISTS games(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL, exePath TEXT NOT NULL, iconPath TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '', favorite INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 0, year INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT -1)")
+	_SQLite_Exec(-1, 	"CREATE TABLE IF NOT EXISTS games(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL, exePath TEXT NOT NULL, iconPath TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '', favorite BOOLEAN NOT NULL CHECK (favorite IN (0, 1)) DEFAULT 0, year INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT -1)")
 	; Data integrity triggers
 	_SQLite_Exec(-1, 	"CREATE TRIGGER IF NOT EXISTS add_game_icon_integrity AFTER INSERT ON games WHEN new.iconPath == '' BEGIN " & _
 							"UPDATE games SET iconPath=new.exePath WHERE id=new.id;" & _
@@ -108,12 +107,12 @@ Func _Database_Startup()
 	; Game list/search interface
 	_SQLite_Exec(-1,	"CREATE VIEW IF NOT EXISTS gameList AS SELECT " & _ 
 							"games.name, " & _ 
-							"games.favorite, " & _ 
-							"games.year, " & _ 
-							"(SELECT GROUP_CONCAT(name, ', ') FROM developers JOIN metadata_mapping ON type=='developers' AND metadata_id==id AND game_id=games.id) AS developer, " & _ 
-							"(SELECT GROUP_CONCAT(name, ', ') FROM publishers JOIN metadata_mapping ON type=='publishers' AND metadata_id==id AND game_id=games.id) AS publisher, " & _ 
-							"(SELECT GROUP_CONCAT(name, ', ') FROM genres JOIN metadata_mapping ON type=='genres' AND metadata_id==id AND game_id=games.id) AS genre, " & _ 
-							"(SELECT GROUP_CONCAT(name, ', ') FROM categories JOIN metadata_mapping ON type=='categories' AND metadata_id==id AND game_id=games.id) AS category, " & _ 
+							"REPLACE(REPLACE(games.favorite, 0, 'No'), 1, 'Yes'), " & _ 
+							"REPLACE(games.year, -1, ''), " & _ 
+							"(SELECT GROUP_CONCAT(name, ', ') FROM developers JOIN metadata_mapping ON game_id=games.id AND type=='developers' AND metadata_id==id) AS developer, " & _ 
+							"(SELECT GROUP_CONCAT(name, ', ') FROM publishers JOIN metadata_mapping ON game_id=games.id AND type=='publishers' AND metadata_id==id) AS publisher, " & _ 
+							"(SELECT GROUP_CONCAT(name, ', ') FROM genres JOIN metadata_mapping ON game_id=games.id AND type=='genres' AND metadata_id==id) AS genre, " & _ 
+							"(SELECT GROUP_CONCAT(name, ', ') FROM categories JOIN metadata_mapping ON game_id=games.id AND type=='categories' AND metadata_id==id) AS category, " & _ 
 							"games.exePath, " & _ 
 							"games.iconPath, " & _ 
 							"games.id " & _ 
@@ -134,7 +133,6 @@ EndFunc   ;==>_Database_Shutdown()
 
 Func _Database_GetGamesByQuery($sSQL, ByRef $aData, ByRef $iRows, ByRef $iCols)
 	_SQLite_GetTable2d(-1, $sSQL, $aData, $iRows, $iCols)
-	_ArrayDelete($aData, 0)
 EndFunc   ;==>_Database_GetGamesByQuery
 
 ;--------------------------------------------------------------
@@ -188,21 +186,33 @@ EndFunc   ;==>_Database_DeleteGame
 ; METADATA METHODS
 
 Func _Database_InsertMappedMetadata($sTableName, $sName, $sDescription = "NULL")
-	Local $iReturnId = -1
+	Local $aRow, $iReturnId = -1
 	If _SQLite_Exec(-1,	'INSERT INTO '&$sTableName&' VALUES(NULL, '&sanitize($sName)&', '&sanitize($sDescription)&', 0)') == $SQLITE_OK Then
-		Local $aRow
 		_SQLite_QuerySingleRow(-1, 'SELECT max(id) FROM '&$sTableName, $aRow)
+		$iReturnId = Number($aRow[0])
+	Else
+		_SQLite_QuerySingleRow(-1, 'SELECT id FROM '&$sTableName&' WHERE name=='&sanitize($sName), $aRow)
 		$iReturnId = Number($aRow[0])
 	EndIf
 	Return $iReturnId
 EndFunc   ;==>_Database_InsertMappedMetadata
 
-Func _Database_MapMetadataToGame($sTableName, $iMetadataId, $iGameId)
-	Return _SQLite_Exec(-1,	'INSERT INTO metadata_mapping VALUES('&sanitize($sTableName)&', '&$iMetadataId&', '&$iGameId&'); ') == $SQLITE_OK
+Func _Database_MapGameToMetadata($iGameId, $sTableName, $iMetadataId)
+	Return _SQLite_Exec(-1,	'INSERT INTO metadata_mapping VALUES('&$iGameId&', '&sanitize($sTableName)&', '&$iMetadataId&'); ') == $SQLITE_OK
 EndFunc   ;==>_Database_MapMetadataToGame
 
-Func _Database_RemoveMetadataMap($sTableName, $iMetadataId, $iGameId)
-	Return _SQLite_Exec(-1, 'DELETE FROM metadata_mapping WHERE type=='&sanitize($sTableName)&' AND metadata_id=='&$iMetadataId&' AND game_id=='&$iGameId&'; ') == $SQLITE_OK
+Func _Database_RemoveMetadataMap($iGameId, $sTableName = -1, $iMetadataId = -1)
+	; Default: Delete all maps related to a game
+	Local $sSQL = 'DELETE FROM metadata_mapping WHERE game_id=='&$iGameId
+	; Additional: Delete all maps related to a metadata type
+	If $sTableName <> -1 Then
+		$sSQL &= ' AND type=='&sanitize($sTableName)
+	EndIf
+	; Additional: Delete a specific metadata map
+	If $iMetadataId > 0 Then
+		$sSQL &= ' AND metadata_id=='&$iMetadataId
+	EndIf
+	Return _SQLite_Exec(-1, $sSQL) == $SQLITE_OK
 EndFunc   ;==>Database_RemoveMetadataMap
 
 Func _Database_UpdateMappedMetadata($sTableName, $iMetadataId, $sName = -2, $sDescription = -2)
@@ -229,8 +239,10 @@ Func _Database_EndTransaction()
 	_SQLite_Exec(-1,	'COMMIT;')	
 EndFunc   ;==>_Database_EndTransaction
 
-Func sanitize($str)
-	If $str = "" Or Not $str Then $Str = "NULL"
-	If $str <> "NULL" And Not IsNumber($str) Then $str = '"' & $str & '"'
-	Return $str
+Func sanitize($val)
+	If Not IsNumber($val) Then
+		If $val == "" Or Not $val Then $val = "NULL"
+		If $val <> "NULL" Then $val = '"' & $val & '"'
+	EndIf
+	Return $val
 EndFunc   ;==>sanitize
