@@ -209,8 +209,6 @@
 		<Unit filename="src/sqlite3/sqlite3.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src/wxGameList.cpp" />
-		<Unit filename="wxGameList.h" />
 		<Unit filename="wxsmith/GreenLauncherframe.wxs" />
 		<Extensions>
 			<debugger>
@@ -219,9 +217,9 @@
 				</remote_debugging>
 			</debugger>
 			<wxsmith version="1">
-				<gui name="wxWidgets" src="GreenLauncherApp.cpp" main="GreenLauncherFrame" init_handlers="necessary" language="CPP" />
+				<gui name="wxWidgets" src="src/GreenLauncherApp.cpp" main="GreenLauncherFrame" init_handlers="necessary" language="CPP" />
 				<resources>
-					<wxFrame wxs="wxsmith/GreenLauncherframe.wxs" src="GreenLauncherMain.cpp" hdr="GreenLauncherMain.h" fwddecl="0" i18n="1" name="GreenLauncherFrame" language="CPP" />
+					<wxFrame wxs="wxsmith/GreenLauncherframe.wxs" src="src/GreenLauncherMain.cpp" hdr="include/GreenLauncherMain.h" fwddecl="0" i18n="1" name="GreenLauncherFrame" language="CPP" />
 				</resources>
 			</wxsmith>
 		</Extensions>

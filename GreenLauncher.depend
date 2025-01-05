@@ -13925,7 +13925,7 @@
 1332253217 c:\dev\greenlauncher\include\sqlite3\sqlite3.h
 	<stdarg.h>
 
-1733817025 source:c:\dev\greenlauncher\src\greenlauncherapp.cpp
+1736047831 source:c:\dev\greenlauncher\src\greenlauncherapp.cpp
 	"GreenLauncherApp.h"
 	"GreenLauncherMain.h"
 	<wx/image.h>
@@ -13933,7 +13933,7 @@
 1733205445 c:\dev\greenlauncher\include\greenlauncherapp.h
 	<wx/app.h>
 
-1734502941 c:\dev\greenlauncher\include\greenlaunchermain.h
+1736048208 c:\dev\greenlauncher\include\greenlaunchermain.h
 	"wxGameList.h"
 	<wx/frame.h>
 	<wx/listctrl.h>
@@ -13942,10 +13942,12 @@
 	<wx/statusbr.h>
 	<wx/treectrl.h>
 
-1735684759 c:\dev\greenlauncher\include\wxgamelist.h
+1736053610 c:\dev\greenlauncher\include\wxgamelist.h
 	<wx/wx.h>
+	<wx/imaglist.h>
 	<wx/listctrl.h>
 	<wx/string.h>
+	<wx/log.h>
 	"database.h"
 
 1734469016 source:c:\dev\greenlauncher\src\sqlite3\sqlite3.c
@@ -13995,7 +13997,7 @@
 	<unicode/ubrk.h>
 	<unicode/utf16.h>
 
-1735684802 source:c:\dev\greenlauncher\src\greenlaunchermain.cpp
+1736048221 source:c:\dev\greenlauncher\src\greenlaunchermain.cpp
 	"GreenLauncherMain.h"
 	<wx/msgdlg.h>
 	"wxGameList.h"

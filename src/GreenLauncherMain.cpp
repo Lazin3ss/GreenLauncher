@@ -110,6 +110,7 @@ GreenLauncherFrame::GreenLauncherFrame(wxWindow* parent,wxWindowID id)
     StatusBar1->SetStatusStyles(1,__wxStatusBarStyles_1);
     SetStatusBar(StatusBar1);
 
+    Connect(ID_GAMELIST1,wxEVT_COMMAND_LIST_ITEM_ACTIVATED,(wxObjectEventFunction)&GreenLauncherFrame::OnGameList1ItemActivated);
     Connect(idMenuQuit,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&GreenLauncherFrame::OnQuit);
     Connect(idMenuAbout,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&GreenLauncherFrame::OnAbout);
     //*)
@@ -138,6 +139,8 @@ void GreenLauncherFrame::OnAbout(wxCommandEvent& event)
     wxMessageBox(msg, _("Welcome to..."));
 }
 
-void GreenLauncherFrame::OnTreeCtrl1BeginDrag(wxTreeEvent& event)
+void GreenLauncherFrame::OnGameList1ItemActivated(wxListEvent& event)
 {
+    wxString msg = GameList1->GetItemData(0, 0);
+    wxMessageBox(msg, _("Welcome to..."));
 }

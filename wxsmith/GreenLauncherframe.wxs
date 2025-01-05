@@ -30,6 +30,7 @@
 			<object class="wxListView" name="ID_GAMELIST1" subclass="wxGameList" variable="GameList1" member="yes">
 				<pos>248,135</pos>
 				<style>wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VIRTUAL</style>
+				<handler function="OnGameList1ItemActivated" entry="EVT_LIST_ITEM_ACTIVATED" />
 			</object>
 		</object>
 		<object class="wxMenuBar" variable="MenuBar1" member="no">

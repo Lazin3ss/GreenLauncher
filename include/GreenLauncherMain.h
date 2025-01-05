@@ -40,6 +40,7 @@ class GreenLauncherFrame: public wxFrame
         void OnListView1BeginDrag(wxListEvent& event);
         void OnTreeCtrl1BeginDrag(wxTreeEvent& event);
         void OnListView1CacheHint(wxListEvent& event);
+        void OnGameList1ItemActivated(wxListEvent& event);
         //*)
 
         //(*Identifiers(GreenLauncherFrame)
