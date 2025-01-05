@@ -9,6 +9,7 @@
 
 #include "GreenLauncherMain.h"
 #include <wx/msgdlg.h>
+#include <wx/process.h>
 #include "wxGameList.h"
 
 //(*InternalHeaders(GreenLauncherFrame)
@@ -141,6 +142,5 @@ void GreenLauncherFrame::OnAbout(wxCommandEvent& event)
 
 void GreenLauncherFrame::OnGameList1ItemActivated(wxListEvent& event)
 {
-    wxString msg = GameList1->GetItemData(0, 0);
-    wxMessageBox(msg, _("Welcome to..."));
+    wxExecute(GameList1->GetItemData(event.GetData(), 7));
 }
