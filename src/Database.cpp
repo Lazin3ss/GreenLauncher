@@ -1,3 +1,12 @@
+/***************************************************************
+ * Name:      Database.cpp
+ * Purpose:   SQLite3 database handler
+ * Author:    Francisco Iturrieta (laziness@protonmail.com)
+ * Created:   2024-12-31
+ * Copyright: Francisco Iturrieta (https://lisa734.neocities.org)
+ * License:   GPL-3.0
+ **************************************************************/
+
 #include "Database.h"
 #include "sqlite3/sqlite3.h"
 

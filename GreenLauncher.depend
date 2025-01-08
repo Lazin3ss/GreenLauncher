@@ -13933,7 +13933,7 @@
 1733205445 c:\dev\greenlauncher\include\greenlauncherapp.h
 	<wx/app.h>
 
-1736053918 c:\dev\greenlauncher\include\greenlaunchermain.h
+1736290887 c:\dev\greenlauncher\include\greenlaunchermain.h
 	"wxGameList.h"
 	<wx/frame.h>
 	<wx/listctrl.h>
@@ -13942,12 +13942,16 @@
 	<wx/statusbr.h>
 	<wx/treectrl.h>
 
-1736054198 c:\dev\greenlauncher\include\wxgamelist.h
+1736316207 c:\dev\greenlauncher\include\wxgamelist.h
 	<wx/wx.h>
 	<wx/imaglist.h>
 	<wx/listctrl.h>
 	<wx/string.h>
 	<wx/log.h>
+	<wx/process.h>
+	<wx/utils.h>
+	<wx/filename.h>
+	<wx/stdpaths.h>
 	"database.h"
 
 1734469016 source:c:\dev\greenlauncher\src\sqlite3\sqlite3.c
@@ -13997,11 +14001,11 @@
 	<unicode/ubrk.h>
 	<unicode/utf16.h>
 
-1736054265 source:c:\dev\greenlauncher\src\greenlaunchermain.cpp
+1736318629 source:c:\dev\greenlauncher\src\greenlaunchermain.cpp
 	"GreenLauncherMain.h"
 	<wx/msgdlg.h>
-	<wx/process.h>
 	"wxGameList.h"
+	"EditGame.h"
 	<wx/bitmap.h>
 	<wx/icon.h>
 	<wx/image.h>
@@ -14013,4 +14017,45 @@
 	"wx/event.h"
 	"wx/stream.h"
 	"wx/utils.h"
+
+1736056745 source:c:\dev\greenlauncher\editgame.cpp
+	"EditGame.h"
+	<wx/intl.h>
+	<wx/string.h>
+
+1736056730 c:\dev\greenlauncher\editgame.h
+	<wx/dialog.h>
+	<wx/stattext.h>
+
+1736320849 c:\dev\greenlauncher\include\editgame.h
+	<wx/button.h>
+	<wx/checkbox.h>
+	<wx/dialog.h>
+	<wx/panel.h>
+	<wx/sizer.h>
+	<wx/stattext.h>
+	<wx/textctrl.h>
+
+1736320849 source:c:\dev\greenlauncher\src\editgame.cpp
+	"EditGame.h"
+	<wx/intl.h>
+	<wx/string.h>
+
+1587560968 c:\tools\cb-legacy-dev_v18nov2023\codeblocks\wxwidgets-3.0.5\include\wx\stdpaths.h
+	"wx/defs.h"
+	"wx/string.h"
+	"wx/filefn.h"
+	"wx/msw/stdpaths.h"
+	"wx/osx/core/stdpaths.h"
+	"wx/os2/stdpaths.h"
+	"wx/unix/stdpaths.h"
+
+1587560968 c:\tools\cb-legacy-dev_v18nov2023\codeblocks\wxwidgets-3.0.5\include\wx\msw\stdpaths.h
+
+1587560968 c:\tools\cb-legacy-dev_v18nov2023\codeblocks\wxwidgets-3.0.5\include\wx\osx\core\stdpaths.h
+	"wx/unix/stdpaths.h"
+
+1587560968 c:\tools\cb-legacy-dev_v18nov2023\codeblocks\wxwidgets-3.0.5\include\wx\unix\stdpaths.h
+
+1587560968 c:\tools\cb-legacy-dev_v18nov2023\codeblocks\wxwidgets-3.0.5\include\wx\os2\stdpaths.h
 

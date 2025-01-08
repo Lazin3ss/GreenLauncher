@@ -4,7 +4,7 @@
  * Author:    Francisco Iturrieta (laziness@protonmail.com)
  * Created:   2024-12-02
  * Copyright: Francisco Iturrieta (https://lisa734.neocities.org)
- * License:
+ * License:   GPL-3.0
  **************************************************************/
 
 #ifndef GREENLAUNCHERAPP_H

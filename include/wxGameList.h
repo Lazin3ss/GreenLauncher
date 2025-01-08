@@ -1,3 +1,12 @@
+/***************************************************************
+ * Name:      wxGameList.h
+ * Purpose:   Defines wxListCtrl class extension for game list displaying
+ * Author:    Francisco Iturrieta (laziness@protonmail.com)
+ * Created:   2024-12-31
+ * Copyright: Francisco Iturrieta (https://lisa734.neocities.org)
+ * License:   GPL-3.0
+ **************************************************************/
+
 #ifndef WXGAMELIST_H
 #define WXGAMELIST_H
 
@@ -6,6 +15,11 @@
 #include <wx/listctrl.h>
 #include <wx/string.h>
 #include <wx/log.h>
+#include <wx/process.h>
+#include <wx/utils.h>
+#include <wx/filename.h>
+#include <wx/stdpaths.h>
+
 #include "database.h"
 
 
@@ -65,6 +79,15 @@ class wxGameList : public wxListCtrl
         wxString GetItemData(long row, long col)
         {
             return db->ReturnTableItem(row, col);
+        }
+
+        bool RunGame(long id)
+        {
+            wxFileName path(db->ReturnTableItem(id, 7));
+            wxExecuteEnv env;
+            env.cwd = path.GetPath();
+            wxProcess* process;
+            wxExecute(path.GetFullPath(), wxEXEC_ASYNC, process, &env);
         }
 };
 

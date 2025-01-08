@@ -1,3 +1,12 @@
+/***************************************************************
+ * Name:      Database.h
+ * Purpose:   SQLite3 database handler definitions
+ * Author:    Francisco Iturrieta (laziness@protonmail.com)
+ * Created:   2024-12-31
+ * Copyright: Francisco Iturrieta (https://lisa734.neocities.org)
+ * License:   GPL-3.0
+ **************************************************************/
+
 #ifndef DATABASE_H
 #define DATABASE_H
 

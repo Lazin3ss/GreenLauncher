@@ -1,13 +1,10 @@
-#ifndef HEADER_F89662E16ADB0C82
-#define HEADER_F89662E16ADB0C82
-
 /***************************************************************
  * Name:      GreenLauncherMain.h
  * Purpose:   Defines Application Frame
  * Author:    Francisco Iturrieta (laziness@protonmail.com)
  * Created:   2024-12-02
  * Copyright: Francisco Iturrieta (https://lisa734.neocities.org)
- * License:
+ * License:   GPL-3.0
  **************************************************************/
 
 #ifndef GREENLAUNCHERMAIN_H
@@ -36,17 +33,19 @@ class GreenLauncherFrame: public wxFrame
         //(*Handlers(GreenLauncherFrame)
         void OnQuit(wxCommandEvent& event);
         void OnAbout(wxCommandEvent& event);
-        void OnButton1Click(wxCommandEvent& event);
         void OnListView1BeginDrag(wxListEvent& event);
         void OnTreeCtrl1BeginDrag(wxTreeEvent& event);
         void OnListView1CacheHint(wxListEvent& event);
         void OnGameList1ItemActivated(wxListEvent& event);
+        void OnAddGameClick(wxCommandEvent& event);
+        void OnTreeCtrl1BeginDrag1(wxTreeEvent& event);
         //*)
 
         //(*Identifiers(GreenLauncherFrame)
         static const long ID_TREECTRL1;
         static const long ID_GAMELIST1;
         static const long ID_SPLITTERWINDOW1;
+        static const long idMenuAdd;
         static const long idMenuQuit;
         static const long idMenuAbout;
         static const long ID_STATUSBAR1;
@@ -54,6 +53,7 @@ class GreenLauncherFrame: public wxFrame
 
         //(*Declarations(GreenLauncherFrame)
         wxGameList* GameList1;
+        wxMenuItem* MenuItem3;
         wxSplitterWindow* SplitterWindow1;
         wxStatusBar* StatusBar1;
         wxTreeCtrl* TreeCtrl1;
@@ -63,5 +63,4 @@ class GreenLauncherFrame: public wxFrame
 };
 
 #endif // GREENLAUNCHERMAIN_H
-#endif // header guard
 

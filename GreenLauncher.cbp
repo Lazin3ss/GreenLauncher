@@ -23,6 +23,7 @@
 					<Add option="-std=c++11" />
 					<Add option="-pipe" />
 					<Add option="-mthreads" />
+					<Add option="-fpermissive" />
 					<Add option="-D__GNUWIN32__" />
 					<Add option="-D__WXMSW__" />
 					<Add option="-DwxUSE_UNICODE" />
@@ -196,6 +197,7 @@
 		</Linker>
 		<Unit filename="icon.ico" />
 		<Unit filename="include/Database.h" />
+		<Unit filename="include/EditGame.h" />
 		<Unit filename="include/GreenLauncherApp.h" />
 		<Unit filename="include/GreenLauncherMain.h" />
 		<Unit filename="include/sqlite3/sqlite3.h" />
@@ -204,11 +206,13 @@
 			<Option compilerVar="WINDRES" />
 		</Unit>
 		<Unit filename="src/Database.cpp" />
+		<Unit filename="src/EditGame.cpp" />
 		<Unit filename="src/GreenLauncherApp.cpp" />
 		<Unit filename="src/GreenLauncherMain.cpp" />
 		<Unit filename="src/sqlite3/sqlite3.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="wxsmith/EditGame.wxs" />
 		<Unit filename="wxsmith/GreenLauncherframe.wxs" />
 		<Extensions>
 			<debugger>
@@ -220,6 +224,7 @@
 				<gui name="wxWidgets" src="src/GreenLauncherApp.cpp" main="GreenLauncherFrame" init_handlers="necessary" language="CPP" />
 				<resources>
 					<wxFrame wxs="wxsmith/GreenLauncherframe.wxs" src="src/GreenLauncherMain.cpp" hdr="include/GreenLauncherMain.h" fwddecl="0" i18n="1" name="GreenLauncherFrame" language="CPP" />
+					<wxDialog wxs="wxsmith/EditGame.wxs" src="src/EditGame.cpp" hdr="include/EditGame.h" fwddecl="0" i18n="1" name="EditGame" language="CPP" />
 				</resources>
 			</wxsmith>
 		</Extensions>
