@@ -41,3 +41,7 @@
 
 # Backup files
 *.bak
+
+# Codeblocks files
+*.layout
+*.depend
