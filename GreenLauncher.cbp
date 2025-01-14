@@ -200,6 +200,7 @@
 		<Unit filename="include/EditGame.h" />
 		<Unit filename="include/GreenLauncherApp.h" />
 		<Unit filename="include/GreenLauncherMain.h" />
+		<Unit filename="include/LaunchConfig.h" />
 		<Unit filename="include/sqlite3/sqlite3.h" />
 		<Unit filename="include/wxGameList.h" />
 		<Unit filename="resource.rc">
@@ -209,11 +210,13 @@
 		<Unit filename="src/EditGame.cpp" />
 		<Unit filename="src/GreenLauncherApp.cpp" />
 		<Unit filename="src/GreenLauncherMain.cpp" />
+		<Unit filename="src/LaunchConfig.cpp" />
 		<Unit filename="src/sqlite3/sqlite3.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="wxsmith/EditGame.wxs" />
 		<Unit filename="wxsmith/GreenLauncherframe.wxs" />
+		<Unit filename="wxsmith/LaunchConfig.wxs" />
 		<Extensions>
 			<debugger>
 				<remote_debugging>
@@ -225,6 +228,7 @@
 				<resources>
 					<wxFrame wxs="wxsmith/GreenLauncherframe.wxs" src="src/GreenLauncherMain.cpp" hdr="include/GreenLauncherMain.h" fwddecl="0" i18n="1" name="GreenLauncherFrame" language="CPP" />
 					<wxDialog wxs="wxsmith/EditGame.wxs" src="src/EditGame.cpp" hdr="include/EditGame.h" fwddecl="0" i18n="1" name="EditGame" language="CPP" />
+					<wxPanel wxs="wxsmith/LaunchConfig.wxs" src="src/LaunchConfig.cpp" hdr="include/LaunchConfig.h" fwddecl="0" i18n="1" name="LaunchConfig" language="CPP" />
 				</resources>
 			</wxsmith>
 		</Extensions>
