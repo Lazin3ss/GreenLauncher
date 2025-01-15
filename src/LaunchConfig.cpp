@@ -1,4 +1,5 @@
 #include "LaunchConfig.h"
+#include "EditGame.h"
 
 //(*InternalHeaders(LaunchConfig)
 #include <wx/artprov.h>
@@ -24,8 +25,8 @@ const long LaunchConfig::ID_ARGTEX = wxNewId();
 const long LaunchConfig::ID_STATICTEXT5 = wxNewId();
 const long LaunchConfig::ID_BITMAPBUTTON3 = wxNewId();
 const long LaunchConfig::ID_PANEL1 = wxNewId();
-const long LaunchConfig::ID_BITMAPBUTTON2 = wxNewId();
-const long LaunchConfig::ID_BITMAPBUTTON1 = wxNewId();
+const long LaunchConfig::ID_ADDACTIONBUTTON = wxNewId();
+const long LaunchConfig::ID_DELETEACTIONBUTTON = wxNewId();
 const long LaunchConfig::ID_PANEL2 = wxNewId();
 //*)
 
@@ -34,7 +35,7 @@ BEGIN_EVENT_TABLE(LaunchConfig,wxPanel)
     //*)
 END_EVENT_TABLE()
 
-LaunchConfig::LaunchConfig(wxWindow* parent,wxWindowID id,const wxPoint& pos,const wxSize& size)
+LaunchConfig::LaunchConfig(wxWindow* parent, wxString actionName, bool isMain, wxWindowID id,const wxPoint& pos,const wxSize& size)
 {
     //(*Initialize(LaunchConfig)
     wxBoxSizer* BoxSizer1;
@@ -85,15 +86,24 @@ LaunchConfig::LaunchConfig(wxWindow* parent,wxWindowID id,const wxPoint& pos,con
     wxBoxSizer1->Add(-1,-1,1, wxALL|wxEXPAND, 5);
     Panel2 = new wxPanel(this, ID_PANEL2, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL2"));
     BoxSizer1 = new wxBoxSizer(wxHORIZONTAL);
-    BitmapButton2 = new wxBitmapButton(Panel2, ID_BITMAPBUTTON2, wxArtProvider::GetBitmap(wxART_MAKE_ART_ID_FROM_STR(_T("wxART_PLUS")),wxART_BUTTON), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW, wxDefaultValidator, _T("ID_BITMAPBUTTON2"));
-    BoxSizer1->Add(BitmapButton2, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    AddActionButton = new wxBitmapButton(Panel2, ID_ADDACTIONBUTTON, wxArtProvider::GetBitmap(wxART_MAKE_ART_ID_FROM_STR(_T("wxART_PLUS")),wxART_BUTTON), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW, wxDefaultValidator, _T("ID_ADDACTIONBUTTON"));
+    BoxSizer1->Add(AddActionButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     BoxSizer1->Add(-1,-1,1, wxALL|wxEXPAND, 5);
-    BitmapButton1 = new wxBitmapButton(Panel2, ID_BITMAPBUTTON1, wxArtProvider::GetBitmap(wxART_MAKE_ART_ID_FROM_STR(_T("wxART_MINUS")),wxART_BUTTON), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW, wxDefaultValidator, _T("ID_BITMAPBUTTON1"));
-    BoxSizer1->Add(BitmapButton1, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    DeleteActionButton = new wxBitmapButton(Panel2, ID_DELETEACTIONBUTTON, wxArtProvider::GetBitmap(wxART_MAKE_ART_ID_FROM_STR(_T("wxART_MINUS")),wxART_BUTTON), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW, wxDefaultValidator, _T("ID_DELETEACTIONBUTTON"));
+    BoxSizer1->Add(DeleteActionButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     Panel2->SetSizer(BoxSizer1);
     wxBoxSizer1->Add(Panel2, 0, wxALL|wxEXPAND, 5);
     SetSizer(wxBoxSizer1);
+
+    Connect(ID_ADDACTIONBUTTON,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&LaunchConfig::OnAddActionButtonClick);
+    Connect(ID_DELETEACTIONBUTTON,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&LaunchConfig::OnDeleteActionButtonClick);
     //*)
+    NameTextCtrl->SetValue(actionName);
+    this->isMain = isMain;
+    if (isMain) {
+        NameTextCtrl->Disable();
+        DeleteActionButton->Disable();
+    }
 }
 
 LaunchConfig::~LaunchConfig()
@@ -102,3 +112,16 @@ LaunchConfig::~LaunchConfig()
     //*)
 }
 
+void LaunchConfig::OnAddActionButtonClick(wxCommandEvent& event)
+{
+    wxListbook* parent = GetParent();
+    wxString actionName = wxString("New Action");
+    LaunchConfig* LaunchPanel = new LaunchConfig(parent, actionName, false);
+    parent->AddPage(LaunchPanel, actionName, true);
+}
+
+void LaunchConfig::OnDeleteActionButtonClick(wxCommandEvent& event)
+{
+    wxListbook* parent = GetParent();
+    parent->DeletePage(parent->FindPage(this));
+}

@@ -11,6 +11,7 @@
 #include <wx/msgdlg.h>
 #include "wxGameList.h"
 #include "EditGame.h"
+#include "Database.h"
 
 //(*InternalHeaders(GreenLauncherFrame)
 #include <wx/bitmap.h>
@@ -163,6 +164,8 @@ GreenLauncherFrame::GreenLauncherFrame(wxWindow* parent,wxWindowID id)
         TreeCtrl1->SetWindowStyle(wxTR_DEFAULT_STYLE|wxBORDER_NONE);
         GameList1->SetWindowStyle(wxLC_REPORT|wxLC_VIRTUAL|wxBORDER_NONE);
     #endif // SQLITE_OS_WINNT
+    db = new Database;
+    GameList1->SetDatabase(db);
     GameList1->GetGames("SELECT * from gameList");
 }
 
@@ -170,6 +173,7 @@ GreenLauncherFrame::~GreenLauncherFrame()
 {
     //(*Destroy(GreenLauncherFrame)
     //*)
+    delete db;
 }
 
 void GreenLauncherFrame::OnQuit(wxCommandEvent& event)
@@ -192,14 +196,14 @@ void GreenLauncherFrame::OnGameList1ItemActivated(wxListEvent& event)
 void GreenLauncherFrame::OnAddGameClick(wxCommandEvent& event)
 {
     EditGame dialog(this);
-    dialog.ShowModal();
+    dialog.SetDatabase(db);
+    int rc = dialog.ShowModal();
+    if (rc == wxOK) {
+        GameList1->GetGames("SELECT * from gameList");
+    }
+
 }
 
 void GreenLauncherFrame::OnTreeCtrl1BeginDrag1(wxTreeEvent& event)
 {
-}
-
-wxGameList* GreenLauncherFrame::GetGameList()
-{
-    return GameList1;
 }

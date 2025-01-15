@@ -1,6 +1,3 @@
-#ifndef HEADER_F24FFB0214ABAD82
-#define HEADER_F24FFB0214ABAD82
-
 /***************************************************************
  * Name:      EditGame.h
  * Purpose:   Defines Add/Edit Game Dialog Frame
@@ -12,6 +9,9 @@
 
 #ifndef EDITGAME_H
 #define EDITGAME_H
+
+#include "LaunchConfig.h"
+#include "Database.h"
 
 //(*Headers(EditGame)
 #include <wx/checkbox.h>
@@ -29,14 +29,18 @@
 #include <wx/textctrl.h>
 //*)
 
-#include "LaunchConfig.h"
-
 class EditGame: public wxDialog
 {
     public:
 
-        EditGame(wxWindow* parent,wxWindowID id=wxID_ANY);
+        EditGame(wxWindow* parent, wxWindowID id=wxID_ANY);
         virtual ~EditGame();
+
+        SetDatabase(Database* db);
+        AddAction(wxString name, bool isMain);
+        DeleteAction(size_t pageId);
+        SaveGameToDatabase();
+        OnDialogButtonClick(wxCommandEvent& event);
 
         //(*Declarations(EditGame)
         wxCheckBox* CheckBox1;
@@ -59,7 +63,7 @@ class EditGame: public wxDialog
         wxDatePickerCtrl* DatePickerCtrl1;
         wxDatePickerCtrl* DatePickerCtrl2;
         wxDatePickerCtrl* DatePickerCtrl3;
-        wxListbook* Listbook1;
+        wxListbook* ActionListbook;
         wxNotebook* Notebook1;
         wxPanel* Panel1;
         wxPanel* Panel2;
@@ -125,7 +129,7 @@ class EditGame: public wxDialog
         static const long ID_TEXTCTRL4;
         static const long ID_TEXTCTRL5;
         static const long ID_PANEL6;
-        static const long ID_LISTBOOK1;
+        static const long ID_ACTIONLISTBOOK;
         static const long ID_PANEL1;
         static const long ID_STATICTEXT11;
         static const long ID_DATEPICKERCTRL3;
@@ -162,22 +166,19 @@ class EditGame: public wxDialog
 
     private:
 
+        Database* db;
+
         //(*Handlers(EditGame)
         void OnNotebook1PageChanged(wxNotebookEvent& event);
         void OnPanel1Paint(wxPaintEvent& event);
         void OnNotebook1PageChanged1(wxNotebookEvent& event);
         void OnChoicebook1PageChanged(wxChoicebookEvent& event);
         void OnChoicebook1PageChanged1(wxChoicebookEvent& event);
+        void OnListbook1PageChanged(wxListbookEvent& event);
         //*)
-
-        SetupAction(wxString name, bool isMain);
-        SaveGameToDatabase();
-        OnDialogButtonClick(wxCommandEvent& event);
 
         DECLARE_EVENT_TABLE()
 };
 
 #endif
-
-#endif // header guard
 

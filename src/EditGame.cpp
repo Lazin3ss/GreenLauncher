@@ -10,6 +10,7 @@
 #include "EditGame.h".
 #include "LaunchConfig.h"
 #include "GreenLauncherMain.h"
+#include "Database.h"
 
 //(*InternalHeaders(EditGame)
 #include <wx/button.h>
@@ -42,7 +43,7 @@ const long EditGame::ID_STATICTEXT3 = wxNewId();
 const long EditGame::ID_TEXTCTRL4 = wxNewId();
 const long EditGame::ID_TEXTCTRL5 = wxNewId();
 const long EditGame::ID_PANEL6 = wxNewId();
-const long EditGame::ID_LISTBOOK1 = wxNewId();
+const long EditGame::ID_ACTIONLISTBOOK = wxNewId();
 const long EditGame::ID_PANEL1 = wxNewId();
 const long EditGame::ID_STATICTEXT11 = wxNewId();
 const long EditGame::ID_DATEPICKERCTRL3 = wxNewId();
@@ -82,7 +83,7 @@ BEGIN_EVENT_TABLE(EditGame,wxDialog)
     //*)
 END_EVENT_TABLE()
 
-EditGame::EditGame(wxWindow* parent,wxWindowID id)
+EditGame::EditGame(wxWindow* parent, wxWindowID id)
 {
     //(*Initialize(EditGame)
     wxBoxSizer* BoxSizer1;
@@ -195,8 +196,8 @@ EditGame::EditGame(wxWindow* parent,wxWindowID id)
     Panel6->SetSizer(BoxSizer3);
     Panel1 = new wxPanel(Notebook1, ID_PANEL1, wxPoint(253,189), wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL1"));
     BoxSizer1 = new wxBoxSizer(wxHORIZONTAL);
-    Listbook1 = new wxListbook(Panel1, ID_LISTBOOK1, wxDefaultPosition, wxDefaultSize, 0, _T("ID_LISTBOOK1"));
-    BoxSizer1->Add(Listbook1, 1, wxALL|wxEXPAND, 5);
+    ActionListbook = new wxListbook(Panel1, ID_ACTIONLISTBOOK, wxDefaultPosition, wxDefaultSize, wxLB_DEFAULT, _T("ID_ACTIONLISTBOOK"));
+    BoxSizer1->Add(ActionListbook, 1, wxALL|wxEXPAND, 5);
     Panel1->SetSizer(BoxSizer1);
     Panel2 = new wxPanel(Notebook1, ID_PANEL2, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL2"));
     BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
@@ -276,7 +277,9 @@ EditGame::EditGame(wxWindow* parent,wxWindowID id)
     Fit();
     Center();
     //*)
-    SetupAction(wxString("Main"), true);
+    this->db = db;
+    LaunchConfig* LaunchPanel = new LaunchConfig(ActionListbook, wxString("Main"), true);
+    ActionListbook->AddPage(LaunchPanel, wxString("Main"), true);
     Bind(wxEVT_BUTTON, (wxObjectEventFunction)&EditGame::OnDialogButtonClick, this);
 }
 
@@ -286,31 +289,29 @@ EditGame::~EditGame()
     //*)
 }
 
-EditGame::SetupAction(wxString actionName, bool isMain)
+EditGame::SetDatabase(Database* db)
 {
-    LaunchConfig* MainLaunchPanel = new LaunchConfig(Listbook1);
-    MainLaunchPanel->NameTextCtrl->SetValue(actionName);
-    if (isMain) {
-        MainLaunchPanel->NameTextCtrl->Disable();
-    }
-    Listbook1->AddPage(MainLaunchPanel, actionName, false);
+    this->db = db;
 }
 
 EditGame::SaveGameToDatabase()
 {
-    GreenLauncherFrame* MainFrame = EditGame::GetParentForModalDialog();
-    wxGameList* GL = MainFrame->GetGameList();
-    GL->db->AddGame(wxString("INSERT into games values(NULL, 'MagicISO', 'C:\\Program Files (x86)\\MagicISO\\MagicISO.exe', 'C:\\Program Files (x86)\\MagicISO\\MagicISO.exe', 0, 2002)"));
+    const char* name = GameName->GetLineText(0).mb_str();
+    const char* path = ((LaunchConfig*) ActionListbook->GetPage(0))->FileCtrl->GetPath();
+    db->AddGame(wxString::Format(wxT("INSERT into games values(NULL, '%s', '%s', '%s', 0, 2002)"), name, path, path));
 
 }
 
 EditGame::OnDialogButtonClick(wxCommandEvent& event)
 {
     switch (event.GetId()) {
-    case wxID_SAVE:
-        SaveGameToDatabase();
+        case wxID_SAVE:
+            SaveGameToDatabase();
+            EndModal(wxOK);
+            break;
+        case wxID_CANCEL:
+            EndModal(wxCANCEL);
+            break;
     }
-    EndModal(wxOK);
     event.Skip();
 }
-

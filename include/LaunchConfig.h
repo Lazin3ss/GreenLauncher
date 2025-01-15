@@ -11,17 +11,22 @@
 #include <wx/textctrl.h>
 //*)
 
+#include <wx/string.h>
+
 class LaunchConfig: public wxPanel
 {
     public:
 
-        LaunchConfig(wxWindow* parent,wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
+        LaunchConfig(wxWindow* parent, wxString actionName, bool isMain, wxWindowID id=wxID_ANY,const wxPoint& pos=wxDefaultPosition,const wxSize& size=wxDefaultSize);
         virtual ~LaunchConfig();
 
+        size_t pageId;
+        bool isMain;
+
         //(*Declarations(LaunchConfig)
-        wxBitmapButton* BitmapButton1;
-        wxBitmapButton* BitmapButton2;
+        wxBitmapButton* AddActionButton;
         wxBitmapButton* BitmapButton3;
+        wxBitmapButton* DeleteActionButton;
         wxComboBox* SystemComboBox;
         wxComboBox* TypeComboBox;
         wxDirPickerCtrl* WorkingDirectoryCtrl;
@@ -57,14 +62,17 @@ class LaunchConfig: public wxPanel
         static const long ID_STATICTEXT5;
         static const long ID_BITMAPBUTTON3;
         static const long ID_PANEL1;
-        static const long ID_BITMAPBUTTON2;
-        static const long ID_BITMAPBUTTON1;
+        static const long ID_ADDACTIONBUTTON;
+        static const long ID_DELETEACTIONBUTTON;
         static const long ID_PANEL2;
         //*)
 
     private:
 
         //(*Handlers(LaunchConfig)
+        void OnBitmapButton2Click(wxCommandEvent& event);
+        void OnAddActionButtonClick(wxCommandEvent& event);
+        void OnDeleteActionButtonClick(wxCommandEvent& event);
         //*)
 
         DECLARE_EVENT_TABLE()

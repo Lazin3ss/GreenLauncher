@@ -290,7 +290,9 @@
 							<pos>253,189</pos>
 							<object class="wxBoxSizer" variable="BoxSizer1" member="no">
 								<object class="sizeritem">
-									<object class="wxListbook" name="ID_LISTBOOK1" variable="Listbook1" member="yes" />
+									<object class="wxListbook" name="ID_ACTIONLISTBOOK" variable="ActionListbook" member="yes">
+										<style>wxLB_DEFAULT</style>
+									</object>
 									<flag>wxALL|wxEXPAND</flag>
 									<border>5</border>
 									<option>1</option>

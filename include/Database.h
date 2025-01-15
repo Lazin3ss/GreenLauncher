@@ -1,6 +1,3 @@
-#ifndef HEADER_3E7D5BA5EB4708AB
-#define HEADER_3E7D5BA5EB4708AB
-
 /***************************************************************
  * Name:      Database.h
  * Purpose:   SQLite3 database handler definitions
@@ -36,5 +33,3 @@ class Database
 };
 
 #endif // DATABASE_H
-#endif // header guard
-
