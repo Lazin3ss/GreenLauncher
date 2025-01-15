@@ -1,3 +1,6 @@
+#ifndef HEADER_540830AA5D6A950B
+#define HEADER_540830AA5D6A950B
+
 /***************************************************************
  * Name:      GreenLauncherMain.h
  * Purpose:   Defines Application Frame
@@ -11,6 +14,7 @@
 #define GREENLAUNCHERMAIN_H
 
 #include "wxGameList.h"
+#include "database.h"
 
 //(*Headers(GreenLauncherFrame)
 #include <wx/frame.h>
@@ -27,6 +31,8 @@ class GreenLauncherFrame: public wxFrame
 
         GreenLauncherFrame(wxWindow* parent,wxWindowID id = -1);
         virtual ~GreenLauncherFrame();
+
+        wxGameList* GetGameList();
 
     private:
 
@@ -63,4 +69,6 @@ class GreenLauncherFrame: public wxFrame
 };
 
 #endif // GREENLAUNCHERMAIN_H
+
+#endif // header guard
 

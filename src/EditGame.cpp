@@ -9,6 +9,7 @@
 
 #include "EditGame.h".
 #include "LaunchConfig.h"
+#include "GreenLauncherMain.h"
 
 //(*InternalHeaders(EditGame)
 #include <wx/button.h>
@@ -18,7 +19,7 @@
 
 //(*IdInit(EditGame)
 const long EditGame::ID_STATICTEXT1 = wxNewId();
-const long EditGame::ID_TEXTCTRL1 = wxNewId();
+const long EditGame::ID_GAMENAME = wxNewId();
 const long EditGame::ID_CHECKBOX1 = wxNewId();
 const long EditGame::ID_CHECKBOX2 = wxNewId();
 const long EditGame::ID_STATICTEXT8 = wxNewId();
@@ -117,8 +118,8 @@ EditGame::EditGame(wxWindow* parent,wxWindowID id)
     FlexGridSizer2->AddGrowableCol(1);
     StaticText1 = new wxStaticText(Panel6, ID_STATICTEXT1, _("Name"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT1"));
     FlexGridSizer2->Add(StaticText1, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-    TextCtrl1 = new wxTextCtrl(Panel6, ID_TEXTCTRL1, wxEmptyString, wxDefaultPosition, wxSize(200,23), 0, wxDefaultValidator, _T("ID_TEXTCTRL1"));
-    FlexGridSizer2->Add(TextCtrl1, 1, wxALL|wxEXPAND, 5);
+    GameName = new wxTextCtrl(Panel6, ID_GAMENAME, wxEmptyString, wxDefaultPosition, wxSize(200,23), 0, wxDefaultValidator, _T("ID_GAMENAME"));
+    FlexGridSizer2->Add(GameName, 1, wxALL|wxEXPAND, 5);
     CheckBox1 = new wxCheckBox(Panel6, ID_CHECKBOX1, _("Favorite"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_CHECKBOX1"));
     CheckBox1->SetValue(false);
     FlexGridSizer2->Add(CheckBox1, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
@@ -275,15 +276,41 @@ EditGame::EditGame(wxWindow* parent,wxWindowID id)
     Fit();
     Center();
     //*)
-    LaunchConfig* LaunchPanel = new LaunchConfig(Listbook1);
-    Listbook1->AddPage(LaunchPanel, wxString("New Action"), false);
-
-
+    SetupAction(wxString("Main"), true);
+    Bind(wxEVT_BUTTON, (wxObjectEventFunction)&EditGame::OnDialogButtonClick, this);
 }
 
 EditGame::~EditGame()
 {
     //(*Destroy(EditGame)
     //*)
+}
+
+EditGame::SetupAction(wxString actionName, bool isMain)
+{
+    LaunchConfig* MainLaunchPanel = new LaunchConfig(Listbook1);
+    MainLaunchPanel->NameTextCtrl->SetValue(actionName);
+    if (isMain) {
+        MainLaunchPanel->NameTextCtrl->Disable();
+    }
+    Listbook1->AddPage(MainLaunchPanel, actionName, false);
+}
+
+EditGame::SaveGameToDatabase()
+{
+    GreenLauncherFrame* MainFrame = EditGame::GetParentForModalDialog();
+    wxGameList* GL = MainFrame->GetGameList();
+    GL->db->AddGame(wxString("INSERT into games values(NULL, 'MagicISO', 'C:\\Program Files (x86)\\MagicISO\\MagicISO.exe', 'C:\\Program Files (x86)\\MagicISO\\MagicISO.exe', 0, 2002)"));
+
+}
+
+EditGame::OnDialogButtonClick(wxCommandEvent& event)
+{
+    switch (event.GetId()) {
+    case wxID_SAVE:
+        SaveGameToDatabase();
+    }
+    EndModal(wxOK);
+    event.Skip();
 }
 

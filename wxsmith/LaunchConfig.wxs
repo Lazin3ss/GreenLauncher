@@ -3,13 +3,27 @@
 	<object class="wxPanel" name="LaunchConfig">
 		<id_arg>0</id_arg>
 		<style>0</style>
-		<object class="wxStaticBoxSizer" variable="StaticBoxSizer1" member="no">
-			<label>Action</label>
+		<object class="wxBoxSizer" variable="wxBoxSizer1" member="no">
+			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
 				<object class="wxPanel" name="ID_PANEL1" variable="Panel1" member="yes">
 					<object class="wxFlexGridSizer" variable="FlexGridSizer1" member="no">
 						<cols>2</cols>
 						<growablecols>1</growablecols>
+						<object class="sizeritem">
+							<object class="wxStaticText" name="ID_STATICTEXT7" variable="StaticText7" member="yes">
+								<label>Name</label>
+							</object>
+							<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+							<border>5</border>
+							<option>1</option>
+						</object>
+						<object class="sizeritem">
+							<object class="wxTextCtrl" name="ID_NAMETEXT" variable="NameTextCtrl" member="yes" />
+							<flag>wxALL|wxEXPAND</flag>
+							<border>5</border>
+							<option>1</option>
+						</object>
 						<object class="sizeritem">
 							<object class="wxStaticText" name="ID_STATICTEXT1" variable="StaticText1" member="yes">
 								<label>Type</label>
@@ -19,13 +33,14 @@
 							<option>1</option>
 						</object>
 						<object class="sizeritem">
-							<object class="wxComboBox" name="ID_COMBOBOX1" variable="ComboBox1" member="yes">
+							<object class="wxComboBox" name="ID_TYPECOMBOBOX" variable="TypeComboBox" member="yes">
 								<content>
-									<item>Executable</item>
+									<item>Standalone</item>
 									<item>Emulated</item>
 									<item>Tool</item>
 									<item>Other</item>
 								</content>
+								<selection>0</selection>
 								<style>wxTAB_TRAVERSAL</style>
 							</object>
 							<flag>wxALL|wxEXPAND</flag>
@@ -42,7 +57,7 @@
 							<option>1</option>
 						</object>
 						<object class="sizeritem">
-							<object class="wxComboBox" name="ID_COMBOBOX2" variable="ComboBox2" member="yes">
+							<object class="wxComboBox" name="ID_SYSCOMBOBOX" variable="SystemComboBox" member="yes">
 								<hidden>1</hidden>
 								<style>wxTAB_TRAVERSAL</style>
 							</object>
@@ -59,7 +74,7 @@
 							<option>1</option>
 						</object>
 						<object class="sizeritem">
-							<object class="wxFilePickerCtrl" name="ID_FILEPICKERCTRL1" variable="FilePickerCtrl1" member="yes">
+							<object class="wxFilePickerCtrl" name="ID_FILECTRL" variable="FileCtrl" member="yes">
 								<message></message>
 								<wildcard></wildcard>
 								<style>wxFLP_FILE_MUST_EXIST|wxFLP_OPEN|wxFLP_USE_TEXTCTRL|wxFLP_SMALL</style>
@@ -77,7 +92,7 @@
 							<option>1</option>
 						</object>
 						<object class="sizeritem">
-							<object class="wxDirPickerCtrl" name="ID_DIRPICKERCTRL1" variable="DirPickerCtrl1" member="yes">
+							<object class="wxDirPickerCtrl" name="ID_WORKDIRCTRL" variable="WorkingDirectoryCtrl" member="yes">
 								<message></message>
 							</object>
 							<flag>wxALL|wxEXPAND</flag>
@@ -93,7 +108,7 @@
 							<option>1</option>
 						</object>
 						<object class="sizeritem">
-							<object class="wxTextCtrl" name="ID_TEXTCTRL1" variable="TextCtrl1" member="yes" />
+							<object class="wxTextCtrl" name="ID_ARGTEX" variable="ArgumentsTextCtrl" member="yes" />
 							<flag>wxALL|wxEXPAND</flag>
 							<border>5</border>
 							<option>1</option>
@@ -114,11 +129,29 @@
 							<border>5</border>
 							<option>1</option>
 						</object>
+					</object>
+				</object>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>5</border>
+				<option>1</option>
+			</object>
+			<object class="spacer">
+				<flag>wxALL|wxEXPAND</flag>
+				<border>5</border>
+				<option>1</option>
+			</object>
+			<object class="sizeritem">
+				<object class="wxPanel" name="ID_PANEL2" variable="Panel2" member="yes">
+					<object class="wxBoxSizer" variable="BoxSizer1" member="no">
 						<object class="sizeritem">
 							<object class="wxBitmapButton" name="ID_BITMAPBUTTON2" variable="BitmapButton2" member="yes">
 								<bitmap stock_id="wxART_PLUS" stock_client="wxART_BUTTON" />
 							</object>
-							<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+							<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+							<border>5</border>
+						</object>
+						<object class="spacer">
+							<flag>wxALL|wxEXPAND</flag>
 							<border>5</border>
 							<option>1</option>
 						</object>
@@ -126,15 +159,13 @@
 							<object class="wxBitmapButton" name="ID_BITMAPBUTTON1" variable="BitmapButton1" member="yes">
 								<bitmap stock_id="wxART_MINUS" stock_client="wxART_BUTTON" />
 							</object>
-							<flag>wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL</flag>
+							<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 							<border>5</border>
-							<option>1</option>
 						</object>
 					</object>
 				</object>
 				<flag>wxALL|wxEXPAND</flag>
 				<border>5</border>
-				<option>1</option>
 			</object>
 		</object>
 	</object>

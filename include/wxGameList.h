@@ -1,3 +1,6 @@
+#ifndef HEADER_EC3AD1CEED7403C2
+#define HEADER_EC3AD1CEED7403C2
+
 /***************************************************************
  * Name:      wxGameList.h
  * Purpose:   Defines wxListCtrl class extension for game list displaying
@@ -26,10 +29,10 @@
 class wxGameList : public wxListCtrl
 {
     private:
-        Database *db;
         wxImageList *imgList;
 
     public:
+        Database *db;
         wxGameList(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxValidator& validator, const wxString& name)
             : wxListCtrl(parent, id, pos, size, style, validator, name)
         {
@@ -92,3 +95,5 @@ class wxGameList : public wxListCtrl
 };
 
 #endif // WXGAMELIST_H
+#endif // header guard 
+

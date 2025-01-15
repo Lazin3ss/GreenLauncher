@@ -1,3 +1,6 @@
+#ifndef HEADER_954BDDD2BA0D6040
+#define HEADER_954BDDD2BA0D6040
+
 /***************************************************************
  * Name:      GreenLauncherApp.h
  * Purpose:   Defines Application Class
@@ -19,4 +22,6 @@ class GreenLauncherApp : public wxApp
 };
 
 #endif // GREENLAUNCHERAPP_H
+
+#endif // header guard
 

@@ -1,3 +1,6 @@
+#ifndef HEADER_F24FFB0214ABAD82
+#define HEADER_F24FFB0214ABAD82
+
 /***************************************************************
  * Name:      EditGame.h
  * Purpose:   Defines Add/Edit Game Dialog Frame
@@ -87,7 +90,7 @@ class EditGame: public wxDialog
         wxStaticText* StaticText7;
         wxStaticText* StaticText8;
         wxStaticText* StaticText9;
-        wxTextCtrl* TextCtrl1;
+        wxTextCtrl* GameName;
         wxTextCtrl* TextCtrl2;
         wxTextCtrl* TextCtrl3;
         wxTextCtrl* TextCtrl4;
@@ -99,7 +102,7 @@ class EditGame: public wxDialog
 
         //(*Identifiers(EditGame)
         static const long ID_STATICTEXT1;
-        static const long ID_TEXTCTRL1;
+        static const long ID_GAMENAME;
         static const long ID_CHECKBOX1;
         static const long ID_CHECKBOX2;
         static const long ID_STATICTEXT8;
@@ -167,8 +170,14 @@ class EditGame: public wxDialog
         void OnChoicebook1PageChanged1(wxChoicebookEvent& event);
         //*)
 
+        SetupAction(wxString name, bool isMain);
+        SaveGameToDatabase();
+        OnDialogButtonClick(wxCommandEvent& event);
+
         DECLARE_EVENT_TABLE()
 };
 
 #endif
+
+#endif // header guard
 

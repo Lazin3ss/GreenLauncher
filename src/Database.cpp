@@ -146,6 +146,31 @@ void Database::Query(wxString str)
     }
 }
 
+void Database::AddGame(wxString name)
+{
+    int rc;
+    char *errmsg;
+    sqlite3_stmt *stmt = NULL;
+    rc = sqlite3_prepare_v2(db, name.mb_str(), -1, &stmt, NULL);
+    if (rc != SQLITE_OK) {
+        wxLogFatalError("Error opening SQLite3 database (%i): %s", rc, sqlite3_errmsg(db));
+        sqlite3_close(db);
+        return;
+    }
+    rc = sqlite3_step(stmt);
+    if (rc != SQLITE_OK) {
+        wxLogFatalError("Error opening SQLite3 database (%i): %s", rc, sqlite3_errmsg(db));
+        sqlite3_close(db);
+        return;
+    }
+    rc = sqlite3_finalize(stmt);
+    if (rc != SQLITE_OK) {
+        wxLogFatalError("Error opening SQLite3 database (%i): %s", rc, sqlite3_errmsg(db));
+        sqlite3_close(db);
+        return;
+    }
+}
+
 wxString Database::ReturnTableItem(long row, long col)
 {
     return wxString(pResult[(pCols) * (row + 1) + col]);

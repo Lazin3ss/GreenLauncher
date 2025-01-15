@@ -38,7 +38,7 @@
 															<option>1</option>
 														</object>
 														<object class="sizeritem">
-															<object class="wxTextCtrl" name="ID_TEXTCTRL1" variable="TextCtrl1" member="yes">
+															<object class="wxTextCtrl" name="ID_GAMENAME" variable="GameName" member="yes">
 																<size>200,23</size>
 															</object>
 															<flag>wxALL|wxEXPAND</flag>

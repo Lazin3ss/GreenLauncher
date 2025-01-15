@@ -198,3 +198,8 @@ void GreenLauncherFrame::OnAddGameClick(wxCommandEvent& event)
 void GreenLauncherFrame::OnTreeCtrl1BeginDrag1(wxTreeEvent& event)
 {
 }
+
+wxGameList* GreenLauncherFrame::GetGameList()
+{
+    return GameList1;
+}

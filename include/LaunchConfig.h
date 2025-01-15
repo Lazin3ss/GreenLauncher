@@ -22,38 +22,44 @@ class LaunchConfig: public wxPanel
         wxBitmapButton* BitmapButton1;
         wxBitmapButton* BitmapButton2;
         wxBitmapButton* BitmapButton3;
-        wxComboBox* ComboBox1;
-        wxComboBox* ComboBox2;
-        wxDirPickerCtrl* DirPickerCtrl1;
-        wxFilePickerCtrl* FilePickerCtrl1;
+        wxComboBox* SystemComboBox;
+        wxComboBox* TypeComboBox;
+        wxDirPickerCtrl* WorkingDirectoryCtrl;
+        wxFilePickerCtrl* FileCtrl;
         wxPanel* Panel1;
+        wxPanel* Panel2;
         wxStaticText* StaticText1;
         wxStaticText* StaticText2;
         wxStaticText* StaticText3;
         wxStaticText* StaticText4;
         wxStaticText* StaticText5;
         wxStaticText* StaticText6;
-        wxTextCtrl* TextCtrl1;
+        wxStaticText* StaticText7;
+        wxTextCtrl* ArgumentsTextCtrl;
+        wxTextCtrl* NameTextCtrl;
         //*)
 
     protected:
 
         //(*Identifiers(LaunchConfig)
+        static const long ID_STATICTEXT7;
+        static const long ID_NAMETEXT;
         static const long ID_STATICTEXT1;
-        static const long ID_COMBOBOX1;
+        static const long ID_TYPECOMBOBOX;
         static const long ID_STATICTEXT2;
-        static const long ID_COMBOBOX2;
+        static const long ID_SYSCOMBOBOX;
         static const long ID_STATICTEXT3;
-        static const long ID_FILEPICKERCTRL1;
+        static const long ID_FILECTRL;
         static const long ID_STATICTEXT4;
-        static const long ID_DIRPICKERCTRL1;
+        static const long ID_WORKDIRCTRL;
         static const long ID_STATICTEXT6;
-        static const long ID_TEXTCTRL1;
+        static const long ID_ARGTEX;
         static const long ID_STATICTEXT5;
         static const long ID_BITMAPBUTTON3;
+        static const long ID_PANEL1;
         static const long ID_BITMAPBUTTON2;
         static const long ID_BITMAPBUTTON1;
-        static const long ID_PANEL1;
+        static const long ID_PANEL2;
         //*)
 
     private:
