@@ -15,6 +15,7 @@
 
 //(*Headers(EditGame)
 #include <wx/checkbox.h>
+#include <wx/checklst.h>
 #include <wx/choice.h>
 #include <wx/choicebk.h>
 #include <wx/combobox.h>
@@ -45,12 +46,21 @@ class EditGame: public wxDialog
         //(*Declarations(EditGame)
         wxCheckBox* CheckBox1;
         wxCheckBox* CheckBox2;
+        wxCheckListBox* CheckListBox1;
+        wxCheckListBox* CheckListBox2;
+        wxCheckListBox* CheckListBox3;
+        wxCheckListBox* CheckListBox4;
         wxChoice* Choice1;
         wxChoice* Choice2;
         wxChoice* Choice3;
         wxChoicebook* Choicebook1;
         wxComboBox* ComboBox10;
         wxComboBox* ComboBox11;
+        wxComboBox* ComboBox12;
+        wxComboBox* ComboBox13;
+        wxComboBox* ComboBox14;
+        wxComboBox* ComboBox15;
+        wxComboBox* ComboBox16;
         wxComboBox* ComboBox1;
         wxComboBox* ComboBox2;
         wxComboBox* ComboBox3;
@@ -72,6 +82,7 @@ class EditGame: public wxDialog
         wxPanel* Panel5;
         wxPanel* Panel6;
         wxPanel* Panel7;
+        wxPanel* Panel8;
         wxStaticText* StaticText10;
         wxStaticText* StaticText11;
         wxStaticText* StaticText12;
@@ -86,7 +97,16 @@ class EditGame: public wxDialog
         wxStaticText* StaticText20;
         wxStaticText* StaticText21;
         wxStaticText* StaticText22;
+        wxStaticText* StaticText23;
+        wxStaticText* StaticText24;
+        wxStaticText* StaticText25;
+        wxStaticText* StaticText26;
+        wxStaticText* StaticText27;
+        wxStaticText* StaticText28;
+        wxStaticText* StaticText29;
         wxStaticText* StaticText2;
+        wxStaticText* StaticText30;
+        wxStaticText* StaticText31;
         wxStaticText* StaticText3;
         wxStaticText* StaticText4;
         wxStaticText* StaticText5;
@@ -156,7 +176,26 @@ class EditGame: public wxDialog
         static const long ID_STATICTEXT22;
         static const long ID_TEXTCTRL6;
         static const long ID_PANEL5;
+        static const long ID_STATICTEXT23;
+        static const long ID_CHECKLISTBOX1;
+        static const long ID_STATICTEXT24;
+        static const long ID_CHECKLISTBOX2;
+        static const long ID_STATICTEXT27;
+        static const long ID_CHECKLISTBOX4;
+        static const long ID_STATICTEXT26;
+        static const long ID_CHECKLISTBOX3;
+        static const long ID_STATICTEXT25;
+        static const long ID_COMBOBOX12;
+        static const long ID_STATICTEXT28;
+        static const long ID_COMBOBOX13;
         static const long ID_PANEL7;
+        static const long ID_STATICTEXT29;
+        static const long ID_COMBOBOX14;
+        static const long ID_STATICTEXT30;
+        static const long ID_COMBOBOX15;
+        static const long ID_STATICTEXT31;
+        static const long ID_COMBOBOX16;
+        static const long ID_PANEL8;
         static const long ID_CHOICEBOOK1;
         static const long ID_PANEL2;
         static const long ID_PANEL3;

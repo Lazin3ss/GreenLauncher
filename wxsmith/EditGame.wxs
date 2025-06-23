@@ -124,6 +124,7 @@
 														<object class="sizeritem">
 															<object class="wxStaticText" name="ID_STATICTEXT4" variable="StaticText4" member="yes">
 																<label>Last Played</label>
+																<enabled>0</enabled>
 															</object>
 															<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 															<border>5</border>
@@ -131,6 +132,7 @@
 														</object>
 														<object class="sizeritem">
 															<object class="wxDatePickerCtrl" name="ID_DATEPICKERCTRL1" variable="DatePickerCtrl1" member="yes">
+																<enabled>0</enabled>
 																<style>wxDP_DEFAULT|wxDP_DROPDOWN|wxDP_SHOWCENTURY</style>
 															</object>
 															<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
@@ -140,13 +142,16 @@
 														<object class="sizeritem">
 															<object class="wxStaticText" name="ID_STATICTEXT5" variable="StaticText5" member="yes">
 																<label>Time Played</label>
+																<enabled>0</enabled>
 															</object>
 															<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 															<border>5</border>
 															<option>1</option>
 														</object>
 														<object class="sizeritem">
-															<object class="wxTextCtrl" name="ID_TEXTCTRL2" variable="TextCtrl2" member="yes" />
+															<object class="wxTextCtrl" name="ID_TEXTCTRL2" variable="TextCtrl2" member="yes">
+																<enabled>0</enabled>
+															</object>
 															<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 															<border>5</border>
 															<option>1</option>
@@ -154,13 +159,16 @@
 														<object class="sizeritem">
 															<object class="wxStaticText" name="ID_STATICTEXT6" variable="StaticText6" member="yes">
 																<label>Play Count</label>
+																<enabled>0</enabled>
 															</object>
 															<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 															<border>5</border>
 															<option>1</option>
 														</object>
 														<object class="sizeritem">
-															<object class="wxTextCtrl" name="ID_TEXTCTRL3" variable="TextCtrl3" member="yes" />
+															<object class="wxTextCtrl" name="ID_TEXTCTRL3" variable="TextCtrl3" member="yes">
+																<enabled>0</enabled>
+															</object>
 															<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 															<border>5</border>
 															<option>1</option>
@@ -168,6 +176,7 @@
 														<object class="sizeritem">
 															<object class="wxStaticText" name="ID_STATICTEXT7" variable="StaticText7" member="yes">
 																<label>Completion Status</label>
+																<enabled>0</enabled>
 															</object>
 															<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 															<border>5</border>
@@ -185,6 +194,7 @@
 																	<item>Abandoned</item>
 																</content>
 																<selection>0</selection>
+																<enabled>0</enabled>
 															</object>
 															<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 															<border>5</border>
@@ -211,13 +221,16 @@
 														<object class="sizeritem">
 															<object class="wxStaticText" name="ID_STATICTEXT9" variable="StaticText9" member="yes">
 																<label>Ownership</label>
+																<enabled>0</enabled>
 															</object>
 															<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 															<border>5</border>
 															<option>1</option>
 														</object>
 														<object class="sizeritem">
-															<object class="wxChoice" name="ID_CHOICE2" variable="Choice2" member="yes" />
+															<object class="wxChoice" name="ID_CHOICE2" variable="Choice2" member="yes">
+																<enabled>0</enabled>
+															</object>
 															<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
 															<border>5</border>
 															<option>1</option>
@@ -241,13 +254,16 @@
 														<object class="sizeritem">
 															<object class="wxStaticText" name="ID_STATICTEXT3" variable="StaticText3" member="yes">
 																<label>Rating</label>
+																<enabled>0</enabled>
 															</object>
 															<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
 															<border>5</border>
 															<option>1</option>
 														</object>
 														<object class="sizeritem">
-															<object class="wxTextCtrl" name="ID_TEXTCTRL4" variable="TextCtrl4" member="yes" />
+															<object class="wxTextCtrl" name="ID_TEXTCTRL4" variable="TextCtrl4" member="yes">
+																<enabled>0</enabled>
+															</object>
 															<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
 															<border>5</border>
 															<option>1</option>
@@ -261,6 +277,7 @@
 														<object class="sizeritem">
 															<object class="wxTextCtrl" name="ID_TEXTCTRL5" variable="TextCtrl5" member="yes">
 																<value>Write a review here!</value>
+																<enabled>0</enabled>
 																<style>wxTE_MULTILINE</style>
 															</object>
 															<flag>wxALL|wxEXPAND</flag>
@@ -428,7 +445,7 @@
 													</object>
 													<object class="sizeritem">
 														<object class="wxStaticText" name="ID_STATICTEXT19" variable="StaticText19" member="yes">
-															<label>Business Model</label>
+															<label>License Model</label>
 														</object>
 														<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
 														<border>5</border>
@@ -487,8 +504,189 @@
 											<label>Main Details</label>
 										</object>
 										<object class="choicebookpage">
-											<object class="wxPanel" name="ID_PANEL7" variable="Panel7" member="yes" />
+											<object class="wxPanel" name="ID_PANEL7" variable="Panel7" member="yes">
+												<object class="wxFlexGridSizer" variable="FlexGridSizer7" member="no">
+													<cols>4</cols>
+													<growablecols>1,3</growablecols>
+													<object class="sizeritem">
+														<object class="wxStaticText" name="ID_STATICTEXT23" variable="StaticText23" member="yes">
+															<label>Player Modes</label>
+														</object>
+														<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxCheckListBox" name="ID_CHECKLISTBOX1" variable="CheckListBox1" member="yes">
+															<content>
+																<item>Singleplayer</item>
+																<item>Multiplayer</item>
+																<item>Local Cooperative</item>
+																<item>Local Competitive</item>
+																<item>Online Cooperative</item>
+																<item>Online Competitive</item>
+															</content>
+															<size>0,72</size>
+														</object>
+														<flag>wxALL|wxEXPAND</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxStaticText" name="ID_STATICTEXT24" variable="StaticText24" member="yes">
+															<label>Perspective</label>
+														</object>
+														<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxCheckListBox" name="ID_CHECKLISTBOX2" variable="CheckListBox2" member="yes">
+															<content>
+																<item>Bird&apos;s Eye</item>
+																<item>Side View</item>
+																<item>Isometric</item>
+																<item>First Person</item>
+																<item>Third Person</item>
+																<item>Auditory</item>
+																<item>Text</item>
+															</content>
+															<size>0,72</size>
+														</object>
+														<flag>wxALL|wxEXPAND</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxStaticText" name="ID_STATICTEXT27" variable="StaticText27" member="yes">
+															<label>Interface / Control</label>
+														</object>
+														<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxCheckListBox" name="ID_CHECKLISTBOX4" variable="CheckListBox4" member="yes">
+															<content>
+																<item>Direct Control</item>
+																<item>Menu Structures</item>
+																<item>Motion Control</item>
+																<item>Multiple units/characters Control</item>
+																<item>Point and Select</item>
+																<item>Text Parser</item>
+																<item>Voice Control</item>
+															</content>
+															<size>0,72</size>
+														</object>
+														<flag>wxALL|wxEXPAND</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxStaticText" name="ID_STATICTEXT26" variable="StaticText26" member="yes">
+															<label>Pacing</label>
+														</object>
+														<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxCheckListBox" name="ID_CHECKLISTBOX3" variable="CheckListBox3" member="yes">
+															<content>
+																<item>Meditative / Zen</item>
+																<item>Persistent</item>
+																<item>Real-Time</item>
+																<item>Turn-Based</item>
+															</content>
+															<size>-1,72</size>
+														</object>
+														<flag>wxALL|wxEXPAND</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxStaticText" name="ID_STATICTEXT25" variable="StaticText25" member="yes">
+															<label>Gameplay Type</label>
+														</object>
+														<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxComboBox" name="ID_COMBOBOX12" variable="ComboBox12" member="yes" />
+														<flag>wxALL|wxEXPAND</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxStaticText" name="ID_STATICTEXT28" variable="StaticText28" member="yes">
+															<label>Theme / Setting</label>
+														</object>
+														<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxComboBox" name="ID_COMBOBOX13" variable="ComboBox13" member="yes" />
+														<flag>wxALL|wxEXPAND</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+												</object>
+											</object>
 											<label>Gameplay</label>
+										</object>
+										<object class="choicebookpage">
+											<object class="wxPanel" name="ID_PANEL8" variable="Panel8" member="yes">
+												<pos>115,14</pos>
+												<object class="wxFlexGridSizer" variable="FlexGridSizer8" member="no">
+													<cols>4</cols>
+													<growablecols>1,3</growablecols>
+													<object class="sizeritem">
+														<object class="wxStaticText" name="ID_STATICTEXT29" variable="StaticText29" member="yes">
+															<label>Video Modes</label>
+														</object>
+														<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxComboBox" name="ID_COMBOBOX14" variable="ComboBox14" member="yes" />
+														<flag>wxALL|wxEXPAND</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxStaticText" name="ID_STATICTEXT30" variable="StaticText30" member="yes">
+															<label>Video Resolutions</label>
+														</object>
+														<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxComboBox" name="ID_COMBOBOX15" variable="ComboBox15" member="yes" />
+														<flag>wxALL|wxEXPAND</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxStaticText" name="ID_STATICTEXT31" variable="StaticText31" member="yes">
+															<label>Drivers/APIs</label>
+														</object>
+														<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+													<object class="sizeritem">
+														<object class="wxComboBox" name="ID_COMBOBOX16" variable="ComboBox16" member="yes" />
+														<flag>wxALL|wxEXPAND</flag>
+														<border>5</border>
+														<option>1</option>
+													</object>
+												</object>
+											</object>
+											<label>Technical Details</label>
 										</object>
 									</object>
 									<flag>wxALL|wxEXPAND</flag>
@@ -505,7 +703,7 @@
 					</object>
 					<object class="notebookpage">
 						<object class="wxPanel" name="ID_PANEL4" variable="Panel4" member="yes" />
-						<label>Installation</label>
+						<label>Installation / Sync</label>
 					</object>
 				</object>
 				<flag>wxALL|wxEXPAND</flag>

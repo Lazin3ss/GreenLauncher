@@ -1,3 +1,12 @@
+/***************************************************************
+ * Name:      EditGame.h
+ * Purpose:   Defines Launch Configuration panel
+ * Author:    Francisco Iturrieta (laziness@protonmail.com)
+ * Created:   2025-01-15
+ * Copyright: Francisco Iturrieta (https://lisa734.neocities.org)
+ * License:   GPL-3.0
+ **************************************************************/
+
 #ifndef LAUNCHCONFIG_H
 #define LAUNCHCONFIG_H
 
