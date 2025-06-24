@@ -1,5 +1,5 @@
 /***************************************************************
- * Name:      EditGame.h
+ * Name:      LaunchConfig.h
  * Purpose:   Defines Launch Configuration panel
  * Author:    Francisco Iturrieta (laziness@protonmail.com)
  * Created:   2025-01-15
@@ -12,6 +12,7 @@
 
 //(*Headers(LaunchConfig)
 #include <wx/bmpbuttn.h>
+#include <wx/choice.h>
 #include <wx/combobox.h>
 #include <wx/filepicker.h>
 #include <wx/panel.h>
@@ -31,24 +32,25 @@ class LaunchConfig: public wxPanel
 
         size_t pageId;
         bool isMain;
+        int lastTypeSelection = 0;
 
         //(*Declarations(LaunchConfig)
         wxBitmapButton* AddActionButton;
-        wxBitmapButton* BitmapButton3;
         wxBitmapButton* DeleteActionButton;
+        wxBitmapButton* IconButton;
+        wxChoice* TypeChoice;
         wxComboBox* SystemComboBox;
-        wxComboBox* TypeComboBox;
         wxDirPickerCtrl* WorkingDirectoryCtrl;
-        wxFilePickerCtrl* FileCtrl;
+        wxFilePickerCtrl* FilePickerCtrl;
         wxPanel* Panel1;
         wxPanel* Panel2;
-        wxStaticText* StaticText1;
-        wxStaticText* StaticText2;
-        wxStaticText* StaticText3;
-        wxStaticText* StaticText4;
-        wxStaticText* StaticText5;
-        wxStaticText* StaticText6;
-        wxStaticText* StaticText7;
+        wxStaticText* ArgText;
+        wxStaticText* FileText;
+        wxStaticText* IconText;
+        wxStaticText* NameText;
+        wxStaticText* SystemText;
+        wxStaticText* TypeText;
+        wxStaticText* WorkDirText;
         wxTextCtrl* ArgumentsTextCtrl;
         wxTextCtrl* NameTextCtrl;
         //*)
@@ -56,20 +58,20 @@ class LaunchConfig: public wxPanel
     protected:
 
         //(*Identifiers(LaunchConfig)
-        static const long ID_STATICTEXT7;
         static const long ID_NAMETEXT;
-        static const long ID_STATICTEXT1;
-        static const long ID_TYPECOMBOBOX;
-        static const long ID_STATICTEXT2;
-        static const long ID_SYSCOMBOBOX;
-        static const long ID_STATICTEXT3;
-        static const long ID_FILECTRL;
-        static const long ID_STATICTEXT4;
+        static const long ID_NAMETEXTCTRL;
+        static const long ID_TYPETEXT;
+        static const long ID_TYPECHOICE;
+        static const long ID_SYSTEMTEXT;
+        static const long ID_SYSTEMCOMBOBOX;
+        static const long ID_FILETEXT;
+        static const long ID_FILEPICKERCTRL;
+        static const long ID_WORKDIRTEXT;
         static const long ID_WORKDIRCTRL;
-        static const long ID_STATICTEXT6;
-        static const long ID_ARGTEX;
-        static const long ID_STATICTEXT5;
-        static const long ID_BITMAPBUTTON3;
+        static const long ID_ARGTEXT;
+        static const long ID_ARGTEXTCTRL;
+        static const long ID_ICONTEXT;
+        static const long ID_ICONBUTTON;
         static const long ID_PANEL1;
         static const long ID_ADDACTIONBUTTON;
         static const long ID_DELETEACTIONBUTTON;
@@ -82,6 +84,8 @@ class LaunchConfig: public wxPanel
         void OnBitmapButton2Click(wxCommandEvent& event);
         void OnAddActionButtonClick(wxCommandEvent& event);
         void OnDeleteActionButtonClick(wxCommandEvent& event);
+        void OnFileCtrlFileChanged(wxFileDirPickerEvent& event);
+        void OnTypeChoiceSelect(wxCommandEvent& event);
         //*)
 
         DECLARE_EVENT_TABLE()

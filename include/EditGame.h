@@ -50,6 +50,11 @@ class EditGame: public wxDialog
         wxCheckListBox* CheckListBox2;
         wxCheckListBox* CheckListBox3;
         wxCheckListBox* CheckListBox4;
+        wxCheckListBox* CheckListBox5;
+        wxCheckListBox* CheckListBox6;
+        wxCheckListBox* CheckListBox7;
+        wxCheckListBox* CheckListBox8;
+        wxCheckListBox* CheckListBox9;
         wxChoice* Choice1;
         wxChoice* Choice2;
         wxChoice* Choice3;
@@ -58,9 +63,6 @@ class EditGame: public wxDialog
         wxComboBox* ComboBox11;
         wxComboBox* ComboBox12;
         wxComboBox* ComboBox13;
-        wxComboBox* ComboBox14;
-        wxComboBox* ComboBox15;
-        wxComboBox* ComboBox16;
         wxComboBox* ComboBox1;
         wxComboBox* ComboBox2;
         wxComboBox* ComboBox3;
@@ -75,6 +77,9 @@ class EditGame: public wxDialog
         wxDatePickerCtrl* DatePickerCtrl3;
         wxListbook* ActionListbook;
         wxNotebook* Notebook1;
+        wxPanel* Panel10;
+        wxPanel* Panel11;
+        wxPanel* Panel13;
         wxPanel* Panel1;
         wxPanel* Panel2;
         wxPanel* Panel3;
@@ -83,6 +88,7 @@ class EditGame: public wxDialog
         wxPanel* Panel6;
         wxPanel* Panel7;
         wxPanel* Panel8;
+        wxPanel* Panel9;
         wxStaticText* StaticText10;
         wxStaticText* StaticText11;
         wxStaticText* StaticText12;
@@ -107,6 +113,12 @@ class EditGame: public wxDialog
         wxStaticText* StaticText2;
         wxStaticText* StaticText30;
         wxStaticText* StaticText31;
+        wxStaticText* StaticText32;
+        wxStaticText* StaticText33;
+        wxStaticText* StaticText34;
+        wxStaticText* StaticText35;
+        wxStaticText* StaticText36;
+        wxStaticText* StaticText37;
         wxStaticText* StaticText3;
         wxStaticText* StaticText4;
         wxStaticText* StaticText5;
@@ -115,11 +127,19 @@ class EditGame: public wxDialog
         wxStaticText* StaticText8;
         wxStaticText* StaticText9;
         wxTextCtrl* GameName;
+        wxTextCtrl* TextCtrl10;
+        wxTextCtrl* TextCtrl11;
+        wxTextCtrl* TextCtrl12;
+        wxTextCtrl* TextCtrl13;
+        wxTextCtrl* TextCtrl1;
         wxTextCtrl* TextCtrl2;
         wxTextCtrl* TextCtrl3;
         wxTextCtrl* TextCtrl4;
         wxTextCtrl* TextCtrl5;
         wxTextCtrl* TextCtrl6;
+        wxTextCtrl* TextCtrl7;
+        wxTextCtrl* TextCtrl8;
+        wxTextCtrl* TextCtrl9;
         //*)
 
     protected:
@@ -175,7 +195,23 @@ class EditGame: public wxDialog
         static const long ID_CHOICE3;
         static const long ID_STATICTEXT22;
         static const long ID_TEXTCTRL6;
+        static const long ID_STATICTEXT32;
+        static const long ID_TEXTCTRL1;
         static const long ID_PANEL5;
+        static const long ID_STATICTEXT25;
+        static const long ID_COMBOBOX12;
+        static const long ID_STATICTEXT28;
+        static const long ID_COMBOBOX13;
+        static const long ID_STATICTEXT33;
+        static const long ID_TEXTCTRL7;
+        static const long ID_TEXTCTRL8;
+        static const long ID_TEXTCTRL9;
+        static const long ID_PANEL11;
+        static const long ID_STATICTEXT34;
+        static const long ID_TEXTCTRL10;
+        static const long ID_TEXTCTRL11;
+        static const long ID_TEXTCTRL12;
+        static const long ID_PANEL13;
         static const long ID_STATICTEXT23;
         static const long ID_CHECKLISTBOX1;
         static const long ID_STATICTEXT24;
@@ -184,18 +220,22 @@ class EditGame: public wxDialog
         static const long ID_CHECKLISTBOX4;
         static const long ID_STATICTEXT26;
         static const long ID_CHECKLISTBOX3;
-        static const long ID_STATICTEXT25;
-        static const long ID_COMBOBOX12;
-        static const long ID_STATICTEXT28;
-        static const long ID_COMBOBOX13;
         static const long ID_PANEL7;
-        static const long ID_STATICTEXT29;
-        static const long ID_COMBOBOX14;
-        static const long ID_STATICTEXT30;
-        static const long ID_COMBOBOX15;
+        static const long ID_STATICTEXT35;
+        static const long ID_CHECKLISTBOX5;
         static const long ID_STATICTEXT31;
-        static const long ID_COMBOBOX16;
+        static const long ID_CHECKLISTBOX6;
+        static const long ID_STATICTEXT29;
+        static const long ID_CHECKLISTBOX7;
+        static const long ID_STATICTEXT30;
+        static const long ID_CHECKLISTBOX8;
+        static const long ID_STATICTEXT36;
+        static const long ID_CHECKLISTBOX9;
+        static const long ID_STATICTEXT37;
+        static const long ID_TEXTCTRL13;
         static const long ID_PANEL8;
+        static const long ID_PANEL9;
+        static const long ID_PANEL10;
         static const long ID_CHOICEBOOK1;
         static const long ID_PANEL2;
         static const long ID_PANEL3;
@@ -214,6 +254,7 @@ class EditGame: public wxDialog
         void OnChoicebook1PageChanged(wxChoicebookEvent& event);
         void OnChoicebook1PageChanged1(wxChoicebookEvent& event);
         void OnListbook1PageChanged(wxListbookEvent& event);
+        void OnCheckListBox1Toggled(wxCommandEvent& event);
         //*)
 
         DECLARE_EVENT_TABLE()
