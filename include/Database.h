@@ -25,7 +25,8 @@ class Database
         virtual ~Database();
 
         void Query(wxString str);
-        void AddGame(wxString name);
+        void RunSQL(wxString name);
+        void AddGame(wxString name, wxString path);
         wxString ReturnTableItem(long row, long col);
 
     private:

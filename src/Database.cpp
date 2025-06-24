@@ -29,18 +29,23 @@ Database::Database()
     const char *sqlCreateTable =
     "BEGIN;"
     "CREATE TABLE IF NOT EXISTS general(totalgames INTEGER, totaldevelopers INTEGER, totalpublishers INTEGER);"
+    "CREATE TABLE IF NOT EXISTS games(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL, favorite BOOLEAN NOT NULL CHECK (favorite IN (0, 1)) DEFAULT 0, year INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT -1);"
+    "CREATE TABLE IF NOT EXISTS tools(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL UNIQUE, exePath TEXT NOT NULL, iconId INTEGER);"
+    "CREATE TABLE IF NOT EXISTS actions(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL, type INTEGER NOT NULL, path TEXT NOT NULL, workingDir TEXT NOT NULL, args TEXT NOT NULL, system_id INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT -1, iconPath TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '');"
     "CREATE TABLE IF NOT EXISTS years(year INTEGER PRIMARY KEY ASC UNIQUE, gameCount INTEGER);"
     "CREATE TABLE IF NOT EXISTS developers(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL UNIQUE, description TEXT, gameCount INTEGER);"
     "CREATE TABLE IF NOT EXISTS publishers(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL UNIQUE, description TEXT, gameCount INTEGER);"
     "CREATE TABLE IF NOT EXISTS genres(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL UNIQUE, description TEXT, gameCount INTEGER);"
     "CREATE TABLE IF NOT EXISTS categories(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL UNIQUE, description TEXT, gameCount INTEGER);"
-    "CREATE TABLE IF NOT EXISTS tools(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL UNIQUE, exePath TEXT NOT NULL, iconId INTEGER);"
+    "CREATE TABLE IF NOT EXISTS actions_mapping(game_id INTEGER, action_id INTEGER, isMain BOOLEAN, UNIQUE(game_id, action_id, isMain));"
     "CREATE TABLE IF NOT EXISTS metadata_mapping(game_id INTEGER ASC, type TEXT ASC, metadata_id INTEGER, UNIQUE(game_id, type, metadata_id));"
     "CREATE TABLE IF NOT EXISTS tools_mapping(game_id INTEGER, tools_id INTEGER, UNIQUE(game_id, tools_id));"
-    "CREATE TABLE IF NOT EXISTS games(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL, exePath TEXT NOT NULL, iconPath TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '', favorite BOOLEAN NOT NULL CHECK (favorite IN (0, 1)) DEFAULT 0, year INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT -1);"
-    "CREATE TRIGGER IF NOT EXISTS add_game_icon_integrity AFTER INSERT ON games WHEN new.iconPath == '' BEGIN "
-        "UPDATE games SET iconPath=new.exePath WHERE id=new.id;"
+    "CREATE TRIGGER IF NOT EXISTS add_action_icon_integrity AFTER INSERT ON actions WHEN new.iconPath == '' BEGIN "
+        "UPDATE actions SET iconPath=new.path WHERE id=new.id;"
     "END;"
+    "CREATE TRIGGER IF NOT EXISTS update_action_icon_integrity AFTER UPDATE ON actions WHEN new.iconPath == '' BEGIN "
+		"UPDATE actions SET iconPath=new.path WHERE id=new.id;"
+	"END;"
     "CREATE TRIGGER IF NOT EXISTS add_game_year_task AFTER INSERT ON games BEGIN "
         "INSERT OR IGNORE INTO years VALUES(new.year, 0);"
         "UPDATE years SET gameCount=gameCount+1 WHERE year==new.year;"
@@ -50,27 +55,31 @@ Database::Database()
 		"UPDATE years SET gameCount=gameCount+1 WHERE year==new.year;"
 		"UPDATE years SET gameCount=gameCount-1 WHERE year==old.year;"
 	"END;"
-	"CREATE TRIGGER IF NOT EXISTS update_game_icon_integrity AFTER UPDATE ON games WHEN new.iconPath == '' BEGIN "
-		"UPDATE games SET iconPath=new.exePath WHERE id=new.id;"
-	"END;"
 	"CREATE TRIGGER IF NOT EXISTS delete_game_task DELETE ON games BEGIN "
 		"UPDATE years SET gameCount=gameCount-1 WHERE year==old.year;"
+		"DELETE FROM actions_mapping WHERE game_id==old.id;"
 		"DELETE FROM metadata_mapping WHERE game_id==old.id;"
+	"END;"
+	"CREATE TRIGGER IF NOT EXISTS delete_action_task DELETE ON actions BEGIN "
+		"DELETE FROM actions_mapping WHERE action_id==old.id;"
+	"END;"
+	"CREATE TRIGGER IF NOT EXISTS delete_action_map_task DELETE ON actions_mapping BEGIN "
+		"DELETE FROM actions WHERE id==old.id;"
 	"END;"
 	"CREATE TRIGGER IF NOT EXISTS clean_years_task AFTER UPDATE ON years WHEN new.gameCount==0 BEGIN "
 		"DELETE FROM years WHERE year=new.year;"
 	"END;"
 	"CREATE TRIGGER IF NOT EXISTS delete_dev_task DELETE ON developers BEGIN "
-		"DELETE FROM metadata_mapping WHERE type=='developers' AND metadata_id=old.id;"
+		"DELETE FROM metadata_mapping WHERE type=='developers' AND metadata_id==old.id;"
 	"END;"
 	"CREATE TRIGGER IF NOT EXISTS delete_publ_task DELETE ON publishers BEGIN "
-		"DELETE FROM metadata_mapping WHERE type=='publishers' AND metadata_id=old.id;"
+		"DELETE FROM metadata_mapping WHERE type=='publishers' AND metadata_id==old.id;"
 	"END;"
 	"CREATE TRIGGER IF NOT EXISTS delete_genre_task DELETE ON genres BEGIN "
-		"DELETE FROM metadata_mapping WHERE type=='genres' AND metadata_id=old.id;"
+		"DELETE FROM metadata_mapping WHERE type=='genres' AND metadata_id==old.id;"
 	"END;"
 	"CREATE TRIGGER IF NOT EXISTS delete_cat_task DELETE ON categories BEGIN "
-		"DELETE FROM metadata_mapping WHERE type=='categories' AND metadata_id=old.id;"
+		"DELETE FROM metadata_mapping WHERE type=='categories' AND metadata_id==old.id;"
 	"END;"
 	"CREATE TRIGGER IF NOT EXISTS map_developers_task INSERT ON metadata_mapping WHEN new.type='developers' BEGIN "
 		"UPDATE developers SET gameCount=gameCount+1 WHERE id==new.metadata_id;"
@@ -104,8 +113,8 @@ Database::Database()
 		"(SELECT GROUP_CONCAT(name, ', ') FROM publishers JOIN metadata_mapping ON game_id=games.id AND type=='publishers' AND metadata_id==id) AS publisher, "
 		"(SELECT GROUP_CONCAT(name, ', ') FROM genres JOIN metadata_mapping ON game_id=games.id AND type=='genres' AND metadata_id==id) AS genre, "
 		"(SELECT GROUP_CONCAT(name, ', ') FROM categories JOIN metadata_mapping ON game_id=games.id AND type=='categories' AND metadata_id==id) AS category, "
-		"games.exePath, "
-		"games.iconPath, "
+		"(SELECT path FROM actions JOIN actions_mapping ON game_id=games.id AND isMain==1) AS exePath, "
+		"(SELECT iconPath FROM actions JOIN actions_mapping ON game_id=games.id AND isMain==1) AS iconPath, "
 		"games.id "
 	"FROM games;"
 	"END;";
@@ -146,14 +155,23 @@ void Database::Query(wxString str)
     }
 }
 
-void Database::AddGame(wxString name)
+void Database::RunSQL(wxString stmtStr)
 {
     int rc;
     char *errmsg;
     sqlite3_stmt *stmt = NULL;
-    rc = sqlite3_prepare_v2(db, name.mb_str(), -1, &stmt, NULL);
+    rc = sqlite3_prepare_v2(db, stmtStr.mb_str(), -1, &stmt, NULL);
     rc = sqlite3_step(stmt);
     rc = sqlite3_finalize(stmt);
+}
+
+void Database::AddGame(wxString name, wxString path)
+{
+    RunSQL(wxString::Format(wxString("INSERT into games values(NULL, '%s', 0, 2002)"), name));
+    sqlite3_int64 game_id = sqlite3_last_insert_rowid(db);
+    RunSQL(wxString::Format(wxString("INSERT into actions values(NULL, 'Main', 0, '%s', '%s', '', -1, '%s')"), path, path, path));
+    sqlite3_int64 action_id = sqlite3_last_insert_rowid(db);
+    RunSQL(wxString::Format(wxString("INSERT into actions_mapping values(%d, %d, 1)"), int(game_id), int(game_id)));
 }
 
 wxString Database::ReturnTableItem(long row, long col)

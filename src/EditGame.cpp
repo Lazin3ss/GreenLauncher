@@ -549,8 +549,7 @@ EditGame::SaveGameToDatabase()
     const wxString name = GameName->GetLineText(0);
     name.Replace("'", "''", true);
     const wxString path = ((LaunchConfig*) ActionListbook->GetPage(0))->FilePickerCtrl->GetPath();
-    db->AddGame(wxString::Format(wxString("INSERT into games values(NULL, '%s', '%s', '%s', 0, 2002)"), name, path, path));
-
+    db->AddGame(name, path);
 }
 
 EditGame::OnDialogButtonClick(wxCommandEvent& event)
