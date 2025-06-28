@@ -14,6 +14,7 @@
 #include <wx/wx.h>
 #include <wx/log.h>
 #include <wx/string.h>
+#include <wx/tokenzr.h>
 
 Database::Database()
 {
@@ -30,14 +31,14 @@ Database::Database()
     const char *sqlCreateTable =
     "BEGIN;"
     "CREATE TABLE IF NOT EXISTS general(totalgames INTEGER, totaldevelopers INTEGER, totalpublishers INTEGER);"
-    "CREATE TABLE IF NOT EXISTS games(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL, favorite BOOLEAN NOT NULL CHECK (favorite IN (0, 1)) DEFAULT 0, hidden BOOLEAN NOT NULL CHECK (favorite IN (0, 1)) DEFAULT 0, category TEXT NOT NULL, source TEXT NOT NULL, year INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT -1);"
+    "CREATE TABLE IF NOT EXISTS games(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL, favorite BOOLEAN NOT NULL CHECK (favorite IN (0, 1)) DEFAULT 0, hidden BOOLEAN NOT NULL CHECK (favorite IN (0, 1)) DEFAULT 0, source TEXT NOT NULL, year INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT -1);"
     "CREATE TABLE IF NOT EXISTS tools(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL UNIQUE, exePath TEXT NOT NULL, iconId INTEGER);"
     "CREATE TABLE IF NOT EXISTS actions(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL, type INTEGER NOT NULL, path TEXT NOT NULL, workingDir TEXT NOT NULL, args TEXT NOT NULL, system_id INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT -1, iconPath TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '');"
-    "CREATE TABLE IF NOT EXISTS years(year INTEGER PRIMARY KEY ASC UNIQUE, gameCount INTEGER);"
-    "CREATE TABLE IF NOT EXISTS developers(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL UNIQUE, description TEXT, gameCount INTEGER);"
-    "CREATE TABLE IF NOT EXISTS publishers(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL UNIQUE, description TEXT, gameCount INTEGER);"
-    "CREATE TABLE IF NOT EXISTS genres(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL UNIQUE, description TEXT, gameCount INTEGER);"
-    "CREATE TABLE IF NOT EXISTS categories(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL UNIQUE, description TEXT, gameCount INTEGER);"
+    "CREATE TABLE IF NOT EXISTS years(year INTEGER PRIMARY KEY ASC UNIQUE, gameCount INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 0);"
+    "CREATE TABLE IF NOT EXISTS developers(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL UNIQUE, description TEXT, gameCount INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 0);"
+    "CREATE TABLE IF NOT EXISTS publishers(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL UNIQUE, description TEXT, gameCount INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 0);"
+    "CREATE TABLE IF NOT EXISTS genres(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL UNIQUE, description TEXT, gameCount INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 0);"
+    "CREATE TABLE IF NOT EXISTS categories(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL UNIQUE, description TEXT, gameCount INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 0);"
     "CREATE TABLE IF NOT EXISTS actions_mapping(game_id INTEGER, isMain BOOLEAN, action_id INTEGER, UNIQUE(game_id, isMain, action_id));"
     "CREATE TABLE IF NOT EXISTS metadata_mapping(game_id INTEGER ASC, type TEXT ASC, metadata_id INTEGER, UNIQUE(game_id, type, metadata_id));"
     "CREATE TABLE IF NOT EXISTS tools_mapping(game_id INTEGER, tools_id INTEGER, UNIQUE(game_id, tools_id));"
@@ -171,6 +172,33 @@ void Database::RunSQL(wxString stmtStr)
    }
 }
 
+void Database::AddMetadataAndMap(const char* type, wxString names, long gameId)
+{
+    wxStringTokenizer tokenizer(names, ";");
+    int rc;
+    sqlite3_stmt *stmt;
+    while (tokenizer.HasMoreTokens()) {
+        wxString token = tokenizer.GetNextToken();
+        // Try to insert the metadata in its table
+        rc = sqlite3_prepare_v2(db, wxString::Format("INSERT INTO %s (id, name) values(NULL, ?);", type).mb_str(), -1, &stmt, NULL);
+        if (rc == SQLITE_OK) {
+            sqlite3_bind_text(stmt, 1, token.mb_str(), -1, SQLITE_TRANSIENT);
+        }
+        rc = sqlite3_step(stmt);
+        rc = sqlite3_finalize(stmt);
+        // Then, try to map it to its game
+        rc = sqlite3_prepare_v2(db, wxString::Format("INSERT INTO metadata_mapping (game_id, type, metadata_id) values(?, ?, (SELECT id FROM %s WHERE name==?));", type).mb_str(), -1, &stmt, NULL);
+        if (rc == SQLITE_OK) {
+            sqlite3_bind_int(stmt, 1, gameId);
+            sqlite3_bind_text(stmt, 2, type, -1, SQLITE_TRANSIENT);
+            sqlite3_bind_text(stmt, 3, token.mb_str(), -1, SQLITE_TRANSIENT);
+        }
+        rc = sqlite3_step(stmt);
+        rc = sqlite3_finalize(stmt);
+    }
+
+}
+
 void Database::AddGame(GameData data)
 {
     int rc;
@@ -178,21 +206,21 @@ void Database::AddGame(GameData data)
     sqlite3_int64 game_id;
     sqlite3_int64 action_id;
     sqlite3_int64 metadata_id;
-    // First, insert the game
-    rc = sqlite3_prepare_v2(db, "INSERT into games (id, name, favorite, hidden, category, source) values(NULL, ?, ?, ?, ?, ?);", -1, &stmt, NULL);
+    // First, insert the game (plus date)
+    rc = sqlite3_prepare_v2(db, "INSERT INTO games (id, name, favorite, hidden, source, year) values(NULL, ?, ?, ?, ?, ?);", -1, &stmt, NULL);
     if (rc == SQLITE_OK) {
         sqlite3_bind_text(stmt, 1, data.name.mb_str(), -1, SQLITE_TRANSIENT);
         sqlite3_bind_int(stmt, 2, data.favorite);
         sqlite3_bind_int(stmt, 3, data.hidden);
-        sqlite3_bind_text(stmt, 4, data.category.mb_str(), -1, SQLITE_TRANSIENT);
-        sqlite3_bind_text(stmt, 5, data.source.mb_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 4, data.source.mb_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_int(stmt, 5, data.metadata.releaseDate.GetYear());
     }
     rc = sqlite3_step(stmt);
     rc = sqlite3_finalize(stmt);
     game_id = sqlite3_last_insert_rowid(db);
     // Then, insert the actions
     for (int i = 0; i<data.actions.size(); i++) {
-        rc = sqlite3_prepare_v2(db, "INSERT into actions (id, name, type, path, workingDir, args, system_id, iconPath) values(NULL, ?, ?, ?, ?, ?, ?, ?);", -1, &stmt, NULL);
+        rc = sqlite3_prepare_v2(db, "INSERT INTO actions (id, name, type, path, workingDir, args, system_id, iconPath) values(NULL, ?, ?, ?, ?, ?, ?, ?);", -1, &stmt, NULL);
         if (rc == SQLITE_OK) {
             sqlite3_bind_text(stmt, 1, data.actions[i].name.mb_str(), -1, SQLITE_TRANSIENT);
             sqlite3_bind_int(stmt, 2, data.actions[i].type);
@@ -205,10 +233,14 @@ void Database::AddGame(GameData data)
         rc = sqlite3_step(stmt);
         rc = sqlite3_finalize(stmt);
         action_id = sqlite3_last_insert_rowid(db);
-        RunSQL(wxString::Format(wxString("INSERT into actions_mapping values(%d, %d, %d)"), long(game_id), int(data.actions[i].isMain), long(action_id)));
+        RunSQL(wxString::Format(wxString("INSERT INTO actions_mapping values(%d, %d, %d)"), long(game_id), int(data.actions[i].isMain), long(action_id)));
     }
-    // And then, the metadata!
-
+    // And then, all other metadata
+    AddMetadataAndMap("categories", data.category, game_id);
+    AddMetadataAndMap("platforms", data.metadata.platform, game_id);
+    AddMetadataAndMap("developers", data.metadata.developer, game_id);
+    AddMetadataAndMap("publishers", data.metadata.publisher, game_id);
+    AddMetadataAndMap("genres", data.metadata.genre, game_id);
 }
 
 wxString Database::ReturnTableItem(long row, long col)

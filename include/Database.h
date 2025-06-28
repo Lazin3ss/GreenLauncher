@@ -28,6 +28,7 @@ class Database
 
         void Query(wxString str);
         void RunSQL(wxString name);
+        void AddMetadataAndMap(const char* type, wxString name, long gameId);
         void AddGame(GameData data);
         wxString ReturnTableItem(long row, long col);
         wxString ReturnGameData(long id);
