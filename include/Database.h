@@ -11,6 +11,8 @@
 #define DATABASE_H
 
 #include "sqlite3/sqlite3.h"
+#include "GameData.h"
+
 #include <wx/string.h>
 
 
@@ -26,8 +28,9 @@ class Database
 
         void Query(wxString str);
         void RunSQL(wxString name);
-        void AddGame(wxString name, wxString path);
+        void AddGame(GameData data);
         wxString ReturnTableItem(long row, long col);
+        wxString ReturnGameData(long id);
 
     private:
         sqlite3 *db;

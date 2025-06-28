@@ -46,7 +46,7 @@
 															<option>1</option>
 														</object>
 														<object class="sizeritem">
-															<object class="wxCheckBox" name="ID_CHECKBOX1" variable="CheckBox1" member="yes">
+															<object class="wxCheckBox" name="ID_GAMEFAVORITE" variable="GameFavorite" member="yes">
 																<label>Favorite</label>
 															</object>
 															<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
@@ -54,7 +54,7 @@
 															<option>1</option>
 														</object>
 														<object class="sizeritem">
-															<object class="wxCheckBox" name="ID_CHECKBOX2" variable="CheckBox2" member="yes">
+															<object class="wxCheckBox" name="ID_GAMEHIDDEN" variable="GameHidden" member="yes">
 																<label>Hidden</label>
 															</object>
 															<flag>wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL</flag>
@@ -79,7 +79,7 @@
 															<option>1</option>
 														</object>
 														<object class="sizeritem">
-															<object class="wxComboBox" name="ID_COMBOBOX1" variable="ComboBox1" member="yes" />
+															<object class="wxTextCtrl" name="ID_GAMECATEGORY" variable="GameCategory" member="yes" />
 															<flag>wxALL|wxEXPAND</flag>
 															<border>5</border>
 															<option>1</option>
@@ -93,7 +93,7 @@
 															<option>1</option>
 														</object>
 														<object class="sizeritem">
-															<object class="wxComboBox" name="ID_COMBOBOX2" variable="ComboBox2" member="yes" />
+															<object class="wxTextCtrl" name="ID_GAMESOURCE" variable="GameSource" member="yes" />
 															<flag>wxALL|wxEXPAND</flag>
 															<border>5</border>
 															<option>1</option>
@@ -339,7 +339,7 @@
 														<option>1</option>
 													</object>
 													<object class="sizeritem">
-														<object class="wxDatePickerCtrl" name="ID_DATEPICKERCTRL3" variable="DatePickerCtrl3" member="yes">
+														<object class="wxDatePickerCtrl" name="ID_GAMERELEASEDATE" variable="GameReleaseDate" member="yes">
 															<style>wxDP_DEFAULT|wxDP_DROPDOWN|wxDP_SHOWCENTURY</style>
 														</object>
 														<flag>wxALL|wxEXPAND</flag>
@@ -355,7 +355,7 @@
 														<option>1</option>
 													</object>
 													<object class="sizeritem">
-														<object class="wxComboBox" name="ID_COMBOBOX3" variable="ComboBox3" member="yes" />
+														<object class="wxTextCtrl" name="ID_GAMEPLATFORM" variable="GamePlatform" member="yes" />
 														<flag>wxALL|wxEXPAND</flag>
 														<border>5</border>
 														<option>1</option>
@@ -369,7 +369,7 @@
 														<option>1</option>
 													</object>
 													<object class="sizeritem">
-														<object class="wxComboBox" name="ID_COMBOBOX4" variable="ComboBox4" member="yes" />
+														<object class="wxTextCtrl" name="ID_GAMEDEVELOPER" variable="GameDeveloper" member="yes" />
 														<flag>wxALL|wxEXPAND</flag>
 														<border>5</border>
 														<option>1</option>
@@ -383,7 +383,7 @@
 														<option>1</option>
 													</object>
 													<object class="sizeritem">
-														<object class="wxComboBox" name="ID_COMBOBOX5" variable="ComboBox5" member="yes" />
+														<object class="wxTextCtrl" name="ID_GAMEPUBLISHER" variable="GamePublisher" member="yes" />
 														<flag>wxALL|wxEXPAND</flag>
 														<border>5</border>
 														<option>1</option>
@@ -397,7 +397,7 @@
 														<option>1</option>
 													</object>
 													<object class="sizeritem">
-														<object class="wxComboBox" name="ID_COMBOBOX6" variable="ComboBox6" member="yes" />
+														<object class="wxTextCtrl" name="ID_GameGenre" variable="GameGenre" member="yes" />
 														<flag>wxALL|wxEXPAND</flag>
 														<border>5</border>
 														<option>1</option>
@@ -411,7 +411,7 @@
 														<option>1</option>
 													</object>
 													<object class="sizeritem">
-														<object class="wxComboBox" name="ID_COMBOBOX7" variable="ComboBox7" member="yes" />
+														<object class="wxTextCtrl" name="ID_GAMESERIES" variable="GameSeries" member="yes" />
 														<flag>wxALL|wxEXPAND</flag>
 														<border>5</border>
 														<option>1</option>
@@ -425,7 +425,7 @@
 														<option>1</option>
 													</object>
 													<object class="sizeritem">
-														<object class="wxComboBox" name="ID_COMBOBOX8" variable="ComboBox8" member="yes" />
+														<object class="wxTextCtrl" name="ID_GAMEREGION" variable="GameRegion" member="yes" />
 														<flag>wxALL|wxEXPAND</flag>
 														<border>5</border>
 														<option>1</option>
@@ -439,7 +439,7 @@
 														<option>1</option>
 													</object>
 													<object class="sizeritem">
-														<object class="wxComboBox" name="ID_COMBOBOX9" variable="ComboBox9" member="yes" />
+														<object class="wxTextCtrl" name="ID_GAMELANGUAGE" variable="GameLanguage" member="yes" />
 														<flag>wxALL|wxEXPAND</flag>
 														<border>5</border>
 														<option>1</option>
@@ -453,7 +453,7 @@
 														<option>1</option>
 													</object>
 													<object class="sizeritem">
-														<object class="wxComboBox" name="ID_COMBOBOX10" variable="ComboBox10" member="yes" />
+														<object class="wxTextCtrl" name="ID_GAMELICENSE" variable="GameLicense" member="yes" />
 														<flag>wxALL|wxEXPAND</flag>
 														<border>5</border>
 														<option>1</option>
@@ -467,7 +467,7 @@
 														<option>1</option>
 													</object>
 													<object class="sizeritem">
-														<object class="wxComboBox" name="ID_COMBOBOX11" variable="ComboBox11" member="yes" />
+														<object class="wxTextCtrl" name="ID_GAMEFORMAT" variable="GameFormat" member="yes" />
 														<flag>wxALL|wxEXPAND</flag>
 														<border>5</border>
 														<option>1</option>
@@ -481,7 +481,7 @@
 														<option>1</option>
 													</object>
 													<object class="sizeritem">
-														<object class="wxChoice" name="ID_CHOICE3" variable="Choice3" member="yes" />
+														<object class="wxChoice" name="ID_GAMEAGERATING" variable="GameAgeRating" member="yes" />
 														<flag>wxALL|wxEXPAND</flag>
 														<border>5</border>
 														<option>1</option>
@@ -495,7 +495,7 @@
 														<option>1</option>
 													</object>
 													<object class="sizeritem">
-														<object class="wxTextCtrl" name="ID_TEXTCTRL6" variable="TextCtrl6" member="yes" />
+														<object class="wxTextCtrl" name="ID_GAMESCORE" variable="GameScore" member="yes" />
 														<flag>wxALL|wxEXPAND</flag>
 														<border>5</border>
 														<option>1</option>
@@ -509,7 +509,7 @@
 														<option>1</option>
 													</object>
 													<object class="sizeritem">
-														<object class="wxTextCtrl" name="ID_TEXTCTRL1" variable="TextCtrl1" member="yes">
+														<object class="wxTextCtrl" name="ID_GAMEDESCRIPTION" variable="GameDescription" member="yes">
 															<tooltip>Add a description!</tooltip>
 															<help>Add a description!</help>
 															<style>wxTE_MULTILINE</style>

@@ -8,8 +8,8 @@
  **************************************************************/
 
 #include "Database.h"
+#include "GameData.h"
 #include "sqlite3/sqlite3.h"
-
 
 #include <wx/wx.h>
 #include <wx/log.h>
@@ -18,18 +18,19 @@
 Database::Database()
 {
     int rc;
-    char *error;
+    char *errmsg;
     // Open Database
     rc = sqlite3_open("GameLibrary.db", &db);
     if (rc != SQLITE_OK) {
-        wxLogFatalError("Error opening SQLite3 database (%i): %s", rc, sqlite3_errmsg(db));
+        wxLogError("Error opening SQLite3 database (%i): %s", rc, sqlite3_errmsg(db));
         sqlite3_close(db);
+        abort();
         return;
     }
     const char *sqlCreateTable =
     "BEGIN;"
     "CREATE TABLE IF NOT EXISTS general(totalgames INTEGER, totaldevelopers INTEGER, totalpublishers INTEGER);"
-    "CREATE TABLE IF NOT EXISTS games(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL, favorite BOOLEAN NOT NULL CHECK (favorite IN (0, 1)) DEFAULT 0, year INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT -1);"
+    "CREATE TABLE IF NOT EXISTS games(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL, favorite BOOLEAN NOT NULL CHECK (favorite IN (0, 1)) DEFAULT 0, hidden BOOLEAN NOT NULL CHECK (favorite IN (0, 1)) DEFAULT 0, category TEXT NOT NULL, source TEXT NOT NULL, year INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT -1);"
     "CREATE TABLE IF NOT EXISTS tools(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL UNIQUE, exePath TEXT NOT NULL, iconId INTEGER);"
     "CREATE TABLE IF NOT EXISTS actions(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL, type INTEGER NOT NULL, path TEXT NOT NULL, workingDir TEXT NOT NULL, args TEXT NOT NULL, system_id INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT -1, iconPath TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '');"
     "CREATE TABLE IF NOT EXISTS years(year INTEGER PRIMARY KEY ASC UNIQUE, gameCount INTEGER);"
@@ -37,7 +38,7 @@ Database::Database()
     "CREATE TABLE IF NOT EXISTS publishers(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL UNIQUE, description TEXT, gameCount INTEGER);"
     "CREATE TABLE IF NOT EXISTS genres(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL UNIQUE, description TEXT, gameCount INTEGER);"
     "CREATE TABLE IF NOT EXISTS categories(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL UNIQUE, description TEXT, gameCount INTEGER);"
-    "CREATE TABLE IF NOT EXISTS actions_mapping(game_id INTEGER, action_id INTEGER, isMain BOOLEAN, UNIQUE(game_id, action_id, isMain));"
+    "CREATE TABLE IF NOT EXISTS actions_mapping(game_id INTEGER, isMain BOOLEAN, action_id INTEGER, UNIQUE(game_id, isMain, action_id));"
     "CREATE TABLE IF NOT EXISTS metadata_mapping(game_id INTEGER ASC, type TEXT ASC, metadata_id INTEGER, UNIQUE(game_id, type, metadata_id));"
     "CREATE TABLE IF NOT EXISTS tools_mapping(game_id INTEGER, tools_id INTEGER, UNIQUE(game_id, tools_id));"
     "CREATE TRIGGER IF NOT EXISTS add_action_icon_integrity AFTER INSERT ON actions WHEN new.iconPath == '' BEGIN "
@@ -113,15 +114,16 @@ Database::Database()
 		"(SELECT GROUP_CONCAT(name, ', ') FROM publishers JOIN metadata_mapping ON game_id=games.id AND type=='publishers' AND metadata_id==id) AS publisher, "
 		"(SELECT GROUP_CONCAT(name, ', ') FROM genres JOIN metadata_mapping ON game_id=games.id AND type=='genres' AND metadata_id==id) AS genre, "
 		"(SELECT GROUP_CONCAT(name, ', ') FROM categories JOIN metadata_mapping ON game_id=games.id AND type=='categories' AND metadata_id==id) AS category, "
-		"(SELECT path FROM actions JOIN actions_mapping ON game_id=games.id AND isMain==1) AS exePath, "
-		"(SELECT iconPath FROM actions JOIN actions_mapping ON game_id=games.id AND isMain==1) AS iconPath, "
+		"(SELECT path FROM actions JOIN actions_mapping ON game_id=games.id AND isMain==1 AND action_id=id ) AS exePath, "
+		"(SELECT iconPath FROM actions JOIN actions_mapping ON game_id=games.id AND isMain==1 AND action_id=id) AS iconPath, "
 		"games.id "
 	"FROM games;"
 	"END;";
-	rc = sqlite3_exec(db, sqlCreateTable, NULL, NULL, &error);
+	rc = sqlite3_exec(db, sqlCreateTable, NULL, NULL, &errmsg);
 	if (rc) {
-      wxLogFatalError("Error creating games table in SQLite3: ", sqlite3_errmsg(db));
-      sqlite3_free(error);
+      wxLogError("Error creating games table in SQLite3: ", wxString(errmsg));
+      sqlite3_free(errmsg);
+      abort();
    }
 }
 
@@ -150,8 +152,9 @@ void Database::Query(wxString str)
     );
     if (rc != SQLITE_OK ) {
         sqlite3_free_table(pResult);
-        wxLogFatalError("Error querying SQLite3 database: ", wxString(errmsg));
+        wxLogError("Error querying SQLite3 database: ", wxString(errmsg));
         sqlite3_free(errmsg);
+        abort();
     }
 }
 
@@ -160,21 +163,73 @@ void Database::RunSQL(wxString stmtStr)
     int rc;
     char *errmsg;
     sqlite3_stmt *stmt = NULL;
-    rc = sqlite3_prepare_v2(db, stmtStr.mb_str(), -1, &stmt, NULL);
-    rc = sqlite3_step(stmt);
-    rc = sqlite3_finalize(stmt);
+    rc = sqlite3_exec(db, stmtStr.mb_str(), NULL, NULL, &errmsg);
+    if (rc) {
+      wxLogError("Error running SQL in Database: ", wxString(errmsg));
+      sqlite3_free(errmsg);
+      abort();
+   }
 }
 
-void Database::AddGame(wxString name, wxString path)
+void Database::AddGame(GameData data)
 {
-    RunSQL(wxString::Format(wxString("INSERT into games values(NULL, '%s', 0, 2002)"), name));
-    sqlite3_int64 game_id = sqlite3_last_insert_rowid(db);
-    RunSQL(wxString::Format(wxString("INSERT into actions values(NULL, 'Main', 0, '%s', '%s', '', -1, '%s')"), path, path, path));
-    sqlite3_int64 action_id = sqlite3_last_insert_rowid(db);
-    RunSQL(wxString::Format(wxString("INSERT into actions_mapping values(%d, %d, 1)"), int(game_id), int(game_id)));
+    int rc;
+    sqlite3_stmt *stmt;
+    sqlite3_int64 game_id;
+    sqlite3_int64 action_id;
+    sqlite3_int64 metadata_id;
+    // First, insert the game
+    rc = sqlite3_prepare_v2(db, "INSERT into games (id, name, favorite, hidden, category, source) values(NULL, ?, ?, ?, ?, ?);", -1, &stmt, NULL);
+    if (rc == SQLITE_OK) {
+        sqlite3_bind_text(stmt, 1, data.name.mb_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_int(stmt, 2, data.favorite);
+        sqlite3_bind_int(stmt, 3, data.hidden);
+        sqlite3_bind_text(stmt, 4, data.category.mb_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 5, data.source.mb_str(), -1, SQLITE_TRANSIENT);
+    }
+    rc = sqlite3_step(stmt);
+    rc = sqlite3_finalize(stmt);
+    game_id = sqlite3_last_insert_rowid(db);
+    // Then, insert the actions
+    for (int i = 0; i<data.actions.size(); i++) {
+        rc = sqlite3_prepare_v2(db, "INSERT into actions (id, name, type, path, workingDir, args, system_id, iconPath) values(NULL, ?, ?, ?, ?, ?, ?, ?);", -1, &stmt, NULL);
+        if (rc == SQLITE_OK) {
+            sqlite3_bind_text(stmt, 1, data.actions[i].name.mb_str(), -1, SQLITE_TRANSIENT);
+            sqlite3_bind_int(stmt, 2, data.actions[i].type);
+            sqlite3_bind_text(stmt, 3, data.actions[i].path.mb_str(), -1, SQLITE_TRANSIENT);
+            sqlite3_bind_text(stmt, 4, data.actions[i].workingDir.mb_str(), -1, SQLITE_TRANSIENT);
+            sqlite3_bind_text(stmt, 5, data.actions[i].args.mb_str(), -1, SQLITE_TRANSIENT);
+            sqlite3_bind_int(stmt, 6, data.actions[i].systemId);
+            sqlite3_bind_text(stmt, 7, data.actions[i].iconPath.mb_str(), -1, SQLITE_TRANSIENT);
+        }
+        rc = sqlite3_step(stmt);
+        rc = sqlite3_finalize(stmt);
+        action_id = sqlite3_last_insert_rowid(db);
+        RunSQL(wxString::Format(wxString("INSERT into actions_mapping values(%d, %d, %d)"), long(game_id), int(data.actions[i].isMain), long(action_id)));
+    }
+    // And then, the metadata!
+
 }
 
 wxString Database::ReturnTableItem(long row, long col)
 {
     return wxString(pResult[(pCols) * (row + 1) + col]);
+}
+
+wxString Database::ReturnGameData(long id)
+{
+    GameData data;
+    char **pTable;
+    char *errmsg;
+    int rc;
+    rc = sqlite3_get_table(db, wxString::Format(("SELECT * FROM GameList WHERE id==%d"), id).mb_str(), &pTable, NULL, NULL, &errmsg);
+    if (rc != SQLITE_OK ) {
+        sqlite3_free_table(pTable);
+        wxLogError("Error querying SQLite3 database: ", wxString(errmsg));
+        sqlite3_free(errmsg);
+        abort();
+    }
+    data.metadata.developer = wxString(pTable[10]);
+    sqlite3_free_table(pTable);
+    return data.metadata.developer;
 }

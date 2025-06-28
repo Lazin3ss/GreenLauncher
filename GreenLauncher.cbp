@@ -31,6 +31,7 @@
 					<Add option="-DNDEBUG" />
 					<Add option="-DwxDEBUG_LEVEL=0" />
 					<Add option="-DSQLITE_OS_WINNT=1" />
+					<Add option="-DSQLITE_WIN32_NO_OVERLAPPED=1" />
 					<Add directory="$(#wx30)/include" />
 					<Add directory="$(#wx30)/lib/gcc_lib/mswud" />
 					<Add directory="./" />
@@ -93,6 +94,7 @@
 					<Add option="-DNDEBUG" />
 					<Add option="-DwxDEBUG_LEVEL=0" />
 					<Add option="-DSQLITE_OS_WINNT=1" />
+					<Add option="-DSQLITE_WIN32_NO_OVERLAPPED=1" />
 					<Add directory="$(#wx32)/include" />
 					<Add directory="$(#wx32)/lib/gcc_lib/mswud" />
 					<Add directory="./" />
@@ -191,6 +193,10 @@
 				</Linker>
 			</Target>
 		</Build>
+		<Compiler>
+			<Add option="-DSQLITE_OS_WINNT=1" />
+			<Add option="-DSQLITE_WIN32_NO_OVERLAPPED=1" />
+		</Compiler>
 		<Linker>
 			<Add option="-static-libstdc++" />
 			<Add option="-static-libgcc" />
@@ -198,6 +204,7 @@
 		<Unit filename="icon.ico" />
 		<Unit filename="include/Database.h" />
 		<Unit filename="include/EditGame.h" />
+		<Unit filename="include/GameData.h" />
 		<Unit filename="include/GreenLauncherApp.h" />
 		<Unit filename="include/GreenLauncherMain.h" />
 		<Unit filename="include/LaunchConfig.h" />

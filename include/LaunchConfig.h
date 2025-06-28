@@ -35,13 +35,13 @@ class LaunchConfig: public wxPanel
         int lastTypeSelection = 0;
 
         //(*Declarations(LaunchConfig)
+        wxBitmapButton* ActionIcon;
         wxBitmapButton* AddActionButton;
         wxBitmapButton* DeleteActionButton;
-        wxBitmapButton* IconButton;
-        wxChoice* TypeChoice;
-        wxComboBox* SystemComboBox;
-        wxDirPickerCtrl* WorkingDirectoryCtrl;
-        wxFilePickerCtrl* FilePickerCtrl;
+        wxChoice* ActionType;
+        wxComboBox* ActionSystem;
+        wxDirPickerCtrl* ActionWorkingDirectory;
+        wxFilePickerCtrl* ActionPath;
         wxPanel* Panel1;
         wxPanel* Panel2;
         wxStaticText* ArgText;
@@ -51,27 +51,27 @@ class LaunchConfig: public wxPanel
         wxStaticText* SystemText;
         wxStaticText* TypeText;
         wxStaticText* WorkDirText;
-        wxTextCtrl* ArgumentsTextCtrl;
-        wxTextCtrl* NameTextCtrl;
+        wxTextCtrl* ActionArguments;
+        wxTextCtrl* ActionName;
         //*)
 
     protected:
 
         //(*Identifiers(LaunchConfig)
         static const long ID_NAMETEXT;
-        static const long ID_NAMETEXTCTRL;
+        static const long ID_ACTIONNAME;
         static const long ID_TYPETEXT;
-        static const long ID_TYPECHOICE;
+        static const long ID_ACTIONTYPE;
         static const long ID_SYSTEMTEXT;
-        static const long ID_SYSTEMCOMBOBOX;
+        static const long ID_ACTIONSYSTEM;
         static const long ID_FILETEXT;
-        static const long ID_FILEPICKERCTRL;
+        static const long ID_ACTIONFILE;
         static const long ID_WORKDIRTEXT;
-        static const long ID_WORKDIRCTRL;
+        static const long ID_ACTIONWORKDIR;
         static const long ID_ARGTEXT;
-        static const long ID_ARGTEXTCTRL;
+        static const long ID_ACTIONARGS;
         static const long ID_ICONTEXT;
-        static const long ID_ICONBUTTON;
+        static const long ID_ACTIONICON;
         static const long ID_PANEL1;
         static const long ID_ADDACTIONBUTTON;
         static const long ID_DELETEACTIONBUTTON;
@@ -86,6 +86,7 @@ class LaunchConfig: public wxPanel
         void OnDeleteActionButtonClick(wxCommandEvent& event);
         void OnFileCtrlFileChanged(wxFileDirPickerEvent& event);
         void OnTypeChoiceSelect(wxCommandEvent& event);
+        void OnActionNameText(wxCommandEvent& event);
         //*)
 
         DECLARE_EVENT_TABLE()

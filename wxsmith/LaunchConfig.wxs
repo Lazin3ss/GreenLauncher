@@ -19,7 +19,9 @@
 							<option>1</option>
 						</object>
 						<object class="sizeritem">
-							<object class="wxTextCtrl" name="ID_NAMETEXTCTRL" variable="NameTextCtrl" member="yes" />
+							<object class="wxTextCtrl" name="ID_ACTIONNAME" variable="ActionName" member="yes">
+								<handler function="OnActionNameText" entry="EVT_TEXT" />
+							</object>
 							<flag>wxALL|wxEXPAND</flag>
 							<border>5</border>
 							<option>1</option>
@@ -33,7 +35,7 @@
 							<option>1</option>
 						</object>
 						<object class="sizeritem">
-							<object class="wxChoice" name="ID_TYPECHOICE" variable="TypeChoice" member="yes">
+							<object class="wxChoice" name="ID_ACTIONTYPE" variable="ActionType" member="yes">
 								<content>
 									<item>Standalone</item>
 									<item>Emulated</item>
@@ -57,7 +59,7 @@
 							<option>1</option>
 						</object>
 						<object class="sizeritem">
-							<object class="wxComboBox" name="ID_SYSTEMCOMBOBOX" variable="SystemComboBox" member="yes">
+							<object class="wxComboBox" name="ID_ACTIONSYSTEM" variable="ActionSystem" member="yes">
 								<hidden>1</hidden>
 								<style>wxTAB_TRAVERSAL</style>
 							</object>
@@ -67,14 +69,14 @@
 						</object>
 						<object class="sizeritem">
 							<object class="wxStaticText" name="ID_FILETEXT" variable="FileText" member="yes">
-								<label>Executable File</label>
+								<label>Executable Path</label>
 							</object>
 							<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
 							<border>5</border>
 							<option>1</option>
 						</object>
 						<object class="sizeritem">
-							<object class="wxFilePickerCtrl" name="ID_FILEPICKERCTRL" variable="FilePickerCtrl" member="yes">
+							<object class="wxFilePickerCtrl" name="ID_ACTIONFILE" variable="ActionPath" member="yes">
 								<message></message>
 								<wildcard></wildcard>
 								<style>wxFLP_FILE_MUST_EXIST|wxFLP_OPEN|wxFLP_USE_TEXTCTRL|wxFLP_SMALL</style>
@@ -93,7 +95,7 @@
 							<option>1</option>
 						</object>
 						<object class="sizeritem">
-							<object class="wxDirPickerCtrl" name="ID_WORKDIRCTRL" variable="WorkingDirectoryCtrl" member="yes">
+							<object class="wxDirPickerCtrl" name="ID_ACTIONWORKDIR" variable="ActionWorkingDirectory" member="yes">
 								<message></message>
 							</object>
 							<flag>wxALL|wxEXPAND</flag>
@@ -109,7 +111,7 @@
 							<option>1</option>
 						</object>
 						<object class="sizeritem">
-							<object class="wxTextCtrl" name="ID_ARGTEXTCTRL" variable="ArgumentsTextCtrl" member="yes" />
+							<object class="wxTextCtrl" name="ID_ACTIONARGS" variable="ActionArguments" member="yes" />
 							<flag>wxALL|wxEXPAND</flag>
 							<border>5</border>
 							<option>1</option>
@@ -123,7 +125,7 @@
 							<option>1</option>
 						</object>
 						<object class="sizeritem">
-							<object class="wxBitmapButton" name="ID_ICONBUTTON" variable="IconButton" member="yes">
+							<object class="wxBitmapButton" name="ID_ACTIONICON" variable="ActionIcon" member="yes">
 								<size>32,32</size>
 							</object>
 							<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>

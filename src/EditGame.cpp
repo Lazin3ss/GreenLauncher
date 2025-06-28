@@ -11,6 +11,7 @@
 #include "LaunchConfig.h"
 #include "GreenLauncherMain.h"
 #include "Database.h"
+#include "GameData.h"
 
 //(*InternalHeaders(EditGame)
 #include <wx/button.h>
@@ -21,12 +22,12 @@
 //(*IdInit(EditGame)
 const long EditGame::ID_STATICTEXT1 = wxNewId();
 const long EditGame::ID_GAMENAME = wxNewId();
-const long EditGame::ID_CHECKBOX1 = wxNewId();
-const long EditGame::ID_CHECKBOX2 = wxNewId();
+const long EditGame::ID_GAMEFAVORITE = wxNewId();
+const long EditGame::ID_GAMEHIDDEN = wxNewId();
 const long EditGame::ID_STATICTEXT8 = wxNewId();
-const long EditGame::ID_COMBOBOX1 = wxNewId();
+const long EditGame::ID_GAMECATEGORY = wxNewId();
 const long EditGame::ID_STATICTEXT10 = wxNewId();
-const long EditGame::ID_COMBOBOX2 = wxNewId();
+const long EditGame::ID_GAMESOURCE = wxNewId();
 const long EditGame::ID_STATICTEXT4 = wxNewId();
 const long EditGame::ID_DATEPICKERCTRL1 = wxNewId();
 const long EditGame::ID_STATICTEXT5 = wxNewId();
@@ -46,31 +47,31 @@ const long EditGame::ID_PANEL6 = wxNewId();
 const long EditGame::ID_ACTIONLISTBOOK = wxNewId();
 const long EditGame::ID_PANEL1 = wxNewId();
 const long EditGame::ID_STATICTEXT11 = wxNewId();
-const long EditGame::ID_DATEPICKERCTRL3 = wxNewId();
+const long EditGame::ID_GAMERELEASEDATE = wxNewId();
 const long EditGame::ID_STATICTEXT12 = wxNewId();
-const long EditGame::ID_COMBOBOX3 = wxNewId();
+const long EditGame::ID_GAMEPLATFORM = wxNewId();
 const long EditGame::ID_STATICTEXT13 = wxNewId();
-const long EditGame::ID_COMBOBOX4 = wxNewId();
+const long EditGame::ID_GAMEDEVELOPER = wxNewId();
 const long EditGame::ID_STATICTEXT14 = wxNewId();
-const long EditGame::ID_COMBOBOX5 = wxNewId();
+const long EditGame::ID_GAMEPUBLISHER = wxNewId();
 const long EditGame::ID_STATICTEXT15 = wxNewId();
-const long EditGame::ID_COMBOBOX6 = wxNewId();
+const long EditGame::ID_GameGenre = wxNewId();
 const long EditGame::ID_STATICTEXT16 = wxNewId();
-const long EditGame::ID_COMBOBOX7 = wxNewId();
+const long EditGame::ID_GAMESERIES = wxNewId();
 const long EditGame::ID_STATICTEXT17 = wxNewId();
-const long EditGame::ID_COMBOBOX8 = wxNewId();
+const long EditGame::ID_GAMEREGION = wxNewId();
 const long EditGame::ID_STATICTEXT18 = wxNewId();
-const long EditGame::ID_COMBOBOX9 = wxNewId();
+const long EditGame::ID_GAMELANGUAGE = wxNewId();
 const long EditGame::ID_STATICTEXT19 = wxNewId();
-const long EditGame::ID_COMBOBOX10 = wxNewId();
+const long EditGame::ID_GAMELICENSE = wxNewId();
 const long EditGame::ID_STATICTEXT20 = wxNewId();
-const long EditGame::ID_COMBOBOX11 = wxNewId();
+const long EditGame::ID_GAMEFORMAT = wxNewId();
 const long EditGame::ID_STATICTEXT21 = wxNewId();
-const long EditGame::ID_CHOICE3 = wxNewId();
+const long EditGame::ID_GAMEAGERATING = wxNewId();
 const long EditGame::ID_STATICTEXT22 = wxNewId();
-const long EditGame::ID_TEXTCTRL6 = wxNewId();
+const long EditGame::ID_GAMESCORE = wxNewId();
 const long EditGame::ID_STATICTEXT32 = wxNewId();
-const long EditGame::ID_TEXTCTRL1 = wxNewId();
+const long EditGame::ID_GAMEDESCRIPTION = wxNewId();
 const long EditGame::ID_PANEL5 = wxNewId();
 const long EditGame::ID_STATICTEXT25 = wxNewId();
 const long EditGame::ID_COMBOBOX12 = wxNewId();
@@ -162,23 +163,23 @@ EditGame::EditGame(wxWindow* parent, wxWindowID id)
     FlexGridSizer2->Add(StaticText1, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     GameName = new wxTextCtrl(Panel6, ID_GAMENAME, wxEmptyString, wxDefaultPosition, wxSize(200,23), 0, wxDefaultValidator, _T("ID_GAMENAME"));
     FlexGridSizer2->Add(GameName, 1, wxALL|wxEXPAND, 5);
-    CheckBox1 = new wxCheckBox(Panel6, ID_CHECKBOX1, _("Favorite"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_CHECKBOX1"));
-    CheckBox1->SetValue(false);
-    FlexGridSizer2->Add(CheckBox1, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-    CheckBox2 = new wxCheckBox(Panel6, ID_CHECKBOX2, _("Hidden"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_CHECKBOX2"));
-    CheckBox2->SetValue(false);
-    FlexGridSizer2->Add(CheckBox2, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+    GameFavorite = new wxCheckBox(Panel6, ID_GAMEFAVORITE, _("Favorite"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_GAMEFAVORITE"));
+    GameFavorite->SetValue(false);
+    FlexGridSizer2->Add(GameFavorite, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+    GameHidden = new wxCheckBox(Panel6, ID_GAMEHIDDEN, _("Hidden"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_GAMEHIDDEN"));
+    GameHidden->SetValue(false);
+    FlexGridSizer2->Add(GameHidden, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     BoxSizer7->Add(FlexGridSizer2, 1, wxALL|wxEXPAND, 5);
     FlexGridSizer5 = new wxFlexGridSizer(0, 2, 0, 0);
     FlexGridSizer5->AddGrowableCol(1);
     StaticText8 = new wxStaticText(Panel6, ID_STATICTEXT8, _("Categories"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT8"));
     FlexGridSizer5->Add(StaticText8, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-    ComboBox1 = new wxComboBox(Panel6, ID_COMBOBOX1, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_COMBOBOX1"));
-    FlexGridSizer5->Add(ComboBox1, 1, wxALL|wxEXPAND, 5);
+    GameCategory = new wxTextCtrl(Panel6, ID_GAMECATEGORY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_GAMECATEGORY"));
+    FlexGridSizer5->Add(GameCategory, 1, wxALL|wxEXPAND, 5);
     StaticText10 = new wxStaticText(Panel6, ID_STATICTEXT10, _("Source"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT10"));
     FlexGridSizer5->Add(StaticText10, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-    ComboBox2 = new wxComboBox(Panel6, ID_COMBOBOX2, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_COMBOBOX2"));
-    FlexGridSizer5->Add(ComboBox2, 1, wxALL|wxEXPAND, 5);
+    GameSource = new wxTextCtrl(Panel6, ID_GAMESOURCE, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_GAMESOURCE"));
+    FlexGridSizer5->Add(GameSource, 1, wxALL|wxEXPAND, 5);
     BoxSizer7->Add(FlexGridSizer5, 1, wxALL|wxEXPAND, 5);
     StaticBoxSizer1->Add(BoxSizer7, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 0);
     BoxSizer3->Add(StaticBoxSizer1, 0, wxALL|wxEXPAND, 5);
@@ -263,58 +264,58 @@ EditGame::EditGame(wxWindow* parent, wxWindowID id)
     FlexGridSizer6->AddGrowableRow(6);
     StaticText11 = new wxStaticText(Panel5, ID_STATICTEXT11, _("Release Date"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT11"));
     FlexGridSizer6->Add(StaticText11, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-    DatePickerCtrl3 = new wxDatePickerCtrl(Panel5, ID_DATEPICKERCTRL3, wxDefaultDateTime, wxDefaultPosition, wxDefaultSize, wxDP_DEFAULT|wxDP_DROPDOWN|wxDP_SHOWCENTURY, wxDefaultValidator, _T("ID_DATEPICKERCTRL3"));
-    FlexGridSizer6->Add(DatePickerCtrl3, 1, wxALL|wxEXPAND, 5);
+    GameReleaseDate = new wxDatePickerCtrl(Panel5, ID_GAMERELEASEDATE, wxDefaultDateTime, wxDefaultPosition, wxDefaultSize, wxDP_DEFAULT|wxDP_DROPDOWN|wxDP_SHOWCENTURY, wxDefaultValidator, _T("ID_GAMERELEASEDATE"));
+    FlexGridSizer6->Add(GameReleaseDate, 1, wxALL|wxEXPAND, 5);
     StaticText12 = new wxStaticText(Panel5, ID_STATICTEXT12, _("Platform"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT12"));
     FlexGridSizer6->Add(StaticText12, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-    ComboBox3 = new wxComboBox(Panel5, ID_COMBOBOX3, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_COMBOBOX3"));
-    FlexGridSizer6->Add(ComboBox3, 1, wxALL|wxEXPAND, 5);
+    GamePlatform = new wxTextCtrl(Panel5, ID_GAMEPLATFORM, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_GAMEPLATFORM"));
+    FlexGridSizer6->Add(GamePlatform, 1, wxALL|wxEXPAND, 5);
     StaticText13 = new wxStaticText(Panel5, ID_STATICTEXT13, _("Developer"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT13"));
     FlexGridSizer6->Add(StaticText13, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-    ComboBox4 = new wxComboBox(Panel5, ID_COMBOBOX4, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_COMBOBOX4"));
-    FlexGridSizer6->Add(ComboBox4, 1, wxALL|wxEXPAND, 5);
+    GameDeveloper = new wxTextCtrl(Panel5, ID_GAMEDEVELOPER, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_GAMEDEVELOPER"));
+    FlexGridSizer6->Add(GameDeveloper, 1, wxALL|wxEXPAND, 5);
     StaticText14 = new wxStaticText(Panel5, ID_STATICTEXT14, _("Publisher"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT14"));
     FlexGridSizer6->Add(StaticText14, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-    ComboBox5 = new wxComboBox(Panel5, ID_COMBOBOX5, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_COMBOBOX5"));
-    FlexGridSizer6->Add(ComboBox5, 1, wxALL|wxEXPAND, 5);
+    GamePublisher = new wxTextCtrl(Panel5, ID_GAMEPUBLISHER, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_GAMEPUBLISHER"));
+    FlexGridSizer6->Add(GamePublisher, 1, wxALL|wxEXPAND, 5);
     StaticText15 = new wxStaticText(Panel5, ID_STATICTEXT15, _("Genre"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT15"));
     FlexGridSizer6->Add(StaticText15, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-    ComboBox6 = new wxComboBox(Panel5, ID_COMBOBOX6, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_COMBOBOX6"));
-    FlexGridSizer6->Add(ComboBox6, 1, wxALL|wxEXPAND, 5);
+    GameGenre = new wxTextCtrl(Panel5, ID_GameGenre, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_GameGenre"));
+    FlexGridSizer6->Add(GameGenre, 1, wxALL|wxEXPAND, 5);
     StaticText16 = new wxStaticText(Panel5, ID_STATICTEXT16, _("Series"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT16"));
     FlexGridSizer6->Add(StaticText16, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-    ComboBox7 = new wxComboBox(Panel5, ID_COMBOBOX7, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_COMBOBOX7"));
-    FlexGridSizer6->Add(ComboBox7, 1, wxALL|wxEXPAND, 5);
+    GameSeries = new wxTextCtrl(Panel5, ID_GAMESERIES, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_GAMESERIES"));
+    FlexGridSizer6->Add(GameSeries, 1, wxALL|wxEXPAND, 5);
     StaticText17 = new wxStaticText(Panel5, ID_STATICTEXT17, _("Region"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT17"));
     FlexGridSizer6->Add(StaticText17, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-    ComboBox8 = new wxComboBox(Panel5, ID_COMBOBOX8, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_COMBOBOX8"));
-    FlexGridSizer6->Add(ComboBox8, 1, wxALL|wxEXPAND, 5);
+    GameRegion = new wxTextCtrl(Panel5, ID_GAMEREGION, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_GAMEREGION"));
+    FlexGridSizer6->Add(GameRegion, 1, wxALL|wxEXPAND, 5);
     StaticText18 = new wxStaticText(Panel5, ID_STATICTEXT18, _("Language"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT18"));
     FlexGridSizer6->Add(StaticText18, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-    ComboBox9 = new wxComboBox(Panel5, ID_COMBOBOX9, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_COMBOBOX9"));
-    FlexGridSizer6->Add(ComboBox9, 1, wxALL|wxEXPAND, 5);
+    GameLanguage = new wxTextCtrl(Panel5, ID_GAMELANGUAGE, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_GAMELANGUAGE"));
+    FlexGridSizer6->Add(GameLanguage, 1, wxALL|wxEXPAND, 5);
     StaticText19 = new wxStaticText(Panel5, ID_STATICTEXT19, _("License Model"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT19"));
     FlexGridSizer6->Add(StaticText19, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-    ComboBox10 = new wxComboBox(Panel5, ID_COMBOBOX10, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_COMBOBOX10"));
-    FlexGridSizer6->Add(ComboBox10, 1, wxALL|wxEXPAND, 5);
+    GameLicense = new wxTextCtrl(Panel5, ID_GAMELICENSE, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_GAMELICENSE"));
+    FlexGridSizer6->Add(GameLicense, 1, wxALL|wxEXPAND, 5);
     StaticText20 = new wxStaticText(Panel5, ID_STATICTEXT20, _("Format"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT20"));
     FlexGridSizer6->Add(StaticText20, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-    ComboBox11 = new wxComboBox(Panel5, ID_COMBOBOX11, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_COMBOBOX11"));
-    FlexGridSizer6->Add(ComboBox11, 1, wxALL|wxEXPAND, 5);
+    GameFormat = new wxTextCtrl(Panel5, ID_GAMEFORMAT, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_GAMEFORMAT"));
+    FlexGridSizer6->Add(GameFormat, 1, wxALL|wxEXPAND, 5);
     StaticText21 = new wxStaticText(Panel5, ID_STATICTEXT21, _("Age Rating"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT21"));
     FlexGridSizer6->Add(StaticText21, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-    Choice3 = new wxChoice(Panel5, ID_CHOICE3, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_CHOICE3"));
-    FlexGridSizer6->Add(Choice3, 1, wxALL|wxEXPAND, 5);
+    GameAgeRating = new wxChoice(Panel5, ID_GAMEAGERATING, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_GAMEAGERATING"));
+    FlexGridSizer6->Add(GameAgeRating, 1, wxALL|wxEXPAND, 5);
     StaticText22 = new wxStaticText(Panel5, ID_STATICTEXT22, _("Score"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT22"));
     FlexGridSizer6->Add(StaticText22, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
-    TextCtrl6 = new wxTextCtrl(Panel5, ID_TEXTCTRL6, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_TEXTCTRL6"));
-    FlexGridSizer6->Add(TextCtrl6, 1, wxALL|wxEXPAND, 5);
+    GameScore = new wxTextCtrl(Panel5, ID_GAMESCORE, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_GAMESCORE"));
+    FlexGridSizer6->Add(GameScore, 1, wxALL|wxEXPAND, 5);
     StaticText32 = new wxStaticText(Panel5, ID_STATICTEXT32, _("Description"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT32"));
     FlexGridSizer6->Add(StaticText32, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-    TextCtrl1 = new wxTextCtrl(Panel5, ID_TEXTCTRL1, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE, wxDefaultValidator, _T("ID_TEXTCTRL1"));
-    TextCtrl1->SetToolTip(_("Add a description!"));
-    TextCtrl1->SetHelpText(_("Add a description!"));
-    FlexGridSizer6->Add(TextCtrl1, 1, wxALL|wxEXPAND, 5);
+    GameDescription = new wxTextCtrl(Panel5, ID_GAMEDESCRIPTION, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE, wxDefaultValidator, _T("ID_GAMEDESCRIPTION"));
+    GameDescription->SetToolTip(_("Add a description!"));
+    GameDescription->SetHelpText(_("Add a description!"));
+    FlexGridSizer6->Add(GameDescription, 1, wxALL|wxEXPAND, 5);
     Panel5->SetSizer(FlexGridSizer6);
     Panel7 = new wxPanel(Choicebook1, ID_PANEL7, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, _T("ID_PANEL7"));
     FlexGridSizer7 = new wxFlexGridSizer(0, 4, 0, 0);
@@ -546,10 +547,40 @@ EditGame::SetDatabase(Database* db)
 
 EditGame::SaveGameToDatabase()
 {
-    const wxString name = GameName->GetLineText(0);
-    name.Replace("'", "''", true);
-    const wxString path = ((LaunchConfig*) ActionListbook->GetPage(0))->FilePickerCtrl->GetPath();
-    db->AddGame(name, path);
+    GameData data;
+    // Gather General info
+    data.name = GameName->GetValue();
+    data.favorite = GameFavorite->GetValue();
+    data.hidden = GameHidden->GetValue();
+    data.category = GameCategory->GetValue();
+    data.source = GameSource->GetValue();
+    // Gather Action data info
+    for (int i = 0; i < ActionListbook->GetPageCount(); i++) {
+        ActionData actData;
+        actData.name = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionName->GetValue();
+        actData.isMain = ((LaunchConfig*) ActionListbook->GetPage(i))->isMain;
+        actData.type = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionType->GetSelection();
+        actData.systemId = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionSystem->GetCurrentSelection();
+        actData.path = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionPath->GetPath();
+        actData.workingDir = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionWorkingDirectory->GetPath();
+        actData.args = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionArguments->GetValue();
+        actData.iconPath = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionPath->GetPath(); // Not implemented yet, just use same path as executable
+        data.actions.push_back(actData);
+    }
+    // Gather Metadata info
+    data.metadata.releaseDate = GameReleaseDate->GetValue();
+    data.metadata.platform = GamePlatform->GetValue();
+    data.metadata.developer = GameDeveloper->GetValue();
+    data.metadata.publisher = GamePublisher->GetValue();
+    data.metadata.genre = GameGenre->GetValue();
+    data.metadata.series = GameSeries->GetValue();
+    data.metadata.region = GameRegion->GetValue();
+    data.metadata.language = GameLanguage->GetValue();
+    data.metadata.license = GameLicense->GetValue();
+    data.metadata.ageRating = GameAgeRating->GetString(GameAgeRating->GetSelection());
+    data.metadata.score = GameScore->GetValue();
+    data.metadata.description = GameDescription->GetValue();
+    db->AddGame(data);
 }
 
 EditGame::OnDialogButtonClick(wxCommandEvent& event)

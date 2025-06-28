@@ -184,7 +184,7 @@ void GreenLauncherFrame::OnQuit(wxCommandEvent& event)
 void GreenLauncherFrame::OnAbout(wxCommandEvent& event)
 {
     // wxString msg = wxbuildinfo(long_f);
-    wxString msg = GameList1->GetItemData(0, 0);
+    wxString msg = db->ReturnGameData(1);
     wxMessageBox(msg, _("Welcome to..."));
 }
 
