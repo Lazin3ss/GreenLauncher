@@ -1,5 +1,5 @@
 /***************************************************************
- * Name:      LaunchConfig.h
+ * Name:      wxLaunchConfig.h
  * Purpose:   Defines Launch Configuration panel
  * Author:    Francisco Iturrieta (laziness@protonmail.com)
  * Created:   2025-01-15
@@ -7,8 +7,8 @@
  * License:   GPL-3.0
  **************************************************************/
 
-#ifndef LAUNCHCONFIG_H
-#define LAUNCHCONFIG_H
+#ifndef WXLAUNCHCONFIG_H
+#define WXLAUNCHCONFIG_H
 
 //(*Headers(LaunchConfig)
 #include <wx/bmpbuttn.h>
@@ -33,6 +33,7 @@ class LaunchConfig: public wxPanel
         size_t pageId;
         bool isMain;
         int lastTypeSelection = 0;
+        long ActionId = 0;
 
         //(*Declarations(LaunchConfig)
         wxBitmapButton* ActionIcon;

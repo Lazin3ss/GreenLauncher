@@ -8,9 +8,10 @@
  **************************************************************/
 
 #include "GreenLauncherApp.h"
+#include "GameManager.h"
 
 //(*AppHeaders
-#include "GreenLauncherMain.h"
+#include "wxGreenLauncherMain.h"
 #include <wx/image.h>
 //*)
 
@@ -18,6 +19,7 @@ IMPLEMENT_APP(GreenLauncherApp);
 
 bool GreenLauncherApp::OnInit()
 {
+    gameManager = new GameManager();
     //(*AppInitialize
     bool wxsOK = true;
     wxInitAllImageHandlers();
@@ -30,4 +32,9 @@ bool GreenLauncherApp::OnInit()
     //*)
     return wxsOK;
 
+}
+
+int GreenLauncherApp::OnExit()
+{
+    delete gameManager;
 }

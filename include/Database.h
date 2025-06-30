@@ -20,18 +20,24 @@ class Database
 {
     public:
         char **pResult;
-        int pRows = -1;
-        int pCols = -1;
+        long pRows = -1;
+        long pCols = -1;
 
         Database();
         virtual ~Database();
 
         void Query(wxString str);
         void RunSQL(wxString name);
+        void AddAction(long game_id, bool isMain, wxString name, long type, wxString path, wxString workingDir, wxString args, long systemId, wxString iconPath);
+        void UpdateAction(long actionId, wxString name, long type, wxString path, wxString workingDir, wxString args, long systemId, wxString iconPath);
         void AddMetadataAndMap(const char* type, wxString name, long gameId);
+        void UpdateMetadata(const char* type, wxString names, long gameId);
         void AddGame(GameData data);
+        void EditGame(GameData data);
+        void DeleteGame(long gameId);
         wxString ReturnTableItem(long row, long col);
-        wxString ReturnGameData(long id);
+        wxString ReturnMetadata(const char* type, long gameId);
+        GameData ReturnGameData(long id);
 
     private:
         sqlite3 *db;

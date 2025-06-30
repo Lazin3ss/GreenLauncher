@@ -203,24 +203,26 @@
 		</Linker>
 		<Unit filename="icon.ico" />
 		<Unit filename="include/Database.h" />
-		<Unit filename="include/EditGame.h" />
 		<Unit filename="include/GameData.h" />
+		<Unit filename="include/GameManager.h" />
 		<Unit filename="include/GreenLauncherApp.h" />
-		<Unit filename="include/GreenLauncherMain.h" />
-		<Unit filename="include/LaunchConfig.h" />
 		<Unit filename="include/sqlite3/sqlite3.h" />
-		<Unit filename="include/wxGameList.h" />
+		<Unit filename="include/wxEditGame.h" />
+		<Unit filename="include/wxGameListCtrl.h" />
+		<Unit filename="include/wxGreenLauncherMain.h" />
+		<Unit filename="include/wxLaunchConfig.h" />
 		<Unit filename="resource.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>
 		<Unit filename="src/Database.cpp" />
-		<Unit filename="src/EditGame.cpp" />
+		<Unit filename="src/GameManager.cpp" />
 		<Unit filename="src/GreenLauncherApp.cpp" />
-		<Unit filename="src/GreenLauncherMain.cpp" />
-		<Unit filename="src/LaunchConfig.cpp" />
 		<Unit filename="src/sqlite3/sqlite3.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="src/wxEditGame.cpp" />
+		<Unit filename="src/wxGreenLauncherMain.cpp" />
+		<Unit filename="src/wxLaunchConfig.cpp" />
 		<Unit filename="wxsmith/EditGame.wxs" />
 		<Unit filename="wxsmith/GreenLauncherframe.wxs" />
 		<Unit filename="wxsmith/LaunchConfig.wxs" />
@@ -233,9 +235,9 @@
 			<wxsmith version="1">
 				<gui name="wxWidgets" src="src/GreenLauncherApp.cpp" main="GreenLauncherFrame" init_handlers="necessary" language="CPP" />
 				<resources>
-					<wxFrame wxs="wxsmith/GreenLauncherframe.wxs" src="src/GreenLauncherMain.cpp" hdr="include/GreenLauncherMain.h" fwddecl="0" i18n="1" name="GreenLauncherFrame" language="CPP" />
-					<wxDialog wxs="wxsmith/EditGame.wxs" src="src/EditGame.cpp" hdr="include/EditGame.h" fwddecl="0" i18n="1" name="EditGame" language="CPP" />
-					<wxPanel wxs="wxsmith/LaunchConfig.wxs" src="src/LaunchConfig.cpp" hdr="include/LaunchConfig.h" fwddecl="0" i18n="1" name="LaunchConfig" language="CPP" />
+					<wxFrame wxs="wxsmith/GreenLauncherframe.wxs" src="src/wxGreenLauncherMain.cpp" hdr="include/wxGreenLauncherMain.h" fwddecl="0" i18n="1" name="GreenLauncherFrame" language="CPP" />
+					<wxDialog wxs="wxsmith/EditGame.wxs" src="src/wxEditGame.cpp" hdr="include/wxEditGame.h" fwddecl="0" i18n="1" name="EditGame" language="CPP" />
+					<wxPanel wxs="wxsmith/LaunchConfig.wxs" src="src/wxLaunchConfig.cpp" hdr="include/wxLaunchConfig.h" fwddecl="0" i18n="1" name="LaunchConfig" language="CPP" />
 				</resources>
 			</wxsmith>
 		</Extensions>

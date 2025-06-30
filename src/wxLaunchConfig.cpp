@@ -1,14 +1,14 @@
 /***************************************************************
- * Name:      LaunchConfig.cpp
- * Purpose:   Code for Launch Configuration panel, as part of EditGame dialog
+ * Name:      wxLaunchConfig.cpp
+ * Purpose:   Code for Launch Configuration panel, as part of wxEditGame dialog
  * Author:    Francisco Iturrieta (laziness@protonmail.com)
  * Created:   2025-01-15
  * Copyright: Francisco Iturrieta (https://lisa734.neocities.org)
  * License:   GPL-3.0
  **************************************************************/
 
-#include "LaunchConfig.h"
-#include "EditGame.h"
+#include "wxEditGame.h"
+#include "wxLaunchConfig.h"
 
 //(*InternalHeaders(LaunchConfig)
 #include <wx/artprov.h>

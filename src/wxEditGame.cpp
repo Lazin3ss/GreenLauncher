@@ -1,5 +1,5 @@
 /***************************************************************
- * Name:      EditGame.cpp
+ * Name:      wxEditGame.cpp
  * Purpose:   Code for Add/Edit Game Dialog Frame
  * Author:    Francisco Iturrieta (laziness@protonmail.com)
  * Created:   2025-01-08
@@ -7,17 +7,20 @@
  * License:   GPL-3.0
  **************************************************************/
 
-#include "EditGame.h".
-#include "LaunchConfig.h"
-#include "GreenLauncherMain.h"
 #include "Database.h"
 #include "GameData.h"
+
+#include "wxEditGame.h".
+#include "wxLaunchConfig.h"
+#include "wxGreenLauncherMain.h"
 
 //(*InternalHeaders(EditGame)
 #include <wx/button.h>
 #include <wx/intl.h>
 #include <wx/string.h>
 //*)
+
+wxDECLARE_APP(GreenLauncherApp);
 
 //(*IdInit(EditGame)
 const long EditGame::ID_STATICTEXT1 = wxNewId();
@@ -123,7 +126,7 @@ BEGIN_EVENT_TABLE(EditGame,wxDialog)
     //*)
 END_EVENT_TABLE()
 
-EditGame::EditGame(wxWindow* parent, wxWindowID id)
+EditGame::EditGame(wxWindow* parent, GameData data, wxWindowID id)
 {
     //(*Initialize(EditGame)
     wxBoxSizer* BoxSizer1;
@@ -145,7 +148,7 @@ EditGame::EditGame(wxWindow* parent, wxWindowID id)
     wxStaticBoxSizer* StaticBoxSizer3;
     wxStdDialogButtonSizer* StdDialogButtonSizer1;
 
-    Create(parent, wxID_ANY, _("Add / Edit Game"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, _T("wxID_ANY"));
+    Create(parent, wxID_ANY, _("Edit Game"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER, _T("wxID_ANY"));
     Move(wxPoint(-1,-1));
     SetMinSize(wxSize(620,440));
     FlexGridSizer1 = new wxFlexGridSizer(2, 1, 0, 0);
@@ -528,10 +531,16 @@ EditGame::EditGame(wxWindow* parent, wxWindowID id)
     Fit();
     Center();
     //*)
-    this->db = db;
     LaunchConfig* LaunchPanel = new LaunchConfig(ActionListbook, wxString("Main"), true);
     ActionListbook->AddPage(LaunchPanel, wxString("Main"), true);
     Bind(wxEVT_BUTTON, (wxObjectEventFunction)&EditGame::OnDialogButtonClick, this);
+    this->data = data;
+    if (data.id > 0) {
+        SetLabel(wxString::Format("Editing %s", data.name));
+        LoadData();
+    } else {
+        SetLabel("Add a new game");
+    }
 }
 
 EditGame::~EditGame()
@@ -540,14 +549,52 @@ EditGame::~EditGame()
     //*)
 }
 
-EditGame::SetDatabase(Database* db)
+void EditGame::LoadData()
 {
-    this->db = db;
+    // Game base data
+    GameName->SetValue(data.name);
+    GameFavorite->SetValue(data.favorite);
+    GameHidden->SetValue(data.hidden);
+    GameCategory->SetValue(data.category);
+    GameSource->SetValue(data.source);
+    // Actions data
+    for (int i = 0; i < data.actions.size(); i++) {
+        if (!data.actions[i].isMain) {
+            LaunchConfig* panel = new LaunchConfig(ActionListbook, data.actions[i].name, false);
+            ActionListbook->AddPage(panel, data.actions[i].name, true);
+            panel->ActionType->SetSelection(data.actions[i].type);
+            panel->ActionSystem->SetSelection(data.actions[i].systemId);
+            panel->ActionPath->SetPath(data.actions[i].path);
+            panel->ActionWorkingDirectory->SetPath(data.actions[i].workingDir);
+            panel->ActionArguments->SetValue(data.actions[i].args);
+            panel->ActionId = data.actions[i].id;
+        } else {
+            ((LaunchConfig*) ActionListbook->GetPage(0))->ActionType->SetSelection(data.actions[i].type);
+            ((LaunchConfig*) ActionListbook->GetPage(0))->ActionSystem->SetSelection(data.actions[i].systemId);
+            ((LaunchConfig*) ActionListbook->GetPage(0))->ActionPath->SetPath(data.actions[i].path);
+            ((LaunchConfig*) ActionListbook->GetPage(0))->ActionWorkingDirectory->SetPath(data.actions[i].workingDir);
+            ((LaunchConfig*) ActionListbook->GetPage(0))->ActionArguments->SetValue(data.actions[i].args);
+            ((LaunchConfig*) ActionListbook->GetPage(0))->ActionId = data.actions[i].id;
+        }
+    }
+    // Metadata
+    GameReleaseDate->SetValue(data.metadata.releaseDate);
+    GamePlatform->SetValue(data.metadata.platform);
+    GameDeveloper->SetValue(data.metadata.developer);
+    GamePublisher->SetValue(data.metadata.publisher);
+    GameGenre->SetValue(data.metadata.genre);
+    GameSeries->SetValue(data.metadata.series);
+    GameRegion->SetValue(data.metadata.region);
+    GameLanguage->SetValue(data.metadata.language);
+    GameLicense->SetValue(data.metadata.license);
+    //GameAgeRating->SetString(0, data.metadata.ageRating);
+    //GameAgeRating->SetSelection(0);
+    GameScore->SetValue(data.metadata.score);
+    GameDescription->SetValue(data.metadata.description);
 }
 
-EditGame::SaveGameToDatabase()
+void EditGame::SaveData()
 {
-    GameData data;
     // Gather General info
     data.name = GameName->GetValue();
     data.favorite = GameFavorite->GetValue();
@@ -555,8 +602,10 @@ EditGame::SaveGameToDatabase()
     data.category = GameCategory->GetValue();
     data.source = GameSource->GetValue();
     // Gather Action data info
+    data.actions.clear();
     for (int i = 0; i < ActionListbook->GetPageCount(); i++) {
         ActionData actData;
+        actData.id = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionId;
         actData.name = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionName->GetValue();
         actData.isMain = ((LaunchConfig*) ActionListbook->GetPage(i))->isMain;
         actData.type = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionType->GetSelection();
@@ -580,14 +629,13 @@ EditGame::SaveGameToDatabase()
     data.metadata.ageRating = GameAgeRating->GetString(GameAgeRating->GetSelection());
     data.metadata.score = GameScore->GetValue();
     data.metadata.description = GameDescription->GetValue();
-    db->AddGame(data);
 }
 
 EditGame::OnDialogButtonClick(wxCommandEvent& event)
 {
     switch (event.GetId()) {
         case wxID_SAVE:
-            SaveGameToDatabase();
+            SaveData();
             EndModal(wxOK);
             break;
         case wxID_CANCEL:

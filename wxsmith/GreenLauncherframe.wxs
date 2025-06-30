@@ -12,7 +12,7 @@
 		<object class="wxSplitterWindow" name="ID_SPLITTERWINDOW1" variable="SplitterWindow1" member="yes">
 			<sashpos>1</sashpos>
 			<sashgravity>0.000000</sashgravity>
-			<minsize>130</minsize>
+			<minsize>150</minsize>
 			<orientation>vertical</orientation>
 			<style>wxSP_3D|wxSP_LIVE_UPDATE</style>
 			<object class="wxTreeCtrl" name="ID_TREECTRL1" variable="TreeCtrl1" member="yes">
@@ -24,39 +24,11 @@
 					<item>1,#000000,0,-1,-1,-1,-1,Games</item>
 					<item>2,#000000,0,-1,-1,-1,-1,All Games</item>
 					<item>2,#000000,0,-1,-1,-1,-1,Categories</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Developers</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Genres</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Platforms</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Publishers</item>
 					<item>2,#000000,0,-1,-1,-1,-1,Years</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Features</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Series</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Regions</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Age Rating</item>
-					<item>2,#000000,0,-1,-1,-1,-1,User Rating</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Languages</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Licenses</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Favorites</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Installed</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Completion</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Ownership</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Source</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Perspective</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Player Mode</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Theme</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Engine</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Staff</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Hours Played</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Length</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Description</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Review</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Links</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Photos</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Videos</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Controller</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Renderer</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Game Type</item>
-					<item>2,#000000,0,-1,-1,-1,-1,Connection</item>
+					<item>2,#000000,0,-1,-1,-1,-1,Platforms</item>
+					<item>2,#000000,0,-1,-1,-1,-1,Developers</item>
+					<item>2,#000000,0,-1,-1,-1,-1,Publishers</item>
+					<item>2,#000000,0,-1,-1,-1,-1,Genres</item>
 					<item>1,#000000,0,-1,-1,-1,-1,Tools</item>
 				</tree_items>
 				<items_text>
@@ -66,49 +38,23 @@
 					<item2>1,#000000,0,-1,-1,-1,-1,Games</item2>
 					<item2>2,#000000,0,-1,-1,-1,-1,All Games</item2>
 					<item2>2,#000000,0,-1,-1,-1,-1,Categories</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Developers</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Genres</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Platforms</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Publishers</item2>
 					<item2>2,#000000,0,-1,-1,-1,-1,Years</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Features</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Series</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Regions</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Age Rating</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,User Rating</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Languages</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Licenses</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Favorites</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Installed</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Completion</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Ownership</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Source</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Perspective</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Player Mode</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Theme</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Engine</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Staff</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Hours Played</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Length</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Description</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Review</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Links</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Photos</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Videos</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Controller</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Renderer</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Game Type</item2>
-					<item2>2,#000000,0,-1,-1,-1,-1,Connection</item2>
+					<item2>2,#000000,0,-1,-1,-1,-1,Platforms</item2>
+					<item2>2,#000000,0,-1,-1,-1,-1,Developers</item2>
+					<item2>2,#000000,0,-1,-1,-1,-1,Publishers</item2>
+					<item2>2,#000000,0,-1,-1,-1,-1,Genres</item2>
 					<item2>1,#000000,0,-1,-1,-1,-1,Tools</item2>
 				</items_text>
 				<pos>53,132</pos>
 				<extra_code>TreeCtrl1-&gt;ExpandAll();</extra_code>
 				<style>wxTR_HIDE_ROOT|wxTR_DEFAULT_STYLE</style>
 			</object>
-			<object class="wxListView" name="ID_GAMELIST1" subclass="wxGameList" variable="GameList1" member="yes">
+			<object class="wxListView" name="ID_GAMELIST1" subclass="GameListCtrl" variable="GameList1" member="yes">
 				<pos>248,135</pos>
 				<style>wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VIRTUAL</style>
+				<handler function="OnGameList1ItemSelect" entry="EVT_LIST_ITEM_SELECTED" />
 				<handler function="OnGameList1ItemActivated" entry="EVT_LIST_ITEM_ACTIVATED" />
+				<handler function="OnGameList1ItemRClick" entry="EVT_LIST_ITEM_RIGHT_CLICK" />
 			</object>
 		</object>
 		<object class="wxMenuBar" variable="MenuBar1" member="no">
@@ -141,6 +87,20 @@
 			<widths>-10,-1</widths>
 			<styles>wxSB_NORMAL,wxSB_NORMAL</styles>
 			<style>wxALWAYS_SHOW_SB</style>
+		</object>
+		<object class="wxMenu" variable="GameListMenu" member="yes">
+			<object class="wxMenuItem" name="ID_LAUNCHGAMEMENUITEM" variable="LaunchGameMenuItem" member="yes">
+				<label>Launch Game</label>
+				<handler function="OnLaunchGameMenuItemSelected" entry="EVT_MENU" />
+			</object>
+			<object class="wxMenuItem" name="ID_EDITGAMEMENUITEM" variable="EditGameMenuItem" member="yes">
+				<label>Edit Game</label>
+				<handler function="OnEditGameMenuItemSelected" entry="EVT_MENU" />
+			</object>
+			<object class="wxMenuItem" name="ID_DELETEGAMEMENUITEM" variable="DeleteGameMenuItem" member="yes">
+				<label>Delete Game</label>
+				<handler function="OnDeleteGameMenuItemSelected" entry="EVT_MENU" />
+			</object>
 		</object>
 	</object>
 </wxsmith>

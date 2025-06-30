@@ -1,5 +1,5 @@
 /***************************************************************
- * Name:      GreenLauncherMain.h
+ * Name:      wxGreenLauncherMain.h
  * Purpose:   Defines Application Frame
  * Author:    Francisco Iturrieta (laziness@protonmail.com)
  * Created:   2024-12-02
@@ -7,11 +7,10 @@
  * License:   GPL-3.0
  **************************************************************/
 
-#ifndef GREENLAUNCHERMAIN_H
-#define GREENLAUNCHERMAIN_H
+#ifndef WXGREENLAUNCHERMAIN_H
+#define WXGREENLAUNCHERMAIN_H
 
-#include "wxGameList.h"
-#include "Database.h"
+#include "wxGameListCtrl.h"
 
 //(*Headers(GreenLauncherFrame)
 #include <wx/frame.h>
@@ -29,10 +28,9 @@ class GreenLauncherFrame: public wxFrame
         GreenLauncherFrame(wxWindow* parent,wxWindowID id = -1);
         virtual ~GreenLauncherFrame();
 
-        wxGameList* GetGameList();
+        GameListCtrl* GetGameList();
 
     private:
-        Database* db;
 
         //(*Handlers(GreenLauncherFrame)
         void OnQuit(wxCommandEvent& event);
@@ -43,6 +41,11 @@ class GreenLauncherFrame: public wxFrame
         void OnGameList1ItemActivated(wxListEvent& event);
         void OnAddGameClick(wxCommandEvent& event);
         void OnTreeCtrl1BeginDrag1(wxTreeEvent& event);
+        void OnGameList1ItemRClick(wxListEvent& event);
+        void OnLaunchGameMenuItemSelected(wxCommandEvent& event);
+        void OnGameList1ItemSelect(wxListEvent& event);
+        void OnDeleteGameMenuItemSelected(wxCommandEvent& event);
+        void OnEditGameMenuItemSelected(wxCommandEvent& event);
         //*)
 
         //(*Identifiers(GreenLauncherFrame)
@@ -53,10 +56,17 @@ class GreenLauncherFrame: public wxFrame
         static const long idMenuQuit;
         static const long idMenuAbout;
         static const long ID_STATUSBAR1;
+        static const long ID_LAUNCHGAMEMENUITEM;
+        static const long ID_EDITGAMEMENUITEM;
+        static const long ID_DELETEGAMEMENUITEM;
         //*)
 
         //(*Declarations(GreenLauncherFrame)
-        wxGameList* GameList1;
+        GameListCtrl* GameList1;
+        wxMenu GameListMenu;
+        wxMenuItem* DeleteGameMenuItem;
+        wxMenuItem* EditGameMenuItem;
+        wxMenuItem* LaunchGameMenuItem;
         wxMenuItem* MenuItem3;
         wxSplitterWindow* SplitterWindow1;
         wxStatusBar* StatusBar1;

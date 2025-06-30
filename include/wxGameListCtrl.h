@@ -1,5 +1,5 @@
 /***************************************************************
- * Name:      wxGameList.h
+ * Name:      wxGameListCtrl.h
  * Purpose:   Defines wxListCtrl class extension for game list displaying
  * Author:    Francisco Iturrieta (laziness@protonmail.com)
  * Created:   2024-12-31
@@ -7,30 +7,26 @@
  * License:   GPL-3.0
  **************************************************************/
 
-#ifndef WXGAMELIST_H
-#define WXGAMELIST_H
+#ifndef WXGAMELISTCTRL_H
+#define WXGAMELISTCTRL_H
 
 #include <wx/wx.h>
 #include <wx/imaglist.h>
 #include <wx/listctrl.h>
 #include <wx/string.h>
-#include <wx/log.h>
-#include <wx/process.h>
-#include <wx/utils.h>
-#include <wx/filename.h>
-#include <wx/stdpaths.h>
 
-#include "database.h"
+#include "GreenLauncherApp.h"
 
+wxDECLARE_APP(GreenLauncherApp);
 
-class wxGameList : public wxListCtrl
+class GameListCtrl : public wxListCtrl
 {
     private:
-        Database* db;
         wxImageList* imgList;
 
     public:
-        wxGameList(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxValidator& validator, const wxString& name)
+        long selectedGameId = -1;
+        GameListCtrl(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxValidator& validator, const wxString& name)
             : wxListCtrl(parent, id, pos, size, style, validator, name)
         {
             this->InsertColumn(0, wxString("Name"));
@@ -44,7 +40,7 @@ class wxGameList : public wxListCtrl
             this->AssignImageList(imgList, wxIMAGE_LIST_SMALL);
         };
 
-        virtual ~wxGameList()
+        virtual ~GameListCtrl()
         {
             delete imgList;
         }
@@ -59,21 +55,16 @@ class wxGameList : public wxListCtrl
             return row;
         };
 
-        void SetDatabase(Database* db)
-        {
-            this->db = db;
-        }
-
         void GetGames(wxString str)
         {
             // Remove previous icons
             imgList->RemoveAll();
             // Get games from database and set count
-            db->Query(str);
-            SetItemCount(db->pRows);
+            long queryRows = wxGetApp().gameManager->Query(str);
+            SetItemCount(queryRows);
             // Set icons for Game List's Image list
-            for (long i = 0; i < db->pRows; i++) {
-                bool res = imgList->Add(wxIcon(wxIconLocation(db->ReturnTableItem(i, 8), 0)));
+            for (long i = 0; i < queryRows; i++) {
+                bool res = imgList->Add(wxIcon(wxIconLocation(wxGetApp().gameManager->ReturnTableItem(i, 8), 0)));
             };
             // Refresh list
             Refresh();
@@ -81,16 +72,7 @@ class wxGameList : public wxListCtrl
 
         wxString GetItemData(long row, long col)
         {
-            return db->ReturnTableItem(row, col);
-        }
-
-        bool RunGame(long id)
-        {
-            wxFileName path(db->ReturnTableItem(id, 7));
-            wxExecuteEnv env;
-            env.cwd = path.GetPath();
-            wxProcess* process;
-            wxExecute(path.GetFullPath(), wxEXEC_ASYNC, process, &env);
+            return wxGetApp().gameManager->ReturnTableItem(row, col);
         }
 };
 

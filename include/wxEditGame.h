@@ -1,5 +1,5 @@
 /***************************************************************
- * Name:      EditGame.h
+ * Name:      wxEditGame.h
  * Purpose:   Defines Add/Edit Game Dialog Frame
  * Author:    Francisco Iturrieta (laziness@protonmail.com)
  * Created:   2025-01-08
@@ -7,11 +7,14 @@
  * License:   GPL-3.0
  **************************************************************/
 
-#ifndef EDITGAME_H
-#define EDITGAME_H
+#ifndef WXEDITGAME_H
+#define WXEDITGAME_H
 
-#include "LaunchConfig.h"
+#include <wx/string.h>
+
 #include "Database.h"
+
+#include "wxLaunchConfig.h"
 
 //(*Headers(EditGame)
 #include <wx/checkbox.h>
@@ -33,14 +36,15 @@
 class EditGame: public wxDialog
 {
     public:
+        GameData data;
 
-        EditGame(wxWindow* parent, wxWindowID id=wxID_ANY);
+        EditGame(wxWindow* parent, GameData data=GameData(), wxWindowID id=wxID_ANY);
         virtual ~EditGame();
 
-        SetDatabase(Database* db);
         AddAction(wxString name, bool isMain);
         DeleteAction(size_t pageId);
-        SaveGameToDatabase();
+        void LoadData();
+        void SaveData();
         OnDialogButtonClick(wxCommandEvent& event);
 
         //(*Declarations(EditGame)
@@ -244,8 +248,6 @@ class EditGame: public wxDialog
         //*)
 
     private:
-
-        Database* db;
 
         //(*Handlers(EditGame)
         void OnNotebook1PageChanged(wxNotebookEvent& event);

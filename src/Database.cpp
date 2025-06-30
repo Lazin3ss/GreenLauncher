@@ -15,6 +15,7 @@
 #include <wx/log.h>
 #include <wx/string.h>
 #include <wx/tokenzr.h>
+#include <wx/datetime.h>
 
 Database::Database()
 {
@@ -25,13 +26,12 @@ Database::Database()
     if (rc != SQLITE_OK) {
         wxLogError("Error opening SQLite3 database (%i): %s", rc, sqlite3_errmsg(db));
         sqlite3_close(db);
-        abort();
         return;
     }
     const char *sqlCreateTable =
     "BEGIN;"
     "CREATE TABLE IF NOT EXISTS general(totalgames INTEGER, totaldevelopers INTEGER, totalpublishers INTEGER);"
-    "CREATE TABLE IF NOT EXISTS games(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL, favorite BOOLEAN NOT NULL CHECK (favorite IN (0, 1)) DEFAULT 0, hidden BOOLEAN NOT NULL CHECK (favorite IN (0, 1)) DEFAULT 0, source TEXT NOT NULL, year INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT -1);"
+    "CREATE TABLE IF NOT EXISTS games(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL, favorite BOOLEAN NOT NULL CHECK (favorite IN (0, 1)) DEFAULT 0, hidden BOOLEAN NOT NULL CHECK (favorite IN (0, 1)) DEFAULT 0, source TEXT NOT NULL, year INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT -1, actionCount INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 0);"
     "CREATE TABLE IF NOT EXISTS tools(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL UNIQUE, exePath TEXT NOT NULL, iconId INTEGER);"
     "CREATE TABLE IF NOT EXISTS actions(id INTEGER PRIMARY KEY ASC, name TEXT NOT NULL, type INTEGER NOT NULL, path TEXT NOT NULL, workingDir TEXT NOT NULL, args TEXT NOT NULL, system_id INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT -1, iconPath TEXT NOT NULL ON CONFLICT REPLACE DEFAULT '');"
     "CREATE TABLE IF NOT EXISTS years(year INTEGER PRIMARY KEY ASC UNIQUE, gameCount INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 0);"
@@ -62,11 +62,15 @@ Database::Database()
 		"DELETE FROM actions_mapping WHERE game_id==old.id;"
 		"DELETE FROM metadata_mapping WHERE game_id==old.id;"
 	"END;"
+	"CREATE TRIGGER IF NOT EXISTS map_actions_task INSERT ON actions_mapping BEGIN "
+        "UPDATE games SET actionCount=actionCount+1 WHERE id==new.game_id;"
+    "END;"
 	"CREATE TRIGGER IF NOT EXISTS delete_action_task DELETE ON actions BEGIN "
 		"DELETE FROM actions_mapping WHERE action_id==old.id;"
 	"END;"
 	"CREATE TRIGGER IF NOT EXISTS delete_action_map_task DELETE ON actions_mapping BEGIN "
-		"DELETE FROM actions WHERE id==old.id;"
+		"UPDATE games SET actionCount=actionCount-1 WHERE id==old.game_id;"
+		"DELETE FROM actions WHERE id==old.action_id;"
 	"END;"
 	"CREATE TRIGGER IF NOT EXISTS clean_years_task AFTER UPDATE ON years WHEN new.gameCount==0 BEGIN "
 		"DELETE FROM years WHERE year=new.year;"
@@ -124,7 +128,6 @@ Database::Database()
 	if (rc) {
       wxLogError("Error creating games table in SQLite3: ", wxString(errmsg));
       sqlite3_free(errmsg);
-      abort();
    }
 }
 
@@ -155,21 +158,59 @@ void Database::Query(wxString str)
         sqlite3_free_table(pResult);
         wxLogError("Error querying SQLite3 database: ", wxString(errmsg));
         sqlite3_free(errmsg);
-        abort();
     }
 }
 
 void Database::RunSQL(wxString stmtStr)
 {
     int rc;
-    char *errmsg;
-    sqlite3_stmt *stmt = NULL;
+    char* errmsg;
+    //sqlite3_stmt *stmt = NULL;
     rc = sqlite3_exec(db, stmtStr.mb_str(), NULL, NULL, &errmsg);
     if (rc) {
       wxLogError("Error running SQL in Database: ", wxString(errmsg));
       sqlite3_free(errmsg);
-      abort();
    }
+}
+
+void Database::AddAction(long game_id, bool isMain, wxString name, long type, wxString path, wxString workingDir, wxString args, long systemId, wxString iconPath)
+{
+    int rc;
+    sqlite3_int64 action_id;
+    sqlite3_stmt* stmt;
+    rc = sqlite3_prepare_v2(db, "INSERT INTO actions (id, name, type, path, workingDir, args, system_id, iconPath) values(NULL, ?, ?, ?, ?, ?, ?, ?);", -1, &stmt, NULL);
+    if (rc == SQLITE_OK) {
+        sqlite3_bind_text(stmt, 1, name.mb_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_int(stmt, 2, type);
+        sqlite3_bind_text(stmt, 3, path.mb_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 4, workingDir.mb_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 5, args.mb_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_int(stmt, 6, systemId);
+        sqlite3_bind_text(stmt, 7, iconPath.mb_str(), -1, SQLITE_TRANSIENT);
+    }
+    rc = sqlite3_step(stmt);
+    rc = sqlite3_finalize(stmt);
+    action_id = sqlite3_last_insert_rowid(db);
+    RunSQL(wxString::Format(wxString("INSERT INTO actions_mapping values(%d, %d, %d)"), long(game_id), int(isMain), long(action_id)));
+}
+
+void Database::UpdateAction(long actionId, wxString name, long type, wxString path, wxString workingDir, wxString args, long systemId, wxString iconPath)
+{
+    int rc;
+    sqlite3_int64 action_id;
+    sqlite3_stmt* stmt;
+    rc = sqlite3_prepare_v2(db, wxString::Format("UPDATE actions SET name=?, type=?, path=?, workingDir=?, args=?, system_id=?, iconPath=? WHERE id==%d", actionId), -1, &stmt, NULL);
+    if (rc == SQLITE_OK) {
+        sqlite3_bind_text(stmt, 1, name.mb_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_int(stmt, 2, type);
+        sqlite3_bind_text(stmt, 3, path.mb_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 4, workingDir.mb_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 5, args.mb_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_int(stmt, 6, systemId);
+        sqlite3_bind_text(stmt, 7, iconPath.mb_str(), -1, SQLITE_TRANSIENT);
+    }
+    rc = sqlite3_step(stmt);
+    rc = sqlite3_finalize(stmt);
 }
 
 void Database::AddMetadataAndMap(const char* type, wxString names, long gameId)
@@ -196,7 +237,16 @@ void Database::AddMetadataAndMap(const char* type, wxString names, long gameId)
         rc = sqlite3_step(stmt);
         rc = sqlite3_finalize(stmt);
     }
+}
 
+void Database::UpdateMetadata(const char* type, wxString names, long gameId)
+{
+    int rc;
+    sqlite3_stmt *stmt;
+    rc = sqlite3_prepare_v2(db, wxString::Format("DELETE FROM metadata_mapping WHERE game_id==%d AND type=='%s'", gameId, type).mb_str(), -1, &stmt, NULL);
+    rc = sqlite3_step(stmt);
+    rc = sqlite3_finalize(stmt);
+    AddMetadataAndMap(type, names, gameId);
 }
 
 void Database::AddGame(GameData data)
@@ -204,14 +254,12 @@ void Database::AddGame(GameData data)
     int rc;
     sqlite3_stmt *stmt;
     sqlite3_int64 game_id;
-    sqlite3_int64 action_id;
-    sqlite3_int64 metadata_id;
     // First, insert the game (plus date)
     rc = sqlite3_prepare_v2(db, "INSERT INTO games (id, name, favorite, hidden, source, year) values(NULL, ?, ?, ?, ?, ?);", -1, &stmt, NULL);
     if (rc == SQLITE_OK) {
         sqlite3_bind_text(stmt, 1, data.name.mb_str(), -1, SQLITE_TRANSIENT);
-        sqlite3_bind_int(stmt, 2, data.favorite);
-        sqlite3_bind_int(stmt, 3, data.hidden);
+        sqlite3_bind_int(stmt, 2, int(data.favorite));
+        sqlite3_bind_int(stmt, 3, int(data.hidden));
         sqlite3_bind_text(stmt, 4, data.source.mb_str(), -1, SQLITE_TRANSIENT);
         sqlite3_bind_int(stmt, 5, data.metadata.releaseDate.GetYear());
     }
@@ -220,27 +268,51 @@ void Database::AddGame(GameData data)
     game_id = sqlite3_last_insert_rowid(db);
     // Then, insert the actions
     for (int i = 0; i<data.actions.size(); i++) {
-        rc = sqlite3_prepare_v2(db, "INSERT INTO actions (id, name, type, path, workingDir, args, system_id, iconPath) values(NULL, ?, ?, ?, ?, ?, ?, ?);", -1, &stmt, NULL);
-        if (rc == SQLITE_OK) {
-            sqlite3_bind_text(stmt, 1, data.actions[i].name.mb_str(), -1, SQLITE_TRANSIENT);
-            sqlite3_bind_int(stmt, 2, data.actions[i].type);
-            sqlite3_bind_text(stmt, 3, data.actions[i].path.mb_str(), -1, SQLITE_TRANSIENT);
-            sqlite3_bind_text(stmt, 4, data.actions[i].workingDir.mb_str(), -1, SQLITE_TRANSIENT);
-            sqlite3_bind_text(stmt, 5, data.actions[i].args.mb_str(), -1, SQLITE_TRANSIENT);
-            sqlite3_bind_int(stmt, 6, data.actions[i].systemId);
-            sqlite3_bind_text(stmt, 7, data.actions[i].iconPath.mb_str(), -1, SQLITE_TRANSIENT);
-        }
-        rc = sqlite3_step(stmt);
-        rc = sqlite3_finalize(stmt);
-        action_id = sqlite3_last_insert_rowid(db);
-        RunSQL(wxString::Format(wxString("INSERT INTO actions_mapping values(%d, %d, %d)"), long(game_id), int(data.actions[i].isMain), long(action_id)));
+        AddAction(game_id, data.actions[i].isMain, data.actions[i].name, data.actions[i].type, data.actions[i].path, data.actions[i].workingDir, data.actions[i].args, data.actions[i].systemId, data.actions[i].iconPath);
     }
     // And then, all other metadata
     AddMetadataAndMap("categories", data.category, game_id);
-    AddMetadataAndMap("platforms", data.metadata.platform, game_id);
+    //AddMetadataAndMap("platforms", data.metadata.platform, game_id);
     AddMetadataAndMap("developers", data.metadata.developer, game_id);
     AddMetadataAndMap("publishers", data.metadata.publisher, game_id);
     AddMetadataAndMap("genres", data.metadata.genre, game_id);
+}
+
+void Database::EditGame(GameData data)
+{
+    int rc;
+    sqlite3_stmt *stmt;
+    rc = sqlite3_prepare_v2(db, wxString::Format("UPDATE games SET name=?, favorite=?, hidden=?, source=?, year=? WHERE id==%d", data.id).mb_str(), -1, &stmt, NULL);
+    if (rc == SQLITE_OK) {
+        sqlite3_bind_text(stmt, 1, data.name.mb_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_int(stmt, 2, int(data.favorite));
+        sqlite3_bind_int(stmt, 3, int(data.hidden));
+        sqlite3_bind_text(stmt, 4, data.source.mb_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_int(stmt, 5, data.metadata.releaseDate.GetYear());
+    }
+    rc = sqlite3_step(stmt);
+    rc = sqlite3_finalize(stmt);
+    // We only keep actions from GameData which have an ID, we assume the other ones were deleted
+    wxString actionsFilter = wxString::Format("DELETE FROM actions_mapping WHERE game_id==%d", data.id);
+    for (int i = 0; i<data.actions.size(); i++) {
+        actionsFilter += wxString::Format(" AND action_id!=%d", data.actions[i].id);
+        if (data.actions[i].id > 0) {
+            UpdateAction(data.actions[i].id, data.actions[i].name, data.actions[i].type, data.actions[i].path, data.actions[i].workingDir, data.actions[i].args, data.actions[i].systemId, data.actions[i].iconPath);
+        } else {
+            AddAction(data.id, data.actions[i].isMain, data.actions[i].name, data.actions[i].type, data.actions[i].path, data.actions[i].workingDir, data.actions[i].args, data.actions[i].systemId, data.actions[i].iconPath);
+        }
+    }
+    RunSQL(actionsFilter);
+    UpdateMetadata("categories", data.category, data.id);
+    //UpdateMetadata("platforms", data.metadata.platform, data.id);
+    UpdateMetadata("developers", data.metadata.developer, data.id);
+    UpdateMetadata("publishers", data.metadata.publisher, data.id);
+    UpdateMetadata("genres", data.metadata.genre, data.id);
+}
+
+void Database::DeleteGame(long gameId)
+{
+    RunSQL(wxString::Format("DELETE FROM games WHERE id==%d;", gameId));
 }
 
 wxString Database::ReturnTableItem(long row, long col)
@@ -248,20 +320,56 @@ wxString Database::ReturnTableItem(long row, long col)
     return wxString(pResult[(pCols) * (row + 1) + col]);
 }
 
-wxString Database::ReturnGameData(long id)
+wxString Database::ReturnMetadata(const char* type, long gameId)
+{
+    int rc;
+    sqlite3_stmt* stmt;
+    rc = sqlite3_prepare_v2(db, wxString::Format("SELECT GROUP_CONCAT(name, ';') FROM %s WHERE id IN (SELECT metadata_id FROM metadata_mapping WHERE game_id==%d)", type, gameId).mb_str(), -1, &stmt, NULL);
+    rc = sqlite3_step(stmt);
+    wxString result = wxString(sqlite3_column_text(stmt, 0));
+    rc = sqlite3_finalize(stmt);
+    return result;
+}
+
+GameData Database::ReturnGameData(long id)
 {
     GameData data;
-    char **pTable;
-    char *errmsg;
     int rc;
-    rc = sqlite3_get_table(db, wxString::Format(("SELECT * FROM GameList WHERE id==%d"), id).mb_str(), &pTable, NULL, NULL, &errmsg);
-    if (rc != SQLITE_OK ) {
-        sqlite3_free_table(pTable);
-        wxLogError("Error querying SQLite3 database: ", wxString(errmsg));
-        sqlite3_free(errmsg);
-        abort();
+    sqlite3_stmt *stmt;
+    rc = sqlite3_prepare_v2(db, wxString::Format("SELECT * FROM games WHERE id==%d", id).mb_str(), -1, &stmt, NULL);
+    rc = sqlite3_step(stmt);
+    // Get base game data
+    data.id = id;
+    data.name = wxString(sqlite3_column_text(stmt, 1));
+    data.favorite = sqlite3_column_int(stmt, 2);
+    data.hidden = sqlite3_column_int(stmt, 3);
+    data.source = wxString(sqlite3_column_text(stmt, 4));
+    data.metadata.releaseDate = wxDateTime(wxDateTime::wxDateTime_t(1), wxDateTime::Month(wxDateTime::Jan), sqlite3_column_int(stmt, 5));
+    long actionCount = sqlite3_column_int(stmt, 6);
+    rc = sqlite3_finalize(stmt);
+    // Get actions
+    rc = sqlite3_prepare_v2(db, wxString::Format("SELECT * FROM actions WHERE id IN (SELECT action_id FROM actions_mapping  WHERE game_id==%d)", id).mb_str(), -1, &stmt, NULL);
+    while (rc != SQLITE_DONE) {
+        rc = sqlite3_step(stmt);
+        if (rc == SQLITE_ROW) {
+            ActionData aData;
+            aData.id = sqlite3_column_int(stmt, 0);
+            aData.name = wxString(sqlite3_column_text(stmt, 1));
+            aData.isMain = aData.name.IsSameAs(wxString("Main"));
+            aData.type = sqlite3_column_int(stmt, 2);
+            aData.path = wxString(sqlite3_column_text(stmt, 3));
+            aData.workingDir = wxString(sqlite3_column_text(stmt, 4));
+            aData.args = wxString(sqlite3_column_text(stmt, 5));
+            aData.systemId = sqlite3_column_int(stmt, 6);
+            aData.iconPath = wxString(sqlite3_column_text(stmt, 7));
+            data.actions.push_back(aData);
+        }
     }
-    data.metadata.developer = wxString(pTable[10]);
-    sqlite3_free_table(pTable);
-    return data.metadata.developer;
+    rc = sqlite3_finalize(stmt);
+    // Get metadata
+    data.category = ReturnMetadata("categories", data.id);
+    data.metadata.developer = ReturnMetadata("developers", data.id);
+    data.metadata.publisher = ReturnMetadata("publishers", data.id);
+    data.metadata.genre = ReturnMetadata("genres", data.id);
+    return data;
 }

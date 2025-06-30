@@ -1,6 +1,3 @@
-#ifndef HEADER_954BDDD2BA0D6040
-#define HEADER_954BDDD2BA0D6040
-
 /***************************************************************
  * Name:      GreenLauncherApp.h
  * Purpose:   Defines Application Class
@@ -13,15 +10,18 @@
 #ifndef GREENLAUNCHERAPP_H
 #define GREENLAUNCHERAPP_H
 
+#include "GameManager.h"
+
 #include <wx/app.h>
 
 class GreenLauncherApp : public wxApp
 {
     public:
+        GameManager* gameManager;
+
         virtual bool OnInit();
+        virtual int OnExit();
 };
 
 #endif // GREENLAUNCHERAPP_H
-
-#endif // header guard
 
