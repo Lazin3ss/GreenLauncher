@@ -127,6 +127,7 @@
 						<object class="sizeritem">
 							<object class="wxBitmapButton" name="ID_ACTIONICON" variable="ActionIcon" member="yes">
 								<size>32,32</size>
+								<handler function="OnActionIconClick" entry="EVT_BUTTON" />
 							</object>
 							<flag>wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL</flag>
 							<border>5</border>
@@ -172,6 +173,9 @@
 				<flag>wxALL|wxEXPAND</flag>
 				<border>5</border>
 			</object>
+		</object>
+		<object class="wxFileDialog" variable="IconFileDialog" member="yes">
+			<message>Select file for icon</message>
 		</object>
 	</object>
 </wxsmith>

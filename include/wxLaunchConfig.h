@@ -14,6 +14,7 @@
 #include <wx/bmpbuttn.h>
 #include <wx/choice.h>
 #include <wx/combobox.h>
+#include <wx/filedlg.h>
 #include <wx/filepicker.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
@@ -34,6 +35,9 @@ class LaunchConfig: public wxPanel
         bool isMain;
         int lastTypeSelection = 0;
         long ActionId = 0;
+        wxString iconPath;
+
+        void SetIcon(wxString path);
 
         //(*Declarations(LaunchConfig)
         wxBitmapButton* ActionIcon;
@@ -42,6 +46,7 @@ class LaunchConfig: public wxPanel
         wxChoice* ActionType;
         wxComboBox* ActionSystem;
         wxDirPickerCtrl* ActionWorkingDirectory;
+        wxFileDialog* IconFileDialog;
         wxFilePickerCtrl* ActionPath;
         wxPanel* Panel1;
         wxPanel* Panel2;
@@ -88,6 +93,7 @@ class LaunchConfig: public wxPanel
         void OnFileCtrlFileChanged(wxFileDirPickerEvent& event);
         void OnTypeChoiceSelect(wxCommandEvent& event);
         void OnActionNameText(wxCommandEvent& event);
+        void OnActionIconClick(wxCommandEvent& event);
         //*)
 
         DECLARE_EVENT_TABLE()

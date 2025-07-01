@@ -208,6 +208,7 @@
 		<Unit filename="include/GreenLauncherApp.h" />
 		<Unit filename="include/sqlite3/sqlite3.h" />
 		<Unit filename="include/wxEditGame.h" />
+		<Unit filename="include/wxFilterData.h" />
 		<Unit filename="include/wxGameListCtrl.h" />
 		<Unit filename="include/wxGreenLauncherMain.h" />
 		<Unit filename="include/wxLaunchConfig.h" />

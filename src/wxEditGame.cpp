@@ -27,6 +27,7 @@ const long EditGame::ID_STATICTEXT1 = wxNewId();
 const long EditGame::ID_GAMENAME = wxNewId();
 const long EditGame::ID_GAMEFAVORITE = wxNewId();
 const long EditGame::ID_GAMEHIDDEN = wxNewId();
+const long EditGame::ID_GAMEICON = wxNewId();
 const long EditGame::ID_STATICTEXT8 = wxNewId();
 const long EditGame::ID_GAMECATEGORY = wxNewId();
 const long EditGame::ID_STATICTEXT10 = wxNewId();
@@ -133,6 +134,7 @@ EditGame::EditGame(wxWindow* parent, GameData data, wxWindowID id)
     wxBoxSizer* BoxSizer2;
     wxBoxSizer* BoxSizer3;
     wxBoxSizer* BoxSizer4;
+    wxBoxSizer* BoxSizer5;
     wxBoxSizer* BoxSizer6;
     wxBoxSizer* BoxSizer7;
     wxFlexGridSizer* FlexGridSizer1;
@@ -160,18 +162,27 @@ EditGame::EditGame(wxWindow* parent, GameData data, wxWindowID id)
     BoxSizer3 = new wxBoxSizer(wxVERTICAL);
     StaticBoxSizer1 = new wxStaticBoxSizer(wxHORIZONTAL, Panel6, _("Basic Info"));
     BoxSizer7 = new wxBoxSizer(wxHORIZONTAL);
-    FlexGridSizer2 = new wxFlexGridSizer(0, 2, 0, 0);
+    FlexGridSizer2 = new wxFlexGridSizer(0, 2, -5, 0);
     FlexGridSizer2->AddGrowableCol(1);
     StaticText1 = new wxStaticText(Panel6, ID_STATICTEXT1, _("Name"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT1"));
     FlexGridSizer2->Add(StaticText1, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     GameName = new wxTextCtrl(Panel6, ID_GAMENAME, wxEmptyString, wxDefaultPosition, wxSize(200,23), 0, wxDefaultValidator, _T("ID_GAMENAME"));
+    GameName->SetFocus();
     FlexGridSizer2->Add(GameName, 1, wxALL|wxEXPAND, 5);
     GameFavorite = new wxCheckBox(Panel6, ID_GAMEFAVORITE, _("Favorite"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_GAMEFAVORITE"));
     GameFavorite->SetValue(false);
     FlexGridSizer2->Add(GameFavorite, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+    BoxSizer5 = new wxBoxSizer(wxHORIZONTAL);
     GameHidden = new wxCheckBox(Panel6, ID_GAMEHIDDEN, _("Hidden"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_GAMEHIDDEN"));
     GameHidden->SetValue(false);
-    FlexGridSizer2->Add(GameHidden, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
+    GameHidden->Disable();
+    BoxSizer5->Add(GameHidden, 2, wxALL|wxALIGN_CENTER_VERTICAL, 5);
+    GameIcon = new wxBitmapButton(Panel6, ID_GAMEICON, wxNullBitmap, wxDefaultPosition, wxSize(32,32), wxBU_AUTODRAW, wxDefaultValidator, _T("ID_GAMEICON"));
+    GameIcon->SetMaxSize(wxSize(32,32));
+    GameIcon->Disable();
+    BoxSizer5->Add(GameIcon, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    BoxSizer5->Add(0,0,1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    FlexGridSizer2->Add(BoxSizer5, 1, wxALL|wxEXPAND, 0);
     BoxSizer7->Add(FlexGridSizer2, 1, wxALL|wxEXPAND, 5);
     FlexGridSizer5 = new wxFlexGridSizer(0, 2, 0, 0);
     FlexGridSizer5->AddGrowableCol(1);
@@ -233,7 +244,7 @@ EditGame::EditGame(wxWindow* parent, GameData data, wxWindowID id)
     Choice2 = new wxChoice(Panel6, ID_CHOICE2, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_CHOICE2"));
     Choice2->Disable();
     FlexGridSizer3->Add(Choice2, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-    StaticBoxSizer2->Add(FlexGridSizer3, 1, wxALL|wxEXPAND, 5);
+    StaticBoxSizer2->Add(FlexGridSizer3, 1, wxALL|wxEXPAND, 0);
     BoxSizer4->Add(StaticBoxSizer2, 0, wxALL|wxEXPAND, 5);
     StaticBoxSizer3 = new wxStaticBoxSizer(wxVERTICAL, Panel6, _("Review"));
     FlexGridSizer4 = new wxFlexGridSizer(0, 2, 0, 0);
@@ -304,18 +315,22 @@ EditGame::EditGame(wxWindow* parent, GameData data, wxWindowID id)
     StaticText20 = new wxStaticText(Panel5, ID_STATICTEXT20, _("Format"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT20"));
     FlexGridSizer6->Add(StaticText20, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     GameFormat = new wxTextCtrl(Panel5, ID_GAMEFORMAT, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_GAMEFORMAT"));
+    GameFormat->Disable();
     FlexGridSizer6->Add(GameFormat, 1, wxALL|wxEXPAND, 5);
     StaticText21 = new wxStaticText(Panel5, ID_STATICTEXT21, _("Age Rating"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT21"));
     FlexGridSizer6->Add(StaticText21, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     GameAgeRating = new wxChoice(Panel5, ID_GAMEAGERATING, wxDefaultPosition, wxDefaultSize, 0, 0, 0, wxDefaultValidator, _T("ID_GAMEAGERATING"));
+    GameAgeRating->Disable();
     FlexGridSizer6->Add(GameAgeRating, 1, wxALL|wxEXPAND, 5);
     StaticText22 = new wxStaticText(Panel5, ID_STATICTEXT22, _("Score"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT22"));
     FlexGridSizer6->Add(StaticText22, 1, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, 5);
     GameScore = new wxTextCtrl(Panel5, ID_GAMESCORE, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, _T("ID_GAMESCORE"));
+    GameScore->Disable();
     FlexGridSizer6->Add(GameScore, 1, wxALL|wxEXPAND, 5);
     StaticText32 = new wxStaticText(Panel5, ID_STATICTEXT32, _("Description"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_STATICTEXT32"));
     FlexGridSizer6->Add(StaticText32, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     GameDescription = new wxTextCtrl(Panel5, ID_GAMEDESCRIPTION, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE, wxDefaultValidator, _T("ID_GAMEDESCRIPTION"));
+    GameDescription->Disable();
     GameDescription->SetToolTip(_("Add a description!"));
     GameDescription->SetHelpText(_("Add a description!"));
     FlexGridSizer6->Add(GameDescription, 1, wxALL|wxEXPAND, 5);
@@ -541,6 +556,7 @@ EditGame::EditGame(wxWindow* parent, GameData data, wxWindowID id)
     } else {
         SetLabel("Add a new game");
     }
+    ActionListbook->ChangeSelection(0);
 }
 
 EditGame::~EditGame()
@@ -567,6 +583,7 @@ void EditGame::LoadData()
             panel->ActionPath->SetPath(data.actions[i].path);
             panel->ActionWorkingDirectory->SetPath(data.actions[i].workingDir);
             panel->ActionArguments->SetValue(data.actions[i].args);
+            panel->SetIcon(data.actions[i].iconPath);
             panel->ActionId = data.actions[i].id;
         } else {
             ((LaunchConfig*) ActionListbook->GetPage(0))->ActionType->SetSelection(data.actions[i].type);
@@ -574,6 +591,7 @@ void EditGame::LoadData()
             ((LaunchConfig*) ActionListbook->GetPage(0))->ActionPath->SetPath(data.actions[i].path);
             ((LaunchConfig*) ActionListbook->GetPage(0))->ActionWorkingDirectory->SetPath(data.actions[i].workingDir);
             ((LaunchConfig*) ActionListbook->GetPage(0))->ActionArguments->SetValue(data.actions[i].args);
+            ((LaunchConfig*) ActionListbook->GetPage(0))->SetIcon(data.actions[i].iconPath);
             ((LaunchConfig*) ActionListbook->GetPage(0))->ActionId = data.actions[i].id;
         }
     }
@@ -606,14 +624,22 @@ void EditGame::SaveData()
     for (int i = 0; i < ActionListbook->GetPageCount(); i++) {
         ActionData actData;
         actData.id = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionId;
-        actData.name = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionName->GetValue();
         actData.isMain = ((LaunchConfig*) ActionListbook->GetPage(i))->isMain;
+        if (actData.isMain) {
+            actData.name = wxString("Launch Game");
+        } else {
+            actData.name = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionName->GetValue();
+        }
         actData.type = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionType->GetSelection();
         actData.systemId = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionSystem->GetCurrentSelection();
         actData.path = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionPath->GetPath();
         actData.workingDir = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionWorkingDirectory->GetPath();
+        if (actData.workingDir.Len() == 0) {
+            actData.workingDir = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionPath->GetFileName().GetPath();
+        }
         actData.args = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionArguments->GetValue();
-        actData.iconPath = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionPath->GetPath(); // Not implemented yet, just use same path as executable
+        actData.iconPath = ((LaunchConfig*) ActionListbook->GetPage(i))->iconPath;
+        //actData.iconPath = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionPath->GetPath(); // Not implemented yet, just use same path as executable
         data.actions.push_back(actData);
     }
     // Gather Metadata info

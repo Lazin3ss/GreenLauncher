@@ -23,10 +23,15 @@ class Database
         long pRows = -1;
         long pCols = -1;
 
+        char **fResult;
+        long fRows = -1;
+        long fCols = -1;
+
         Database();
         virtual ~Database();
 
         void Query(wxString str);
+        wxString ReturnTableItem(long row, long col);
         void RunSQL(wxString name);
         void AddAction(long game_id, bool isMain, wxString name, long type, wxString path, wxString workingDir, wxString args, long systemId, wxString iconPath);
         void UpdateAction(long actionId, wxString name, long type, wxString path, wxString workingDir, wxString args, long systemId, wxString iconPath);
@@ -35,9 +40,11 @@ class Database
         void AddGame(GameData data);
         void EditGame(GameData data);
         void DeleteGame(long gameId);
-        wxString ReturnTableItem(long row, long col);
         wxString ReturnMetadata(const char* type, long gameId);
         GameData ReturnGameData(long id);
+        void GetMetadataTable(wxString type);
+        wxString ReturnFilterTableItem(long row, long col);
+        void FreeMetadataTable();
 
     private:
         sqlite3 *db;

@@ -10,6 +10,8 @@
 #include "wxEditGame.h"
 #include "wxLaunchConfig.h"
 
+#include <wx/msgdlg.h>
+
 //(*InternalHeaders(LaunchConfig)
 #include <wx/artprov.h>
 #include <wx/bitmap.h>
@@ -103,10 +105,12 @@ LaunchConfig::LaunchConfig(wxWindow* parent, wxString actionName, bool isMain, w
     Panel2->SetSizer(BoxSizer1);
     wxBoxSizer1->Add(Panel2, 0, wxALL|wxEXPAND, 5);
     SetSizer(wxBoxSizer1);
+    IconFileDialog = new wxFileDialog(this, _("Select file for icon"), wxEmptyString, wxEmptyString, wxFileSelectorDefaultWildcardStr, wxFD_DEFAULT_STYLE, wxDefaultPosition, wxDefaultSize, _T("wxFileDialog"));
 
     Connect(ID_ACTIONNAME,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&LaunchConfig::OnActionNameText);
     Connect(ID_ACTIONTYPE,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&LaunchConfig::OnTypeChoiceSelect);
     Connect(ID_ACTIONFILE,wxEVT_COMMAND_FILEPICKER_CHANGED,(wxObjectEventFunction)&LaunchConfig::OnFileCtrlFileChanged);
+    Connect(ID_ACTIONICON,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&LaunchConfig::OnActionIconClick);
     Connect(ID_ADDACTIONBUTTON,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&LaunchConfig::OnAddActionButtonClick);
     Connect(ID_DELETEACTIONBUTTON,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&LaunchConfig::OnDeleteActionButtonClick);
     //*)
@@ -123,7 +127,18 @@ LaunchConfig::LaunchConfig(wxWindow* parent, wxString actionName, bool isMain, w
 LaunchConfig::~LaunchConfig()
 {
     //(*Destroy(LaunchConfig)
+    IconFileDialog->Destroy();
     //*)
+}
+
+void LaunchConfig::SetIcon(wxString path) {
+    iconPath = path;
+    ActionIcon->SetBitmap(wxIcon(wxIconLocation(path, 0)));
+    //if (isMain) {
+        //wxListbook* parent1 = GetParent();
+        //EditGame* parent = ((wxListbook*) GetParent())->GetParent();
+        //if (parent->GameIcon
+    //}
 }
 
 void LaunchConfig::OnAddActionButtonClick(wxCommandEvent& event)
@@ -143,6 +158,7 @@ void LaunchConfig::OnDeleteActionButtonClick(wxCommandEvent& event)
 void LaunchConfig::OnFileCtrlFileChanged(wxFileDirPickerEvent& event)
 {
     ActionWorkingDirectory->SetPath(ActionPath->GetFileName().GetPath());
+    SetIcon(ActionPath->GetFileName().GetFullPath());
 }
 
 void LaunchConfig::OnTypeChoiceSelect(wxCommandEvent& event)
@@ -181,4 +197,12 @@ void LaunchConfig::OnActionNameText(wxCommandEvent& event)
          parent->SetPageText(parent->GetSelection(), ActionName->GetValue());
     }
 
+}
+
+void LaunchConfig::OnActionIconClick(wxCommandEvent& event)
+{
+    int rc = IconFileDialog->ShowModal();
+    if (rc == wxID_OK) {
+        SetIcon(IconFileDialog->GetPath());
+    }
 }

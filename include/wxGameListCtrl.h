@@ -23,6 +23,7 @@ class GameListCtrl : public wxListCtrl
 {
     private:
         wxImageList* imgList;
+        wxIcon emptyIcon;
 
     public:
         long selectedGameId = -1;
@@ -34,8 +35,14 @@ class GameListCtrl : public wxListCtrl
             this->InsertColumn(2, wxString("Year"));
             this->InsertColumn(3, wxString("Developer"));
             this->InsertColumn(4, wxString("Publisher"));
-            this->InsertColumn(5, wxString("Genre"));
-            this->InsertColumn(6, wxString("Category"));
+            this->InsertColumn(5, wxString("Platform"));
+            this->InsertColumn(6, wxString("Genre"));
+            this->InsertColumn(7, wxString("Series"));
+            this->InsertColumn(8, wxString("Region"));
+            this->InsertColumn(9, wxString("Language"));
+            this->InsertColumn(10, wxString("License Model"));
+            this->InsertColumn(11, wxString("Category"));
+            this->InsertColumn(12, wxString("Source"));
             imgList = new wxImageList(16, 16, true, 1);
             this->AssignImageList(imgList, wxIMAGE_LIST_SMALL);
         };
@@ -47,7 +54,7 @@ class GameListCtrl : public wxListCtrl
 
         virtual wxString OnGetItemText(long row, long column) const override
         {
-            return GetItemData(row, column);
+            return wxGetApp().gameManager->ReturnTableItem(row, column+5);
         };
 
         virtual int OnGetItemImage(long row) const override
@@ -55,25 +62,24 @@ class GameListCtrl : public wxListCtrl
             return row;
         };
 
-        void GetGames(wxString str)
+        void ReloadGames()
         {
             // Remove previous icons
             imgList->RemoveAll();
             // Get games from database and set count
-            long queryRows = wxGetApp().gameManager->Query(str);
+            long queryRows = wxGetApp().gameManager->Query();
             SetItemCount(queryRows);
             // Set icons for Game List's Image list
             for (long i = 0; i < queryRows; i++) {
-                bool res = imgList->Add(wxIcon(wxIconLocation(wxGetApp().gameManager->ReturnTableItem(i, 8), 0)));
+                if (wxGetApp().gameManager->ReturnTableItem(i, 4).Len() > 0) {
+                    imgList->Add(wxIcon(wxIconLocation(wxGetApp().gameManager->ReturnTableItem(i, 4), 0)));
+                } else {
+                    imgList->Add(wxIcon(wxIconLocation(wxString("GreenLauncher.exe"), 0)));
+                }
             };
             // Refresh list
             Refresh();
         };
-
-        wxString GetItemData(long row, long col)
-        {
-            return wxGetApp().gameManager->ReturnTableItem(row, col);
-        }
 };
 
 #endif // WXGAMELIST_H

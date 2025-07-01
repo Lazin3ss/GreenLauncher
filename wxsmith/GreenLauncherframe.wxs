@@ -9,45 +9,59 @@
 		<extra_code>// This code will set a smaller font if Win 3.11 is detected:&#x0A;int majorVer; int minorVer;&#x0A;wxGetOsVersion(&amp;majorVer, &amp;minorVer);&#x0A;if (minorVer == 30 || majorVer == 30 || majorVer == 3)&#x0A;{&#x0A;    wxFont thisFont(8,wxFONTFAMILY__DEFAULT,wxFONTSTYLE__NORMAL,wxFONTWEIGHT__NORMAL,false,wxEmptyString,wxFONTENCODING__DEFAULT);&#x0A;    SetFont(thisFont);&#x0A;}</extra_code>
 		<id_arg>0</id_arg>
 		<style>wxCAPTION|wxDEFAULT_FRAME_STYLE|wxBORDER_RAISED|wxFULL_REPAINT_ON_RESIZE</style>
+		<handler function="OnMenuOpen" entry="EVT_MENU_OPEN" />
 		<object class="wxSplitterWindow" name="ID_SPLITTERWINDOW1" variable="SplitterWindow1" member="yes">
 			<sashpos>1</sashpos>
 			<sashgravity>0.000000</sashgravity>
 			<minsize>150</minsize>
 			<orientation>vertical</orientation>
 			<style>wxSP_3D|wxSP_LIVE_UPDATE</style>
-			<object class="wxTreeCtrl" name="ID_TREECTRL1" variable="TreeCtrl1" member="yes">
+			<object class="wxTreeCtrl" name="ID_FILTERTREE" variable="FilterTree" member="yes">
 				<image_list>&lt;none&gt;</image_list>
 				<tree_items>
-					<item>TreeCtrl1</item>
+					<item>FilterTree</item>
 					<item>&lt;none&gt;</item>
 					<item>0,#000000,0,-1,-1,-1,-1,Root</item>
 					<item>1,#000000,0,-1,-1,-1,-1,Games</item>
 					<item>2,#000000,0,-1,-1,-1,-1,All Games</item>
+					<item>2,#000000,0,-1,-1,-1,-1,Favorites</item>
 					<item>2,#000000,0,-1,-1,-1,-1,Categories</item>
+					<item>2,#000000,0,-1,-1,-1,-1,Sources</item>
 					<item>2,#000000,0,-1,-1,-1,-1,Years</item>
 					<item>2,#000000,0,-1,-1,-1,-1,Platforms</item>
 					<item>2,#000000,0,-1,-1,-1,-1,Developers</item>
 					<item>2,#000000,0,-1,-1,-1,-1,Publishers</item>
 					<item>2,#000000,0,-1,-1,-1,-1,Genres</item>
+					<item>2,#000000,0,-1,-1,-1,-1,Series</item>
+					<item>2,#000000,0,-1,-1,-1,-1,Regions</item>
+					<item>2,#000000,0,-1,-1,-1,-1,Languages</item>
+					<item>2,#000000,0,-1,-1,-1,-1,License Models</item>
 					<item>1,#000000,0,-1,-1,-1,-1,Tools</item>
 				</tree_items>
 				<items_text>
-					<item2>TreeCtrl1</item2>
+					<item2>FilterTree</item2>
 					<item2>&lt;none&gt;</item2>
 					<item2>0,#000000,0,-1,-1,-1,-1,Root</item2>
 					<item2>1,#000000,0,-1,-1,-1,-1,Games</item2>
 					<item2>2,#000000,0,-1,-1,-1,-1,All Games</item2>
+					<item2>2,#000000,0,-1,-1,-1,-1,Favorites</item2>
 					<item2>2,#000000,0,-1,-1,-1,-1,Categories</item2>
+					<item2>2,#000000,0,-1,-1,-1,-1,Sources</item2>
 					<item2>2,#000000,0,-1,-1,-1,-1,Years</item2>
 					<item2>2,#000000,0,-1,-1,-1,-1,Platforms</item2>
 					<item2>2,#000000,0,-1,-1,-1,-1,Developers</item2>
 					<item2>2,#000000,0,-1,-1,-1,-1,Publishers</item2>
 					<item2>2,#000000,0,-1,-1,-1,-1,Genres</item2>
+					<item2>2,#000000,0,-1,-1,-1,-1,Series</item2>
+					<item2>2,#000000,0,-1,-1,-1,-1,Regions</item2>
+					<item2>2,#000000,0,-1,-1,-1,-1,Languages</item2>
+					<item2>2,#000000,0,-1,-1,-1,-1,License Models</item2>
 					<item2>1,#000000,0,-1,-1,-1,-1,Tools</item2>
 				</items_text>
 				<pos>53,132</pos>
-				<extra_code>TreeCtrl1-&gt;ExpandAll();</extra_code>
+				<extra_code>FilterTree-&gt;ExpandAll();</extra_code>
 				<style>wxTR_HIDE_ROOT|wxTR_DEFAULT_STYLE</style>
+				<handler function="OnFilterTreeSelectionChanged" entry="EVT_TREE_SEL_CHANGED" />
 			</object>
 			<object class="wxListView" name="ID_GAMELIST1" subclass="GameListCtrl" variable="GameList1" member="yes">
 				<pos>248,135</pos>
@@ -89,10 +103,7 @@
 			<style>wxALWAYS_SHOW_SB</style>
 		</object>
 		<object class="wxMenu" variable="GameListMenu" member="yes">
-			<object class="wxMenuItem" name="ID_LAUNCHGAMEMENUITEM" variable="LaunchGameMenuItem" member="yes">
-				<label>Launch Game</label>
-				<handler function="OnLaunchGameMenuItemSelected" entry="EVT_MENU" />
-			</object>
+			<object class="separator" />
 			<object class="wxMenuItem" name="ID_EDITGAMEMENUITEM" variable="EditGameMenuItem" member="yes">
 				<label>Edit Game</label>
 				<handler function="OnEditGameMenuItemSelected" entry="EVT_MENU" />

@@ -15,6 +15,7 @@
 #include <wx/msgdlg.h>
 #include <wx/frame.h>
 #include <wx/dialog.h>
+#include <wx/tokenzr.h>
 
 #include "GameManager.h"
 #include "GameData.h"
@@ -38,33 +39,34 @@ void GameManager::AddGame(GameData data)
 void GameManager::EditGame(GameData data)
 {
     db->EditGame(data);
-    //long id = wxAtoi(ReturnTableItem(selectedGameIdx, 9));
-    //EditGame dialog(&parent, "Editing "+ReturnTableItem(selectedGameIdx, 0));
-    //int rc = dialog.ShowModal();
-    //if (rc == wxOK) {
-//
-    //}
-   // db->GetGameData(gameId);
 }
 
 void GameManager::DeleteGame()
 {
-    long id = wxAtoi(ReturnTableItem(selectedGameIdx, 9));
+    long id = wxAtoi(ReturnTableItem(selectedGameIdx, 0));
     db->DeleteGame(id);
 }
 
-void GameManager::RunGame()
+void GameManager::RunAction(long idx)
 {
-    wxFileName path(db->ReturnTableItem(selectedGameIdx, 7));
-    wxExecuteEnv env;
-    env.cwd = path.GetPath();
-    wxProcess* process;
-    wxExecute(path.GetFullPath(), wxEXEC_ASYNC, process, &env);
+    wxStringTokenizer paths = wxStringTokenizer(db->ReturnTableItem(selectedGameIdx, 1), ";");
+    wxStringTokenizer workingDirs = wxStringTokenizer(db->ReturnTableItem(selectedGameIdx, 2), ";");
+    while (paths.HasMoreTokens()) {
+        wxString tokenPath = paths.GetNextToken();
+        wxString tokenWorkDir = workingDirs.GetNextToken();
+        if (paths.CountTokens() == idx) {
+            wxExecuteEnv env;
+            env.cwd = tokenWorkDir;
+            wxProcess* process;
+            wxExecute(tokenPath, wxEXEC_SYNC, process, &env);
+            break;
+        }
+    }
 }
 
-long GameManager::Query(wxString str)
+long GameManager::Query()
 {
-    db->Query(str);
+    db->Query(currentQuery);
     return db->pRows;
 }
 
@@ -75,6 +77,27 @@ wxString GameManager::ReturnTableItem(long row, long col)
 
 GameData GameManager::GetSingleGameData()
 {
-    long id = wxAtoi(ReturnTableItem(selectedGameIdx, 9));
+    long id = wxAtoi(ReturnTableItem(selectedGameIdx, 0));
     return db->ReturnGameData(id);
+}
+
+long GameManager::GetFilterList(wxString type)
+{
+    db->GetMetadataTable(type);
+    return db->fRows;
+}
+
+wxString GameManager::GetFilterLabel(long idx)
+{
+    return wxString::Format("%s (%s)", db->ReturnFilterTableItem(idx, 0), db->ReturnFilterTableItem(idx, 1));
+}
+
+wxString GameManager::GetFilterData(wxString type, long idx)
+{
+    return wxString::Format("SELECT * from gameList WHERE %s LIKE '%%%s%%';", type, db->ReturnFilterTableItem(idx, 0));
+}
+
+void GameManager::FreeFilterList()
+{
+    db->FreeMetadataTable();
 }

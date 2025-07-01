@@ -27,8 +27,7 @@ class GreenLauncherFrame: public wxFrame
 
         GreenLauncherFrame(wxWindow* parent,wxWindowID id = -1);
         virtual ~GreenLauncherFrame();
-
-        GameListCtrl* GetGameList();
+        void ReloadFilters();
 
     private:
 
@@ -46,17 +45,22 @@ class GreenLauncherFrame: public wxFrame
         void OnGameList1ItemSelect(wxListEvent& event);
         void OnDeleteGameMenuItemSelected(wxCommandEvent& event);
         void OnEditGameMenuItemSelected(wxCommandEvent& event);
+        void OnTreeCtrl1BeginDrag2(wxTreeEvent& event);
+        void OnFilterTreeSelectionChanged(wxTreeEvent& event);
+        void OnFilterTreeBeginDrag(wxTreeEvent& event);
+        void OnFilterTreeBeginDrag1(wxTreeEvent& event);
+        void OnMenuClose(wxMenuEvent& event);
+        void OnMenuOpen(wxMenuEvent& event);
         //*)
 
         //(*Identifiers(GreenLauncherFrame)
-        static const long ID_TREECTRL1;
+        static const long ID_FILTERTREE;
         static const long ID_GAMELIST1;
         static const long ID_SPLITTERWINDOW1;
         static const long idMenuAdd;
         static const long idMenuQuit;
         static const long idMenuAbout;
         static const long ID_STATUSBAR1;
-        static const long ID_LAUNCHGAMEMENUITEM;
         static const long ID_EDITGAMEMENUITEM;
         static const long ID_DELETEGAMEMENUITEM;
         //*)
@@ -66,14 +70,14 @@ class GreenLauncherFrame: public wxFrame
         wxMenu GameListMenu;
         wxMenuItem* DeleteGameMenuItem;
         wxMenuItem* EditGameMenuItem;
-        wxMenuItem* LaunchGameMenuItem;
         wxMenuItem* MenuItem3;
         wxSplitterWindow* SplitterWindow1;
         wxStatusBar* StatusBar1;
-        wxTreeCtrl* TreeCtrl1;
+        wxTreeCtrl* FilterTree;
         //*)
 
         DECLARE_EVENT_TABLE()
+
 };
 
 #endif // GREENLAUNCHERMAIN_H

@@ -17,6 +17,7 @@
 #include "wxLaunchConfig.h"
 
 //(*Headers(EditGame)
+#include <wx/bmpbuttn.h>
 #include <wx/checkbox.h>
 #include <wx/checklst.h>
 #include <wx/choice.h>
@@ -48,6 +49,7 @@ class EditGame: public wxDialog
         OnDialogButtonClick(wxCommandEvent& event);
 
         //(*Declarations(EditGame)
+        wxBitmapButton* GameIcon;
         wxCheckBox* GameFavorite;
         wxCheckBox* GameHidden;
         wxCheckListBox* CheckListBox1;
@@ -153,6 +155,7 @@ class EditGame: public wxDialog
         static const long ID_GAMENAME;
         static const long ID_GAMEFAVORITE;
         static const long ID_GAMEHIDDEN;
+        static const long ID_GAMEICON;
         static const long ID_STATICTEXT8;
         static const long ID_GAMECATEGORY;
         static const long ID_STATICTEXT10;

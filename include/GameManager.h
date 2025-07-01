@@ -15,13 +15,12 @@
 #include "Database.h"
 #include "GameData.h"
 
-#include <wx/window.h>
-
 
 class GameManager
 {
     public:
         long selectedGameIdx;
+        wxString currentQuery = wxString("SELECT * from gameList");
 
         GameManager();
         virtual ~GameManager();
@@ -29,11 +28,17 @@ class GameManager
         void AddGame(GameData data);
         void EditGame(GameData data);
         void DeleteGame();
-        void RunGame();
 
-        long Query(wxString str);
+        void RunAction(long idx);
+
+        long Query();
         wxString ReturnTableItem(long row, long col);
         GameData GetSingleGameData();
+
+        long GetFilterList(wxString type);
+        wxString GetFilterLabel(long idx);
+        wxString GetFilterData(wxString type, long idx);
+        void FreeFilterList();
     private:
         Database* db;
 };
