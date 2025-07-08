@@ -181,7 +181,7 @@ EditGame::EditGame(wxWindow* parent, GameData data, wxWindowID id)
     GameIcon->SetMaxSize(wxSize(32,32));
     GameIcon->Disable();
     BoxSizer5->Add(GameIcon, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-    BoxSizer5->Add(0,0,1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
+    BoxSizer5->Add(-1,-1,1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
     FlexGridSizer2->Add(BoxSizer5, 1, wxALL|wxEXPAND, 0);
     BoxSizer7->Add(FlexGridSizer2, 1, wxALL|wxEXPAND, 5);
     FlexGridSizer5 = new wxFlexGridSizer(0, 2, 0, 0);
@@ -638,8 +638,7 @@ void EditGame::SaveData()
             actData.workingDir = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionPath->GetFileName().GetPath();
         }
         actData.args = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionArguments->GetValue();
-        actData.iconPath = ((LaunchConfig*) ActionListbook->GetPage(i))->iconPath;
-        //actData.iconPath = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionPath->GetPath(); // Not implemented yet, just use same path as executable
+        actData.iconPath = ((LaunchConfig*) ActionListbook->GetPage(i))->IconFileDialog->GetPath();
         data.actions.push_back(actData);
     }
     // Gather Metadata info
@@ -657,12 +656,25 @@ void EditGame::SaveData()
     data.metadata.description = GameDescription->GetValue();
 }
 
+bool EditGame::IntegrityCheck() {
+    if (GameName->GetValue().IsSameAs("")) {
+        return false;
+    }
+    wxString path = ((LaunchConfig*) ActionListbook->GetPage(0))->ActionPath->GetPath();
+    if (!path.Contains(wxString(".exe")) && !path.Contains(wxString(".bat")) && !path.Contains(wxString(".cmd"))) {
+        return false;
+    }
+    return true;
+}
+
 EditGame::OnDialogButtonClick(wxCommandEvent& event)
 {
     switch (event.GetId()) {
         case wxID_SAVE:
-            SaveData();
-            EndModal(wxOK);
+            if (IntegrityCheck()) {
+                SaveData();
+                EndModal(wxOK);
+            }
             break;
         case wxID_CANCEL:
             EndModal(wxCANCEL);

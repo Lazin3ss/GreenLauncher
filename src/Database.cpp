@@ -385,16 +385,16 @@ void Database::EditGame(GameData data)
             AddAction(data.id, false, data.actions[i].name, data.actions[i].type, data.actions[i].path, data.actions[i].workingDir, data.actions[i].args, data.actions[i].systemId, data.actions[i].iconPath);
         }
     }
-    AddMetadataAndMap("categories", data.category, data.id);
-    AddMetadataAndMap("sources", data.source, data.id);
-    AddMetadataAndMap("developers", data.metadata.developer, data.id);
-    AddMetadataAndMap("publishers", data.metadata.publisher, data.id);
-    AddMetadataAndMap("platforms", data.metadata.platform, data.id);
-    AddMetadataAndMap("genres", data.metadata.genre, data.id);
-    AddMetadataAndMap("series", data.metadata.series, data.id);
-    AddMetadataAndMap("regions", data.metadata.region, data.id);
-    AddMetadataAndMap("languages", data.metadata.language, data.id);
-    AddMetadataAndMap("license_models", data.metadata.license, data.id);
+    UpdateMetadata("categories", data.category, data.id);
+    UpdateMetadata("sources", data.source, data.id);
+    UpdateMetadata("developers", data.metadata.developer, data.id);
+    UpdateMetadata("publishers", data.metadata.publisher, data.id);
+    UpdateMetadata("platforms", data.metadata.platform, data.id);
+    UpdateMetadata("genres", data.metadata.genre, data.id);
+    UpdateMetadata("series", data.metadata.series, data.id);
+    UpdateMetadata("regions", data.metadata.region, data.id);
+    UpdateMetadata("languages", data.metadata.language, data.id);
+    UpdateMetadata("license_models", data.metadata.license, data.id);
 }
 
 void Database::DeleteGame(long gameId)

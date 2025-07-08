@@ -78,11 +78,11 @@ LaunchConfig::LaunchConfig(wxWindow* parent, wxString actionName, bool isMain, w
     FlexGridSizer1->Add(ActionSystem, 1, wxALL|wxEXPAND, 5);
     FileText = new wxStaticText(Panel1, ID_FILETEXT, _("Executable Path"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_FILETEXT"));
     FlexGridSizer1->Add(FileText, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-    ActionPath = new wxFilePickerCtrl(Panel1, ID_ACTIONFILE, wxEmptyString, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxFLP_FILE_MUST_EXIST|wxFLP_OPEN|wxFLP_USE_TEXTCTRL|wxFLP_SMALL, wxDefaultValidator, _T("ID_ACTIONFILE"));
+    ActionPath = new wxFilePickerCtrl(Panel1, ID_ACTIONFILE, _T("C:\\"), wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxFLP_FILE_MUST_EXIST|wxFLP_OPEN|wxFLP_USE_TEXTCTRL|wxFLP_SMALL, wxDefaultValidator, _T("ID_ACTIONFILE"));
     FlexGridSizer1->Add(ActionPath, 1, wxALL|wxEXPAND, 5);
     WorkDirText = new wxStaticText(Panel1, ID_WORKDIRTEXT, _("Working Directory"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_WORKDIRTEXT"));
     FlexGridSizer1->Add(WorkDirText, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
-    ActionWorkingDirectory = new wxDirPickerCtrl(Panel1, ID_ACTIONWORKDIR, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxDIRP_DIR_MUST_EXIST|wxDIRP_USE_TEXTCTRL, wxDefaultValidator, _T("ID_ACTIONWORKDIR"));
+    ActionWorkingDirectory = new wxDirPickerCtrl(Panel1, ID_ACTIONWORKDIR, _T("C:\\"), wxEmptyString, wxDefaultPosition, wxDefaultSize, wxDIRP_DIR_MUST_EXIST|wxDIRP_USE_TEXTCTRL, wxDefaultValidator, _T("ID_ACTIONWORKDIR"));
     FlexGridSizer1->Add(ActionWorkingDirectory, 1, wxALL|wxEXPAND, 5);
     ArgText = new wxStaticText(Panel1, ID_ARGTEXT, _("Arguments"), wxDefaultPosition, wxDefaultSize, 0, _T("ID_ARGTEXT"));
     FlexGridSizer1->Add(ArgText, 1, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5);
@@ -105,7 +105,7 @@ LaunchConfig::LaunchConfig(wxWindow* parent, wxString actionName, bool isMain, w
     Panel2->SetSizer(BoxSizer1);
     wxBoxSizer1->Add(Panel2, 0, wxALL|wxEXPAND, 5);
     SetSizer(wxBoxSizer1);
-    IconFileDialog = new wxFileDialog(this, _("Select file for icon"), wxEmptyString, wxEmptyString, wxFileSelectorDefaultWildcardStr, wxFD_DEFAULT_STYLE, wxDefaultPosition, wxDefaultSize, _T("wxFileDialog"));
+    IconFileDialog = new wxFileDialog(this, _("Select file for icon"), _("C:\\"), wxEmptyString, wxFileSelectorDefaultWildcardStr, wxFD_DEFAULT_STYLE, wxDefaultPosition, wxDefaultSize, _T("wxFileDialog"));
 
     Connect(ID_ACTIONNAME,wxEVT_COMMAND_TEXT_UPDATED,(wxObjectEventFunction)&LaunchConfig::OnActionNameText);
     Connect(ID_ACTIONTYPE,wxEVT_COMMAND_CHOICE_SELECTED,(wxObjectEventFunction)&LaunchConfig::OnTypeChoiceSelect);
@@ -132,8 +132,8 @@ LaunchConfig::~LaunchConfig()
 }
 
 void LaunchConfig::SetIcon(wxString path) {
-    iconPath = path;
     ActionIcon->SetBitmap(wxIcon(wxIconLocation(path, 0)));
+    IconFileDialog->SetPath(path);
     //if (isMain) {
         //wxListbook* parent1 = GetParent();
         //EditGame* parent = ((wxListbook*) GetParent())->GetParent();

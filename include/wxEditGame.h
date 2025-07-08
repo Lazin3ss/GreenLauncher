@@ -46,6 +46,7 @@ class EditGame: public wxDialog
         DeleteAction(size_t pageId);
         void LoadData();
         void SaveData();
+        bool IntegrityCheck();
         OnDialogButtonClick(wxCommandEvent& event);
 
         //(*Declarations(EditGame)

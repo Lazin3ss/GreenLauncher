@@ -1,6 +1,8 @@
 # Folders
 /bin
 /obj
+/src/sqlite3/
+/include/sqlite3/
 
 # SQLite3 files
 /src/sqlite3/sqlite3.c

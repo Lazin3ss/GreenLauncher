@@ -78,6 +78,7 @@
 						<object class="sizeritem">
 							<object class="wxFilePickerCtrl" name="ID_ACTIONFILE" variable="ActionPath" member="yes">
 								<message></message>
+								<path>C:\\</path>
 								<wildcard></wildcard>
 								<style>wxFLP_FILE_MUST_EXIST|wxFLP_OPEN|wxFLP_USE_TEXTCTRL|wxFLP_SMALL</style>
 								<handler function="OnFileCtrlFileChanged" entry="EVT_FILEPICKER_CHANGED" />
@@ -97,6 +98,7 @@
 						<object class="sizeritem">
 							<object class="wxDirPickerCtrl" name="ID_ACTIONWORKDIR" variable="ActionWorkingDirectory" member="yes">
 								<message></message>
+								<path>C:\\</path>
 							</object>
 							<flag>wxALL|wxEXPAND</flag>
 							<border>5</border>
@@ -176,6 +178,7 @@
 		</object>
 		<object class="wxFileDialog" variable="IconFileDialog" member="yes">
 			<message>Select file for icon</message>
+			<default_dir>C:\\</default_dir>
 		</object>
 	</object>
 </wxsmith>
