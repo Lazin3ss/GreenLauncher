@@ -47,7 +47,7 @@ void GameManager::DeleteGame()
     db->DeleteGame(id);
 }
 
-void GameManager::RunAction(long idx)
+void GameManager::RunAction(size_t idx)
 {
     wxStringTokenizer paths = wxStringTokenizer(db->ReturnTableItem(selectedGameIdx, 1), ";");
     wxStringTokenizer workingDirs = wxStringTokenizer(db->ReturnTableItem(selectedGameIdx, 2), ";");
@@ -66,7 +66,7 @@ void GameManager::RunAction(long idx)
 
 long GameManager::Query()
 {
-    db->Query(currentQuery);
+    db->Query(currentQuery + _(" ") + currentOrder);
     return db->pRows;
 }
 

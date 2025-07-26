@@ -51,6 +51,7 @@ class GreenLauncherFrame: public wxFrame
         void OnFilterTreeBeginDrag1(wxTreeEvent& event);
         void OnMenuClose(wxMenuEvent& event);
         void OnMenuOpen(wxMenuEvent& event);
+        void OnGameList1ColumnClick(wxListEvent& event);
         //*)
 
         //(*Identifiers(GreenLauncherFrame)

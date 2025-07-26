@@ -79,6 +79,9 @@ class GameListCtrl : public wxListCtrl
             };
             // Refresh list
             Refresh();
+            for (int i = 0; i<GetColumnCount(); i++) {
+                SetColumnWidth(0, wxLIST_AUTOSIZE_USEHEADER);
+            }
         };
 };
 
