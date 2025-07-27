@@ -87,8 +87,8 @@ Database::Database()
 	"CREATE TRIGGER IF NOT EXISTS unmap_categories_task DELETE ON metadata_mapping WHEN old.type='categories' BEGIN "
 		"UPDATE categories SET gameCount=gameCount-1 WHERE id==old.metadata_id;"
 	"END;"
-	"CREATE TRIGGER IF NOT EXISTS delete_categories_task DELETE ON categories BEGIN "
-		"DELETE FROM metadata_mapping WHERE type=='categories' AND metadata_id==old.id;"
+	"CREATE TRIGGER IF NOT EXISTS delete_categories_task UPDATE ON categories WHEN new.gameCount==0 BEGIN "
+		"DELETE FROM categories WHERE id==new.id;"
 	"END;"
 	"CREATE TRIGGER IF NOT EXISTS map_sources_task INSERT ON metadata_mapping WHEN new.type='sources' BEGIN "
 		"UPDATE sources SET gameCount=gameCount+1 WHERE id==new.metadata_id;"
@@ -96,8 +96,8 @@ Database::Database()
 	"CREATE TRIGGER IF NOT EXISTS unmap_sources_task DELETE ON metadata_mapping WHEN old.type='sources' BEGIN "
 		"UPDATE sources SET gameCount=gameCount-1 WHERE id==old.metadata_id;"
 	"END;"
-	"CREATE TRIGGER IF NOT EXISTS delete_sources_task DELETE ON sources BEGIN "
-		"DELETE FROM metadata_mapping WHERE type=='sources' AND metadata_id==old.id;"
+	"CREATE TRIGGER IF NOT EXISTS delete_sources_task UPDATE ON sources WHEN new.gameCount==0 BEGIN "
+		"DELETE FROM sources WHERE id==new.id;"
 	"END;"
 	"CREATE TRIGGER IF NOT EXISTS map_platforms_task INSERT ON metadata_mapping WHEN new.type='platforms' BEGIN "
 		"UPDATE platforms SET gameCount=gameCount+1 WHERE id==new.metadata_id;"
@@ -105,8 +105,8 @@ Database::Database()
 	"CREATE TRIGGER IF NOT EXISTS unmap_platforms_task DELETE ON metadata_mapping WHEN old.type='platforms' BEGIN "
 		"UPDATE platforms SET gameCount=gameCount-1 WHERE id==old.metadata_id;"
 	"END;"
-	"CREATE TRIGGER IF NOT EXISTS delete_platforms_task DELETE ON platforms BEGIN "
-		"DELETE FROM metadata_mapping WHERE type=='platforms' AND metadata_id==old.id;"
+	"CREATE TRIGGER IF NOT EXISTS delete_platforms_task UPDATE ON platforms WHEN new.gameCount==0 BEGIN "
+		"DELETE FROM platforms WHERE id==new.id;"
 	"END;"
 	"CREATE TRIGGER IF NOT EXISTS map_developers_task INSERT ON metadata_mapping WHEN new.type='developers' BEGIN "
 		"UPDATE developers SET gameCount=gameCount+1 WHERE id==new.metadata_id;"
@@ -114,8 +114,8 @@ Database::Database()
 	"CREATE TRIGGER IF NOT EXISTS unmap_developers_task DELETE ON metadata_mapping WHEN old.type='developers' BEGIN "
 		"UPDATE developers SET gameCount=gameCount-1 WHERE id==old.metadata_id;"
 	"END;"
-	"CREATE TRIGGER IF NOT EXISTS delete_developers_task DELETE ON developers BEGIN "
-		"DELETE FROM metadata_mapping WHERE type=='developers' AND metadata_id==old.id;"
+	"CREATE TRIGGER IF NOT EXISTS delete_developers_task UPDATE ON developers WHEN new.gameCount==0 BEGIN "
+		"DELETE FROM developers WHERE id==new.id;"
 	"END;"
 	"CREATE TRIGGER IF NOT EXISTS map_publishers_task INSERT ON metadata_mapping WHEN new.type='publishers' BEGIN "
 		"UPDATE publishers SET gameCount=gameCount+1 WHERE id==new.metadata_id;"
@@ -123,8 +123,8 @@ Database::Database()
 	"CREATE TRIGGER IF NOT EXISTS unmap_publishers_task DELETE ON metadata_mapping WHEN old.type='publishers' BEGIN "
 		"UPDATE publishers SET gameCount=gameCount-1 WHERE id==old.metadata_id;"
 	"END;"
-	"CREATE TRIGGER IF NOT EXISTS delete_publishers_task DELETE ON publishers BEGIN "
-		"DELETE FROM metadata_mapping WHERE type=='publishers' AND metadata_id==old.id;"
+	"CREATE TRIGGER IF NOT EXISTS delete__task UPDATE ON publishers WHEN new.gameCount==0 BEGIN "
+		"DELETE FROM publishers WHERE id==new.id;"
 	"END;"
 	"CREATE TRIGGER IF NOT EXISTS map_genres_task INSERT ON metadata_mapping WHEN new.type='genres' BEGIN "
 		"UPDATE genres SET gameCount=gameCount+1 WHERE id==new.metadata_id;"
@@ -132,8 +132,8 @@ Database::Database()
 	"CREATE TRIGGER IF NOT EXISTS unmap_genres_task DELETE ON metadata_mapping WHEN old.type='genres' BEGIN "
 		"UPDATE genres SET gameCount=gameCount-1 WHERE id==old.metadata_id;"
 	"END;"
-	"CREATE TRIGGER IF NOT EXISTS delete_genres_task DELETE ON genres BEGIN "
-		"DELETE FROM metadata_mapping WHERE type=='genres' AND metadata_id==old.id;"
+	"CREATE TRIGGER IF NOT EXISTS delete_genres_task UPDATE ON genres WHEN new.gameCount==0 BEGIN "
+		"DELETE FROM genres WHERE id==new.id;"
 	"END;"
 	"CREATE TRIGGER IF NOT EXISTS map_series_task INSERT ON metadata_mapping WHEN new.type='series' BEGIN "
 		"UPDATE series SET gameCount=gameCount+1 WHERE id==new.metadata_id;"
@@ -141,8 +141,8 @@ Database::Database()
 	"CREATE TRIGGER IF NOT EXISTS unmap_series_task DELETE ON metadata_mapping WHEN old.type='series' BEGIN "
 		"UPDATE series SET gameCount=gameCount-1 WHERE id==old.metadata_id;"
 	"END;"
-	"CREATE TRIGGER IF NOT EXISTS delete_series_task DELETE ON series BEGIN "
-		"DELETE FROM metadata_mapping WHERE type=='series' AND metadata_id==old.id;"
+	"CREATE TRIGGER IF NOT EXISTS delete_series_task UPDATE ON series WHEN new.gameCount==0 BEGIN "
+		"DELETE FROM series WHERE id==new.id;"
 	"END;"
 	"CREATE TRIGGER IF NOT EXISTS map_regions_task INSERT ON metadata_mapping WHEN new.type='regions' BEGIN "
 		"UPDATE regions SET gameCount=gameCount+1 WHERE id==new.metadata_id;"
@@ -150,8 +150,8 @@ Database::Database()
 	"CREATE TRIGGER IF NOT EXISTS unmap_regions_task DELETE ON metadata_mapping WHEN old.type='regions' BEGIN "
 		"UPDATE regions SET gameCount=gameCount-1 WHERE id==old.metadata_id;"
 	"END;"
-	"CREATE TRIGGER IF NOT EXISTS delete_regions_task DELETE ON regions BEGIN "
-		"DELETE FROM metadata_mapping WHERE type=='regions' AND metadata_id==old.id;"
+	"CREATE TRIGGER IF NOT EXISTS delete_regions_task UPDATE ON regions WHEN new.gameCount==0 BEGIN "
+		"DELETE FROM regions WHERE id==new.id;"
 	"END;"
 	"CREATE TRIGGER IF NOT EXISTS map_languages_task INSERT ON metadata_mapping WHEN new.type='languages' BEGIN "
 		"UPDATE languages SET gameCount=gameCount+1 WHERE id==new.metadata_id;"
@@ -159,8 +159,8 @@ Database::Database()
 	"CREATE TRIGGER IF NOT EXISTS unmap_languages_task DELETE ON metadata_mapping WHEN old.type='languages' BEGIN "
 		"UPDATE languages SET gameCount=gameCount-1 WHERE id==old.metadata_id;"
 	"END;"
-	"CREATE TRIGGER IF NOT EXISTS delete_languages_task DELETE ON languages BEGIN "
-		"DELETE FROM metadata_mapping WHERE type=='languages' AND metadata_id==old.id;"
+	"CREATE TRIGGER IF NOT EXISTS delete_languages_task UPDATE ON languages WHEN new.gameCount==0 BEGIN "
+		"DELETE FROM languages WHERE id==new.id;"
 	"END;"
 	"CREATE TRIGGER IF NOT EXISTS map_license_models_task INSERT ON metadata_mapping WHEN new.type='license_models' BEGIN "
 		"UPDATE license_models SET gameCount=gameCount+1 WHERE id==new.metadata_id;"
@@ -168,8 +168,8 @@ Database::Database()
 	"CREATE TRIGGER IF NOT EXISTS unmap_license_models_task DELETE ON metadata_mapping WHEN old.type='license_models' BEGIN "
 		"UPDATE license_models SET gameCount=gameCount-1 WHERE id==old.metadata_id;"
 	"END;"
-	"CREATE TRIGGER IF NOT EXISTS delete_license_models_task DELETE ON license_models BEGIN "
-		"DELETE FROM metadata_mapping WHERE type=='license_models' AND metadata_id==old.id;"
+	"CREATE TRIGGER IF NOT EXISTS delete_license_models_task UPDATE ON license_models WHEN new.gameCount==0 BEGIN "
+		"DELETE FROM license_models WHERE id==new.id;"
 	"END;"
 	"CREATE VIEW IF NOT EXISTS gameList AS SELECT "
         "games.id, "
@@ -273,7 +273,6 @@ void Database::AddAction(long game_id, bool isMain, wxString name, long type, wx
 void Database::UpdateAction(long actionId, wxString name, long type, wxString path, wxString workingDir, wxString args, long systemId, wxString iconPath)
 {
     int rc;
-    sqlite3_int64 action_id;
     sqlite3_stmt* stmt;
     rc = sqlite3_prepare_v2(db, wxString::Format("UPDATE actions SET name=?, type=?, path=?, workingDir=?, args=?, system_id=?, iconPath=? WHERE id==%d", actionId), -1, &stmt, NULL);
     if (rc == SQLITE_OK) {
@@ -317,11 +316,10 @@ void Database::AddMetadataAndMap(const char* type, wxString names, long gameId)
 
 void Database::UpdateMetadata(const char* type, wxString names, long gameId)
 {
-    int rc;
     sqlite3_stmt *stmt;
-    rc = sqlite3_prepare_v2(db, wxString::Format("DELETE FROM metadata_mapping WHERE game_id==%d AND type=='%s'", gameId, type).mb_str(), -1, &stmt, NULL);
-    rc = sqlite3_step(stmt);
-    rc = sqlite3_finalize(stmt);
+    sqlite3_prepare_v2(db, wxString::Format("DELETE FROM metadata_mapping WHERE game_id==%d AND type=='%s'", gameId, type).mb_str(), -1, &stmt, NULL);
+    sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
     AddMetadataAndMap(type, names, gameId);
 }
 
@@ -342,7 +340,7 @@ void Database::AddGame(GameData data)
     rc = sqlite3_finalize(stmt);
     game_id = sqlite3_last_insert_rowid(db);
     // Then, insert the actions
-    for (int i = 0; i<data.actions.size(); i++) {
+    for (size_t i = 0; i<data.actions.size(); i++) {
         AddAction(game_id, data.actions[i].isMain, data.actions[i].name, data.actions[i].type, data.actions[i].path, data.actions[i].workingDir, data.actions[i].args, data.actions[i].systemId, data.actions[i].iconPath);
     }
     // And then, all other metadata
@@ -373,14 +371,14 @@ void Database::EditGame(GameData data)
     rc = sqlite3_finalize(stmt);
     // We only keep actions from GameData which have an ID, we assume the other ones were deleted
     wxString actionsFilter = wxString::Format("DELETE FROM actions_mapping WHERE game_id==%d", data.id);
-    for (int i = 0; i<data.actions.size(); i++) {
+    for (size_t i = 0; i<data.actions.size(); i++) {
         if (data.actions[i].id > 0) {
             actionsFilter += wxString::Format(" AND action_id!=%d", data.actions[i].id);
             UpdateAction(data.actions[i].id, data.actions[i].name, data.actions[i].type, data.actions[i].path, data.actions[i].workingDir, data.actions[i].args, data.actions[i].systemId, data.actions[i].iconPath);
         }
     }
     RunSQL(actionsFilter);
-    for (int i = 0; i<data.actions.size(); i++) {
+    for (size_t i = 0; i<data.actions.size(); i++) {
         if (data.actions[i].id == 0) {
             AddAction(data.id, false, data.actions[i].name, data.actions[i].type, data.actions[i].path, data.actions[i].workingDir, data.actions[i].args, data.actions[i].systemId, data.actions[i].iconPath);
         }
@@ -404,12 +402,11 @@ void Database::DeleteGame(long gameId)
 
 wxString Database::ReturnMetadata(const char* type, long gameId)
 {
-    int rc;
     sqlite3_stmt* stmt;
-    rc = sqlite3_prepare_v2(db, wxString::Format("SELECT GROUP_CONCAT(name, ';') FROM %s WHERE id IN (SELECT metadata_id FROM metadata_mapping WHERE game_id==%d)", type, gameId).mb_str(), -1, &stmt, NULL);
-    rc = sqlite3_step(stmt);
+    sqlite3_prepare_v2(db, wxString::Format("SELECT GROUP_CONCAT(name, ';') FROM %s WHERE id IN (SELECT metadata_id FROM metadata_mapping WHERE game_id==%d AND type=='%s')", type, gameId, type).mb_str(), -1, &stmt, NULL);
+    sqlite3_step(stmt);
     wxString result = wxString(sqlite3_column_text(stmt, 0));
-    rc = sqlite3_finalize(stmt);
+    sqlite3_finalize(stmt);
     return result;
 }
 
@@ -426,7 +423,7 @@ GameData Database::ReturnGameData(long id)
     data.favorite = sqlite3_column_int(stmt, 2);
     data.hidden = sqlite3_column_int(stmt, 3);
     data.metadata.releaseDate = wxDateTime(wxDateTime::wxDateTime_t(1), wxDateTime::Month(wxDateTime::Jan), sqlite3_column_int(stmt, 4));
-    long actionCount = sqlite3_column_int(stmt, 5);
+    //long actionCount = sqlite3_column_int(stmt, 5);
     rc = sqlite3_finalize(stmt);
     // Get actions
     rc = sqlite3_prepare_v2(db, wxString::Format("SELECT * FROM actions WHERE id IN (SELECT action_id FROM actions_mapping  WHERE game_id==%d)", id).mb_str(), -1, &stmt, NULL);
@@ -470,7 +467,7 @@ void Database::GetMetadataTable(wxString type)
     char *errmsg;
     rc = sqlite3_get_table(
         db,
-        wxString::Format("SELECT name, gameCount FROM %s;", type).mb_str(),
+        wxString::Format("SELECT name, gameCount FROM %s WHERE gameCount>0;", type).mb_str(),
         &fResult,
         &fRows,
         &fCols,

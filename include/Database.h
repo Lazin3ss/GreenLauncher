@@ -20,12 +20,12 @@ class Database
 {
     public:
         char **pResult;
-        long pRows = -1;
-        long pCols = -1;
+        int pRows = -1;
+        int pCols = -1;
 
         char **fResult;
-        long fRows = -1;
-        long fCols = -1;
+        int fRows = -1;
+        int fCols = -1;
 
         Database();
         virtual ~Database();

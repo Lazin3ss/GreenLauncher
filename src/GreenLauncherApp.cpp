@@ -37,4 +37,5 @@ bool GreenLauncherApp::OnInit()
 int GreenLauncherApp::OnExit()
 {
     delete gameManager;
+    return 0;
 }

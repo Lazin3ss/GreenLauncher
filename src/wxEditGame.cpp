@@ -10,7 +10,7 @@
 #include "Database.h"
 #include "GameData.h"
 
-#include "wxEditGame.h".
+#include "wxEditGame.h"
 #include "wxLaunchConfig.h"
 #include "wxGreenLauncherMain.h"
 
@@ -574,7 +574,7 @@ void EditGame::LoadData()
     GameCategory->SetValue(data.category);
     GameSource->SetValue(data.source);
     // Actions data
-    for (int i = 0; i < data.actions.size(); i++) {
+    for (size_t i = 0; i < data.actions.size(); i++) {
         if (!data.actions[i].isMain) {
             LaunchConfig* panel = new LaunchConfig(ActionListbook, data.actions[i].name, false);
             ActionListbook->AddPage(panel, data.actions[i].name, true);
@@ -621,7 +621,7 @@ void EditGame::SaveData()
     data.source = GameSource->GetValue();
     // Gather Action data info
     data.actions.clear();
-    for (int i = 0; i < ActionListbook->GetPageCount(); i++) {
+    for (size_t i = 0; i < ActionListbook->GetPageCount(); i++) {
         ActionData actData;
         actData.id = ((LaunchConfig*) ActionListbook->GetPage(i))->ActionId;
         actData.isMain = ((LaunchConfig*) ActionListbook->GetPage(i))->isMain;
@@ -658,16 +658,18 @@ void EditGame::SaveData()
 
 bool EditGame::IntegrityCheck() {
     if (GameName->GetValue().IsSameAs("")) {
+        wxMessageBox(wxString("The game needs a name!"), _("Error"));
         return false;
     }
     wxString path = ((LaunchConfig*) ActionListbook->GetPage(0))->ActionPath->GetPath();
     if (!path.Contains(wxString(".exe")) && !path.Contains(wxString(".bat")) && !path.Contains(wxString(".cmd"))) {
+        wxMessageBox(wxString("A main executable path is obligatory!"), _("Error"));
         return false;
     }
     return true;
 }
 
-EditGame::OnDialogButtonClick(wxCommandEvent& event)
+void EditGame::OnDialogButtonClick(wxCommandEvent& event)
 {
     switch (event.GetId()) {
         case wxID_SAVE:
@@ -681,8 +683,4 @@ EditGame::OnDialogButtonClick(wxCommandEvent& event)
             break;
     }
     event.Skip();
-}
-
-void EditGame::OnCheckListBox1Toggled(wxCommandEvent& event)
-{
 }

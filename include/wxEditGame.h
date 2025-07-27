@@ -42,12 +42,12 @@ class EditGame: public wxDialog
         EditGame(wxWindow* parent, GameData data=GameData(), wxWindowID id=wxID_ANY);
         virtual ~EditGame();
 
-        AddAction(wxString name, bool isMain);
-        DeleteAction(size_t pageId);
+        void AddAction(wxString name, bool isMain);
+        void DeleteAction(size_t pageId);
         void LoadData();
         void SaveData();
         bool IntegrityCheck();
-        OnDialogButtonClick(wxCommandEvent& event);
+        void OnDialogButtonClick(wxCommandEvent& event);
 
         //(*Declarations(EditGame)
         wxBitmapButton* GameIcon;

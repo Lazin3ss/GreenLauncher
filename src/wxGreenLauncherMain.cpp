@@ -195,10 +195,10 @@ void GreenLauncherFrame::ReloadFilters()
                 wxFilterData* filterData = new wxFilterData(wxGetApp().gameManager->GetFilterData(FilterTree->GetItemText(filterType).Lower(), i));
                 FilterTree->SetItemData(filter, filterData);
             }
+            wxGetApp().gameManager->FreeFilterList();
         }
         filterType = FilterTree->GetNextSibling(filterType);
     }
-    wxGetApp().gameManager->FreeFilterList();
 }
 
 void GreenLauncherFrame::OnQuit(wxCommandEvent& event)
@@ -303,4 +303,3 @@ void GreenLauncherFrame::OnMenuOpen(wxMenuEvent& event)
         }
     }
 }
-

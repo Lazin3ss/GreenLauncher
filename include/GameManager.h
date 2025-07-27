@@ -21,6 +21,7 @@ class GameManager
     public:
         long selectedGameIdx;
         wxString currentQuery = wxString("SELECT * from gameList");
+        wxString currentOrder = wxString("ORDER BY lower(name) ASC");
 
         GameManager();
         virtual ~GameManager();
@@ -29,7 +30,7 @@ class GameManager
         void EditGame(GameData data);
         void DeleteGame();
 
-        void RunAction(long idx);
+        void RunAction(size_t idx);
 
         long Query();
         wxString ReturnTableItem(long row, long col);
